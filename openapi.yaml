@@ -2349,9 +2349,4 @@ tags:
   - name: loyalty card join
   - name: loyalty card registration
   - name: loyalty card delete
-  - name: pll links
   - name: payment account
-  - name: users
-  - name: personal information
-  - name: marketing preferences
-  - name: magic links
