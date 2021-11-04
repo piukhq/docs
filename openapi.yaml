@@ -919,6 +919,16 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
+        '409':
+          description: "**Conflict:** This request conflicts with the target resource's internal state. Possible error codes and messages:<pre>**DUPLICATE_EMAIL**: This email is already in use for this channel</pre>"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse404'
+                  - example:
+                      error_message: "This email is already in use for this channel"
+                      error_slug: "DUPLICATE_EMAIL"
         '422':
           description: "Submitted credentials did not pass validation. One or more fields in the request did not pass the required validation"
           content:
@@ -1087,7 +1097,7 @@ components:
                     allOf: 
                     - $ref: '#/components/schemas/CredentialRequest'
                     example:
-                      credential_slug: 'post_code'
+                      credential_slug: 'postcode'
                       value: 'SL5 5TD'                      
                 consents: 
                   type: array
@@ -1217,21 +1227,21 @@ components:
             description: 'Card scheme (e.g., VISA, American Express, MasterCard)'
             minLength: 0
             maxLength: 200
-            pattern: "[\u0000-\u2FFF]{0,200}"
+            pattern: "[\u0000-\u2FFF]{1,200}"
           type:
             type: string
             example: debit
             description: 'type of payment card, credit, debit etc.,'
             minLength: 0
             maxLength: 40
-            pattern: "[\u0000-\u2FFF]{0,40}"
+            pattern: "[\u0000-\u2FFF]{1,40}"
           country:
             type: string
             example: GB
             description: 'The country of origin of the payment card in accordance with ISO 3166-1 Alpha-2'
             minLength: 0
             maxLength: 40
-            pattern: "[\u0000-\u2FFF]{0,40}"
+            pattern: "[\u0000-\u2FFF]{1,40}"
           currency_code:
             type: string
             example: GBP
@@ -1759,11 +1769,11 @@ components:
         credential_slug:
           type: string
           description: Specifies the input field common name or key. Relevant 'add', 'authorisation', 'join' and 'register' fields for an asscociated loyalty plan can be found in GET /loyalty_plans
-          example: post_code
+          example: 'card_number'
         value:
           type: string
           description: 'Value associated with this field.'
-          example: SW11 5JT
+          example: '198749238749'
     ConsentRequest:
       type: object
       description: ""
@@ -2343,7 +2353,6 @@ tags:
   - name: retrieve all loyalty plans
   - name: retrieve a loyalty plan
   - name: retrieve journey fields for a loyalty plan
-  - name: retrieve values for a loyalty card
   - name: loyalty card add
   - name: loyalty card authorise
   - name: loyalty card join
