@@ -5,6 +5,8 @@ info:
   description: 'This document defines the Bink API URLs, parameters, request bodies, responses. Each operation offers a mock end point. Regex patterns, minLength, and maxLength parameters are for front-end guidance only.'
   contact:
     email: mmorar@bink.com
+  x-logo:
+    url: https://api.gb.bink.com/content/media/logos/bink_with_text.png
 servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
