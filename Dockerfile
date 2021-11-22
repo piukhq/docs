@@ -10,3 +10,4 @@ RUN mv ../build/*.html .
 
 FROM docker.io/nginx:alpine
 COPY --from=build /output/* /usr/share/nginx/html/
+ADD config/default.conf.template /etc/nginx/templates/
