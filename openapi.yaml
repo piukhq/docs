@@ -99,6 +99,12 @@ paths:
                       state: "authorised"
                       slug:
                       description:
+                    images:
+                      - id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
+                        description": "Card Image for Wasabi hero"
+                        encoding": "png"                      
                     balance:
                       updated_at: 1515697663
                       current_display_value: '2 stamps'
@@ -154,6 +160,12 @@ paths:
                       state: "authorised"
                       slug:
                       description:
+                    images:
+                      - id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
+                        description": "Card Image for Wasabi hero"
+                        encoding": "png"                      
                     balance:
                       updated_at: 1515697663
                       current_display_value: '150 points'
@@ -180,6 +192,12 @@ paths:
                     expiry_year: '24'
                     name_on_card: 'Jeff Jeffries'
                     card_nickname: 'My Visa'
+                    images:
+                      - id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/VISA.png'
+                        description": "Card Image VISA"
+                        encoding": "png"                    
                     pll_links:
                     - loyalty_plan_id: 281
                       loyalty_plan: 'Wasabi'
