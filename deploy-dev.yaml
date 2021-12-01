@@ -4,9 +4,7 @@ info:
   title: Bink API
   description: 'This document defines the Bink API URLs, parameters, request bodies, responses. Each operation offers a mock end point. Regex patterns, minLength, and maxLength parameters are for front-end guidance only.'
   contact:
-    email: pb@bink.com
-  x-logo:
-    url: https://api.gb.bink.com/content/media/logos/bink_with_text.png
+    email: mmorar@bink.com
 servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
@@ -76,6 +74,168 @@ paths:
                         state: "pending"
                         slug:
                         description:
+                      images:
+                        id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
+                        description": "Card Image for Wasabi hero"
+                        encoding": "png"                  
+                    - loyalty_card_id: 89
+                      loyalty_plan_id: 43
+                      status:
+                        state: "failed"
+                        slug: ACCOUNT_EXISTS
+                        description: "An account with those details already exists"
+                      images:
+                        id: 291
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Hero_1968x732.png'
+                        description": "Hero image"
+                        encoding": "png"                        
+                loyalty_cards:
+                  - id: 81
+                    loyalty_plan_id: 201
+                    status:
+                      state: "authorised"
+                      slug:
+                      description:
+                    images:
+                      - id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
+                        description": "Card Image for Wasabi hero"
+                        encoding": "png"                      
+                    balance:
+                      updated_at: 1515697663
+                      current_display_value: '2 stamps'
+                    transactions:
+                      - id: "100982384448"
+                        timestamp: 1517549941
+                        description: "Paddington Station £7.45"
+                        display_value: "1 stamp"
+                      - id: "100982345321"
+                        timestamp: 1517549941
+                        description: "Paddington Station £9.55"
+                        display_value: "1 stamp"
+                    vouchers:
+                      - state: "inprogress"
+                        earn_type: "stamps"
+                        reward_text: "Meal Voucher"
+                        headline: "Spend £7.00 or more to get a stamp. Collect 7 stamps to get a Meal Voucher of up to £7 off your next meal"
+                        voucher_code:
+                        barcode_type: 0
+                        progress_display_text: "2/7 stamps"
+                        suffix: 'stamps'
+                        current_value: 2
+                        target_value: 7
+                        body_text: "lorem ipsum"
+                        terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                        issued_date: null
+                        expiry_date: null
+                        redeemed_date:
+                      - state: "issued"
+                        earn_type: "stamps"
+                        reward_text: "Meal Voucher"
+                        headline: "Earned"
+                        voucher_code: "5544332211"
+                        barcode_type: 1
+                        progress_display_text:
+                        body_text: "lorem ipsum"
+                        terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                        issued_date: 1517549941
+                        expiry_date: 1617549941
+                        redeemed_date:
+                    card:
+                      barcode: "633174911234567898"
+                      barcode_type: 0
+                      card_number: "633174911234567898"
+                      colour: '#FFFFFF'
+                    pll_links:
+                      - payment_account_id: 555
+                        payment_scheme: VISA
+                        status: active
+                  - id: 85
+                    loyalty_plan_id: 124
+                    status:
+                      state: "authorised"
+                      slug:
+                      description:
+                    images:
+                      - id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
+                        description": "Card Image for Wasabi hero"
+                        encoding": "png"                      
+                    balance:
+                      updated_at: 1515697663
+                      current_display_value: '150 points'
+                    transactions:
+                      - id: "100982384448"
+                        timestamp: 1517549941
+                        description: "Test transaction: 5 items"
+                        display_value: "150 points"
+                    vouchers:
+                      []
+                    card:
+                      barcode: "633174911234567898"
+                      barcode_type: 0
+                      card_number: "633174911234567898"
+                      colour: '#FFFFFF'
+                    pll_links:
+                      - payment_account_id: 555
+                        payment_scheme: VISA
+                        status: active
+                payment_accounts:
+                  - id: 555
+                    status: 'active'
+                    expiry_month: '12'
+                    expiry_year: '24'
+                    name_on_card: 'Jeff Jeffries'
+                    card_nickname: 'My Visa'
+                    images:
+                      - id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/VISA.png'
+                        description": "Card Image VISA"
+                        encoding": "png"                    
+                    pll_links:
+                    - loyalty_plan_id: 281
+                      loyalty_plan: 'Wasabi'
+                      status: 'active'
+                    - loyalty_plan_id: 105
+                      loyalty_plan: 'Iceland'
+                      status: 'active'
+        '401':
+          description: Not authorised, request does not have a valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+  /wallet_overview:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - retrieve wallet
+      summary: Retrieve wallet for given user
+      operationId: GET /wallet_overview
+      description: "Used to display the contents of a users wallet including: <br><br>1. Loyalty Cards<li>Balance details <li>Transactions <li>Vouchers <br><br>2. Payment Accounts <br>3. Join requests <br>4. PLL links<br><br>**NOTE:** Empty lists at any level in the JSON structure will be returned as: \"key_name\": []. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.<br><br>In accordance with rules above, \"joins\", \"loyalty_cards\", and \"payment_accounts\" may be returned as empty lists."
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalletOverview'
+              example:
+                joins:
+                    - loyalty_card_id: 51
+                      loyalty_plan_id: 21
+                      status:
+                        state: "pending"
+                        slug:
+                        description:
                     - loyalty_card_id: 89
                       loyalty_plan_id: 43
                       status:
@@ -109,6 +269,9 @@ paths:
                         voucher_code:
                         barcode_type: 0
                         progress_display_text: "2/7 stamps"
+                        suffix: 'stamps'
+                        current_value: 2
+                        target_value: 7
                         body_text: "lorem ipsum"
                         terms_and_conditions: "http://baseurl/terms/terms.html%22"
                         issued_date: null
@@ -180,7 +343,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/genericresponse401'
+                  - $ref: '#/components/schemas/genericresponse401'  
   /loyalty_plans:
     get:
       security:
@@ -241,6 +404,154 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse404'
+  /loyalty_plans_overview: 
+    get: 
+      security:
+        - bearerAuth: []
+      tags: 
+        - loyalty plans overview
+      description: 'This enpoints provides a list of abridged versions of the loyalty plans.'
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                allOf:
+                - type: object
+                  properties:
+                    loyalty_plan_id:
+                      type: integer
+                      format: int64
+                      example: 290
+                - $ref: '#/components/schemas/LoyaltyPlanOverview'
+        '401':
+          description: Not authorised, request does not have a valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+  /loyalty_cards/{loyalty_card_id}/balance:
+    get:
+      security: 
+        - bearerAuth: []
+      tags:
+        - retrieve loyalty card values
+      summary: View balances for a loyalty card in the wallet
+      operationId: GET /loyalty_plans/{loyalty_plan_id}/balance
+      description: "Provides balance information for a given loyalty card"
+      parameters:
+        - in: path
+          name: loyalty_card_id
+          description: loyalty_card_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  balance: 
+                    $ref: '#/components/schemas/LoyaltyCardBalance'
+        '401':
+          description: Not authorised, request does not have a valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '404':
+          description: "Resource specified could not be found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse404'
+  /loyalty_cards/{loyalty_card_id}/transactions:
+    get:
+      security: 
+        - bearerAuth: []
+      tags:
+        - retrieve loyalty card values
+      summary: View transactions for a loyalty card in the wallet
+      operationId: GET /loyalty_plans/{loyalty_plan_id}/transactions
+      description: "Provides transactions for a given loyalty card"
+      parameters:
+        - in: path
+          name: loyalty_card_id
+          description: loyalty_card_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  transactions: 
+                    $ref: '#/components/schemas/LoyaltyCardTransactions'
+        '401':
+          description: Not authorised, request does not have a valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '404':
+          description: "Resource specified could not be found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse404'     
+  /loyalty_cards/{loyalty_card_id}/vouchers:
+    get:
+      security: 
+        - bearerAuth: []
+      tags:
+        - retrieve loyalty card values
+      summary: View vouchers for a loyalty card in the wallet
+      operationId: GET /loyalty_plans/{loyalty_plan_id}/vouchers
+      description: "Provides voucher for a given loyalty card"
+      parameters:
+        - in: path
+          name: loyalty_card_id
+          description: loyalty_card_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  vouchers: 
+                    $ref: '#/components/schemas/Vouchers'
+        '401':
+          description: Not authorised, request does not have a valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '404':
+          description: "Resource specified could not be found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse404'    
   /loyalty_plans/{loyalty_plan_id}/journey_fields:
     get:
       security:
@@ -1151,6 +1462,20 @@ components:
                   type: array
                   items:
                     $ref: '#/components/schemas/CredentialRequest'
+    LoyaltyCardProcessOverview:
+      type: object
+      properties:
+        loyalty_card_id:
+          type: integer
+          description: Unique identifier for this process
+          example: 556
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+        loyalty_plan_id:
+          type: integer
+        loyalty_plan_name:
+          type: string
     LoyaltyCardProcess:
       type: object
       properties:
@@ -1181,6 +1506,8 @@ components:
               nullable: true
               example: null
               description: if the loyalty card is in a state other than active, there will be a description to describe the state of the card
+        images: 
+          $ref: '#/components/schemas/Images'
         error:
           type: object
           properties:
@@ -1401,6 +1728,8 @@ components:
             type: array
             items:
                 $ref: '#/components/schemas/Payment_Account_Response'
+    WalletOverview: 
+      type: string
     LoyaltyCard:
       type: object
       properties:
@@ -1435,6 +1764,8 @@ components:
               nullable: true
               example: null
               description: if the loyalty card is in a state other than active, there will be a description to describe the state of the card
+        images: 
+          $ref: '#/components/schemas/Images'
         balance:
           $ref: '#/components/schemas/LoyaltyCardBalance'
         transactions:
@@ -1472,7 +1803,6 @@ components:
           - $ref: '#/components/schemas/PLL_Link_Loyalty_Card'
           - type: object
             description: Payment-Linked Loyalty (PLL) link between payment account and loyalty card.
-
     PLL_Link_Payment_Card:
       type: object
       description: Payment-Linked Loyalty (PLL) link between payment account and loyalty card.
@@ -1487,7 +1817,6 @@ components:
         status:
           type: string
           example: 'active'
-
     Payment_Account_Response:
       type: object
       properties:
@@ -1512,12 +1841,61 @@ components:
         card_nickname:
           type: string
           example: 'My Visa'
+        images: 
+          $ref: '#/components/schemas/Images'
         pll_links:
           type: array
           items:
             $ref: '#/components/schemas/PLL_Link_Payment_Card'
-              
-              
+    LoyaltyPlanOverview: 
+      type: object
+      properties: 
+        loyalty_plan_id:
+          type: integer
+          format: int64
+          example: 109
+        plan_popularity:
+          type: integer
+          description: Numeric rank for this plan's popularity
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+          example: 2        
+        company_name:
+          type: string
+          description: Merchant or loyalty provider name
+          example: Wasabi
+          minLength: 0
+          maxLength: 200
+          pattern: "[\\u0000-\\u2FFF]+"
+        plan_name:
+          type: string
+          description: The merchant’s plan name - Brand + scheme name - not to be used in conjunction with plan_name_card
+          example: 'Wasabi Club'
+          minLength: 0
+          maxLength: 50
+          pattern: "[\\u0000-\\u2FFF]+"   
+        plan_type:
+          type: integer
+          description: 'Store = 0 | View = 1 | Link = 2'
+          example: 2
+          minimum: 0
+          maximum: 9
+          pattern: '[0-9]'    
+        colour:
+          type: string
+          description: background colour for card image - hex format
+          example: '#f80000'
+          pattern: '^[#A-Fa-f0-9]{4,7}$'  
+        category:
+          type: string
+          description: Market sector or retail category
+          example: Household
+          minLength: 0
+          maxLength: 200
+          pattern: "[\\u0000-\\u2FFF]+"   
+        images: 
+          $ref: '#/components/schemas/Images'
     LoyaltyPlan:
       type: object
       properties:
@@ -1597,44 +1975,7 @@ components:
                       - AUTHORISE
                     example: "ADD"
         images:
-          type: array
-          items:
-            minItems: 0
-            type: object
-            properties:
-              id:
-                type: integer
-                minimum: 1
-                maximum: 18446744073709552000
-                pattern: '^[0-9]+$'
-                example: 290
-              type:
-                type: integer
-                minimum: 0
-                maximum: 9
-                example: 0
-                pattern: '[0-9]'
-                description: "0=HERO, 1=BANNER, 2=OFFER, 3=ICON, 4=ASSET, 5=REFERENCE, 6=PERSONAL_OFFERS, 7=PROMOTIONS, 8=TIER, 9=ALTERNATIVE"
-              url:
-                type: string
-                description: Full URL for image
-                example: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_Promo_1968x732.png'
-                pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
-              description:
-                type: string
-                description: Image Type description
-                example: Join now and start saving
-                minLength: 0
-                maxLength: 500
-                pattern: "[\\u0000-\\u2FFF]+"
-              encoding:
-                type: string
-                enum:
-                  - png
-                  - jpg
-                  - svg
-                description: Encoding for this file
-                example: png
+          $ref: '#/components/schemas/Images'
         plan_details:
           type: object
           properties:
@@ -1761,6 +2102,45 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/LoyaltyPlan'
+    Images: 
+      type: array
+      items:
+        minItems: 0
+        type: object
+        properties:
+          id:
+            type: integer
+            minimum: 1
+            maximum: 18446744073709552000
+            pattern: '^[0-9]+$'
+            example: 290
+          type:
+            type: integer
+            minimum: 0
+            maximum: 9
+            example: 0
+            pattern: '[0-9]'
+            description: "0=HERO, 1=BANNER, 2=OFFER, 3=ICON, 4=ASSET, 5=REFERENCE, 6=PERSONAL_OFFERS, 7=PROMOTIONS, 8=TIER, 9=ALTERNATIVE"
+          url:
+            type: string
+            description: Full URL for image
+            example: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_Promo_1968x732.png'
+            pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
+          description:
+            type: string
+            description: Image Type description
+            example: Join now and start saving
+            minLength: 0
+            maxLength: 500
+            pattern: "[\\u0000-\\u2FFF]+"
+          encoding:
+            type: string
+            enum:
+              - png
+              - jpg
+              - svg
+            description: Encoding for this file
+            example: png
     PlanDocumentRequest:
       type: object
       description: ""
@@ -2319,6 +2699,28 @@ components:
           maxLength: 250
           pattern: "[\\u0000-\\u2FFF]+"   
           example: '2/7 stamps'
+        prefix:
+          type: string
+          description: Pre-qualifier for earned and target values - usually a currency symbol
+          minLength: 0
+          maxLength: 50
+          pattern: "[\\u0000-\\u2FFF]+"
+        suffix:
+          type: string
+          description: Post-qualifier for earned and target values such as stamps or visits
+          minLength: 0
+          maxLength: 50
+          pattern: "[\\u0000-\\u2FFF]+"
+        target_value:
+          type: number
+          description: Target spend value
+          minimum: 0
+          maximum: 9999999
+        current_value:
+          type: number
+          description: Spent so far against target
+          minimum: 0
+          maximum: 9999999
         body_text: 
           type: string
           nullable: true
