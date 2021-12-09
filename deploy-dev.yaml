@@ -8,7 +8,7 @@ info:
 servers:
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/Bink_API/Bink_External_API_develop/2.0
+    url: https://virtserver.swaggerhub.com/Bink_API/Bink_External_API/2.0
 paths:
   /token:
     post:
@@ -57,7 +57,7 @@ paths:
       tags:
         - retrieve wallet
       summary: Retrieve wallet for given user
-      operationId: GET /wallets
+      operationId: GET /wallet
       description: "Used to display the contents of a users wallet including: <br><br>1. Loyalty Cards<li>Balance details <li>Transactions <li>Vouchers <br><br>2. Payment Accounts <br>3. Join requests <br>4. PLL links<br><br>**NOTE:** Empty lists at any level in the JSON structure will be returned as: \"key_name\": []. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.<br><br>In accordance with rules above, \"joins\", \"loyalty_cards\", and \"payment_accounts\" may be returned as empty lists."
       responses:
         '200':
@@ -199,10 +199,10 @@ paths:
                         description": "Card Image VISA"
                         encoding": "png"                    
                     pll_links:
-                    - loyalty_plan_id: 281
+                    - loyalty_card_id: 123334
                       loyalty_plan: 'Wasabi'
                       status: 'active'
-                    - loyalty_plan_id: 105
+                    - loyalty_card_id: 445677
                       loyalty_plan: 'Iceland'
                       status: 'active'
         '401':
@@ -220,7 +220,7 @@ paths:
         - retrieve wallet
       summary: Retrieve wallet for given user
       operationId: GET /wallet_overview
-      description: "Used to display the contents of a users wallet including: <br><br>1. Loyalty Cards<li>Balance details <li>Transactions <li>Vouchers <br><br>2. Payment Accounts <br>3. Join requests <br>4. PLL links<br><br>**NOTE:** Empty lists at any level in the JSON structure will be returned as: \"key_name\": []. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.<br><br>In accordance with rules above, \"joins\", \"loyalty_cards\", and \"payment_accounts\" may be returned as empty lists."
+      description: "Used to display an overview of the contents of a users wallet including: <br><br>1. Loyalty Cards<li>Balance details <br>2. Payment Accounts <br>3. Join requests <br><br>**NOTE:** Empty lists at any level in the JSON structure will be returned as: \"key_name\": []. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.<br><br>In accordance with rules above, \"joins\", \"loyalty_cards\", and \"payment_accounts\" may be returned as empty lists."
       responses:
         '200':
           description: "**Successful**"
@@ -231,98 +231,35 @@ paths:
               example:
                 joins:
                     - loyalty_card_id: 51
-                      loyalty_plan_id: 21
+                      loyalty_plan_id: 246
+                      loyalty_plan_name: "Wasabi Club"
                       status:
                         state: "pending"
                         slug:
                         description:
-                    - loyalty_card_id: 89
-                      loyalty_plan_id: 43
-                      status:
-                        state: "failed"
-                        slug: ACCOUNT_EXISTS
-                        description: "An account with those details already exists"
+                      images:
+                        id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
+                        description": "Card Image for Wasabi hero"
+                        encoding": "png"                  
                 loyalty_cards:
                   - id: 81
                     loyalty_plan_id: 201
+                    loyalty_plan_name: "Wasabi Club"
                     status:
                       state: "authorised"
                       slug:
                       description:
+                    images:
+                      - id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
+                        description": "Card Image for Wasabi hero"
+                        encoding": "png"                      
                     balance:
                       updated_at: 1515697663
                       current_display_value: '2 stamps'
-                    transactions:
-                      - id: "100982384448"
-                        timestamp: 1517549941
-                        description: "Paddington Station £7.45"
-                        display_value: "1 stamp"
-                      - id: "100982345321"
-                        timestamp: 1517549941
-                        description: "Paddington Station £9.55"
-                        display_value: "1 stamp"
-                    vouchers:
-                      - state: "inprogress"
-                        earn_type: "stamps"
-                        reward_text: "Meal Voucher"
-                        headline: "Spend £7.00 or more to get a stamp. Collect 7 stamps to get a Meal Voucher of up to £7 off your next meal"
-                        voucher_code:
-                        barcode_type: 0
-                        progress_display_text: "2/7 stamps"
-                        suffix: 'stamps'
-                        current_value: 2
-                        target_value: 7
-                        body_text: "lorem ipsum"
-                        terms_and_conditions: "http://baseurl/terms/terms.html%22"
-                        issued_date: null
-                        expiry_date: null
-                        redeemed_date:
-                      - state: "issued"
-                        earn_type: "stamps"
-                        reward_text: "Meal Voucher"
-                        headline: "Earned"
-                        voucher_code: "5544332211"
-                        barcode_type: 1
-                        progress_display_text:
-                        body_text: "lorem ipsum"
-                        terms_and_conditions: "http://baseurl/terms/terms.html%22"
-                        issued_date: 1517549941
-                        expiry_date: 1617549941
-                        redeemed_date:
-                    card:
-                      barcode: "633174911234567898"
-                      barcode_type: 0
-                      card_number: "633174911234567898"
-                      colour: '#FFFFFF'
-                    pll_links:
-                      - payment_account_id: 555
-                        payment_scheme: VISA
-                        status: active
-                  - id: 85
-                    loyalty_plan_id: 124
-                    status:
-                      state: "authorised"
-                      slug:
-                      description:
-                    balance:
-                      updated_at: 1515697663
-                      current_display_value: '150 points'
-                    transactions:
-                      - id: "100982384448"
-                        timestamp: 1517549941
-                        description: "Test transaction: 5 items"
-                        display_value: "150 points"
-                    vouchers:
-                      []
-                    card:
-                      barcode: "633174911234567898"
-                      barcode_type: 0
-                      card_number: "633174911234567898"
-                      colour: '#FFFFFF'
-                    pll_links:
-                      - payment_account_id: 555
-                        payment_scheme: VISA
-                        status: active
                 payment_accounts:
                   - id: 555
                     status: 'active'
@@ -330,13 +267,12 @@ paths:
                     expiry_year: '24'
                     name_on_card: 'Jeff Jeffries'
                     card_nickname: 'My Visa'
-                    pll_links:
-                    - loyalty_plan_id: 281
-                      loyalty_plan: 'Wasabi'
-                      status: 'active'
-                    - loyalty_plan_id: 105
-                      loyalty_plan: 'Iceland'
-                      status: 'active'
+                    images:
+                      - id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/VISA.png'
+                        description": "Card Image VISA"
+                        encoding": "png"                    
         '401':
           description: Not authorised, request does not have a valid token
           content:
@@ -1206,7 +1142,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/genericresponse404'
-
   /email_update:
     post:
       security:
@@ -1269,7 +1204,6 @@ paths:
                 error_slug: "FIELD_VALIDATION_ERROR"
                 fields:
                   - "expected str for dictionary value @ data['email']"
-
 components:
   securitySchemes:
     bearerAuth:
@@ -1476,6 +1410,27 @@ components:
           type: integer
         loyalty_plan_name:
           type: string
+          example: "Wasabi Club"
+        status:
+          type: object
+          nullable: true
+          description: state of the loyalty card in a wallet
+          properties:
+            state: 
+              type: string
+              example: "active"
+            slug:
+              type: string
+              nullable: true
+              example: null
+              description: if the loyalty card is in a state other than active, there will be a slug to describe the state
+            description:
+              type: string
+              nullable: true
+              example: null
+              description: if the loyalty card is in a state other than active, there will be a description to describe the state of the card
+        images: 
+          $ref: '#/components/schemas/Images'
     LoyaltyCardProcess:
       type: object
       properties:
@@ -1519,6 +1474,7 @@ components:
               type: string
               description: Short text explaining the error
               example: "An account with those details already exists"
+    
     PaymentAccountCreateRequest:
       allOf:
       - $ref: '#/components/schemas/PaymentAccountRequest'
@@ -1730,6 +1686,20 @@ components:
                 $ref: '#/components/schemas/Payment_Account_Response'
     WalletOverview: 
       type: string
+      properties:
+          joins:
+            type: array
+            items:
+              allOf:
+              - $ref: '#/components/schemas/LoyaltyCardProcessOverview'
+          loyalty_cards:
+            type: array
+            items:
+              $ref: '#/components/schemas/LoyaltyCardOverview'
+          payment_accounts:
+            type: array
+            items:
+                $ref: '#/components/schemas/Payment_Account_ResponseOverview'
     LoyaltyCard:
       type: object
       properties:
@@ -1776,6 +1746,47 @@ components:
           $ref: '#/components/schemas/LoyaltyCardProperties'
         pll_links:
           $ref: '#/components/schemas/PLL_Link_Loyalty_Card_Response'
+    LoyaltyCardOverview:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 10683
+          description: Unique ID for this card
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+        loyalty_plan_id:
+          type: integer
+          example: 246
+          description: The Loyalty Plan to which this Loyalty Card belongs
+          minimum: 1
+          maximum: 18446744073709552000
+        loyalty_plan_name:
+          type: string
+          example: "Iceland Bonus Card"
+        status:
+          type: object
+          nullable: true
+          description: state of the loyalty card in a wallet
+          properties:
+            state: 
+              type: string
+              example: "active"
+            slug:
+              type: string
+              nullable: true
+              example: null
+              description: if the loyalty card is in a state other than active, there will be a slug to describe the state
+            description:
+              type: string
+              nullable: true
+              example: null
+              description: if the loyalty card is in a state other than active, there will be a description to describe the state of the card
+        images: 
+          $ref: '#/components/schemas/Images'
+        balance:
+          $ref: '#/components/schemas/LoyaltyCardBalance'
     PLL_Link_Loyalty_Card:
       type: object
       description: Payment-Linked Loyalty (PLL) link between payment account and loyalty card.
@@ -1807,10 +1818,11 @@ components:
       type: object
       description: Payment-Linked Loyalty (PLL) link between payment account and loyalty card.
       properties:
-        loyalty_plan_id:
+        loyalty_card_id:
           type: integer
           format: int64
-          example: 105
+          example: 566788
+          description: "ID of loyalty card that is linked to the given payment account"
         loyalty_plan:
           type: string
           example: 'Iceland'
@@ -1847,6 +1859,32 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PLL_Link_Payment_Card'
+    Payment_Account_ResponseOverview:
+      type: object
+      properties:
+        payment_account_id:
+          type: string
+          example: '555'
+        status:
+          type: string
+          enum:
+            - active
+            - pending
+          example: "active"
+        expiry_month:
+          type: string
+          example: '05'
+        expiry_year:
+          type: string
+          example: '24'
+        name_on_card:
+          type: string
+          example: 'Jeff Jeffries'
+        card_nickname:
+          type: string
+          example: 'My Visa'
+        images: 
+          $ref: '#/components/schemas/Images'
     LoyaltyPlanOverview: 
       type: object
       properties: 
