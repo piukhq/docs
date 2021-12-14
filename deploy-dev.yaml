@@ -1359,7 +1359,30 @@ paths:
                 error_slug: "FIELD_VALIDATION_ERROR"
                 fields:
                   - "expected str for dictionary value @ data['email']"
-
+  /me:
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+      - Users
+      summary: Delete a user
+      operationId: delete-user
+      description: "Deletes a user from the Bink platform. All associated payment accounts and loyalty cards will be deleted unless associated with another user account. User will be identified using the token passed in the request header"
+      responses:
+        '202':
+          description: "**Successful**, account will be deleted"
+        '401':
+          description: Client does not have valid token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericresponse401'
+        '404':
+          description: Resource specified could not be found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericresponse404' 
 components:
   securitySchemes:
     bearerAuth:
