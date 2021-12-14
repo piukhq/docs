@@ -5,17 +5,30 @@ info:
   description: 'This document defines the Bink API URLs, parameters, request bodies, responses. Each operation offers a mock end point. Regex patterns, minLength, and maxLength parameters are for front-end guidance only.'
   contact:
     email: mmorar@bink.com
-servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/Bink_API/Bink_External_API/2.0
+  x-logo: 
+    url: https://api.gb.bink.com/content/media/logos/bink_with_text.png
 paths:
   /token:
     post:
       tags:
-        - token
-      summary: 'Use this endpoint to exchange an authorization grant for an access token'
-      description: '<h1>For grant_type: b2b</h1><p/><p/>The POST /token request requires an Authorization header with a Bearer token which is a signed JWT with the following claims: <pre><p/><p/>Header claims: <p/>**kid: REQUIRED:** Key ID - Refers to the key-pair used to sign this JWT.<p/><p/>Body claims: <p/>**sub: REQUIRED:** Subject - A unique, immutable identifier for the user. If this ID does not exist, a new user will be created using this value and the email provided in the email claim.<p/><p/>**email: REQUIRED:** User’s e-mail address. Must be unique for the channel and is changeable only via the POST /email_update service.<p/><p/>**iat: REQUIRED:** Issued At - This claim identifies the time at which the JWT was issued. This claim can be used to determine the age of the JWT. Its value MUST be a number containing a NumericDate value.<p/><p/>**exp: REQUIRED:** Expiry - This claim identifies the time at which the JWT expires.<p/><p/>The client must sign the JWT with a private key. Bink will validate the signature against the public key and issue an access_token (see 200 response) if valid, or an error (400 or 401) if not.</pre><h1>For grant_type: refresh_token</h1><p/><p/>Requires an Authorisation header with a Bearer token. Provide the refresh_token value that will have been issued in a previous request to POST /token. This string is opaque to the client.'
+        - Token
+      summary: "User registration, login and token refresh"
+      description: "Use this endpoint to get a token for a new user, exisitng user or retrieve a refresh token.<br/><br/><h2>For grant_type\\: b2b</h2>The <code>POST /token</code> request requires an Authorization header with a Bearer token which is a signed JWT with the following claims:<body>
+      <ul>
+        <li><h3>Header claims:</h3></li>
+        <ul>
+          <li>**kid**: Key ID - Refers to the key-pair used to sign this JWT. **REQUIRED** </li>
+        </ul>
+          <li><h3>Body claims:</h3></li>
+         <ul>
+          <li>**sub**: Subject - A unique, immutable identifier for the user. If this ID does not exist, a new user will be created using this value and the email provided in the email claim. **REQUIRED**</li>
+          <li>**email**: User’s e-mail address - Must be unique for the channel and is changeable only via the <code>POST /email_update</code> service. **REQUIRED** (currently being reviewed to allow optionality).</li>
+          <li>**iat**: Issued At - This claim identifies the time at which the JWT was issued. This claim can be used to determine the age of the JWT. Its value MUST be a number containing a NumericDate value. **REQUIRED**</li>
+          <li>**exp**: Expiry - This claim identifies the time at which the JWT expires. **REQUIRED**</li>
+          </ul>
+          </body></html>
+          The client must sign the JWT with a private key. Bink will validate the signature against the public key and issue an access_token (see 200 response) if valid, or an error (400 or 401) if not.<br>
+          <h2>For grant_type:refresh_token</h2>Requires an Authorisation header with a Bearer token. Provide the refresh_token value that will have been issued in a previous request to <code>POST /token</code>. This string is opaque to the client."
       operationId: token
       security:
         - bearerAuth: []
@@ -55,10 +68,23 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - retrieve wallet
-      summary: Retrieve wallet for given user
-      operationId: GET /wallet
-      description: "Used to display the contents of a users wallet including: <br><br>1. Loyalty Cards<li>Balance details <li>Transactions <li>Vouchers <br><br>2. Payment Accounts <br>3. Join requests <br>4. PLL links<br><br>**NOTE:** Empty lists at any level in the JSON structure will be returned as: \"key_name\": []. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.<br><br>In accordance with rules above, \"joins\", \"loyalty_cards\", and \"payment_accounts\" may be returned as empty lists."
+        - Wallet
+      summary: Retrieve a User’s Wallet
+      operationId: GET /wallets
+      description: "Used to display the full contents of a user's wallet including: <br><html><body><ol>
+      <li>Loyalty Cards:
+        <ul>
+          <li>Balance details.</li>
+          <li>Transactions.</li>
+          <li>Vouchers.</li>
+        </ul>
+      </li>  
+      <li>Payment Acccounts.</li>
+      <li>Join Requests.</li>
+      <li>PLL Links.</li>
+      </ol></body></html>
+      <br>**NOTE:** Empty lists at any level in the JSON structure will be returned as\\: <code>key_name: []</code>. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.
+      <br><br>In accordance with rules above, <code>joins</code>, <code>loyalty_cards</code>, and <code>payment_accounts</code> may be returned as empty lists."
       responses:
         '200':
           description: "**Successful**"
@@ -125,6 +151,7 @@ paths:
                         voucher_code:
                         barcode_type: 0
                         progress_display_text: "2/7 stamps"
+                        prefix:
                         suffix: 'stamps'
                         current_value: 2
                         target_value: 7
@@ -140,6 +167,10 @@ paths:
                         voucher_code: "5544332211"
                         barcode_type: 1
                         progress_display_text:
+                        prefix:
+                        suffix:
+                        current_value: 
+                        target_value: 
                         body_text: "lorem ipsum"
                         terms_and_conditions: "http://baseurl/terms/terms.html%22"
                         issued_date: 1517549941
@@ -199,10 +230,10 @@ paths:
                         description": "Card Image VISA"
                         encoding": "png"                    
                     pll_links:
-                    - loyalty_card_id: 123334
+                    - loyalty_card_id: 92744
                       loyalty_plan: 'Wasabi'
                       status: 'active'
-                    - loyalty_card_id: 445677
+                    - loyalty_card_id: 12445
                       loyalty_plan: 'Iceland'
                       status: 'active'
         '401':
@@ -217,10 +248,20 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - retrieve wallet
-      summary: Retrieve wallet for given user
+        - Wallet
+      summary: Retrieve a User’s Wallet Overview
       operationId: GET /wallet_overview
-      description: "Used to display an overview of the contents of a users wallet including: <br><br>1. Loyalty Cards<li>Balance details <br>2. Payment Accounts <br>3. Join requests <br><br>**NOTE:** Empty lists at any level in the JSON structure will be returned as: \"key_name\": []. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.<br><br>In accordance with rules above, \"joins\", \"loyalty_cards\", and \"payment_accounts\" may be returned as empty lists."
+      description: "Used to display the high level contents of a user's wallet including: <br><html><body><ol>
+      <li>Loyalty Cards:
+        <ul>
+          <li>Balance details.</li>
+        </ul>
+      </li>  
+      <li>Payment Acccounts.</li>
+      <li>Join Requests.</li>
+      </ol></body></html>
+      <br>**NOTE:** Empty lists at any level in the JSON structure will be returned as\\: <code>key_name: []</code>. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.
+      <br><br>In accordance with rules above, <code>joins</code>, <code>loyalty_cards</code>, and <code>payment_accounts</code> may be returned as empty lists."     
       responses:
         '200':
           description: "**Successful**"
@@ -242,11 +283,23 @@ paths:
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
                         description": "Card Image for Wasabi hero"
-                        encoding": "png"                  
+                        encoding": "png"  
+                    - loyalty_card_id: 89
+                      loyalty_plan_id: 246
+                      loyalty_plan_name: "Wasabi Club"
+                      status:
+                        state: "failed"
+                        slug: ACCOUNT_EXISTS
+                        description: "An account with those details already exists"
+                      images:
+                        id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
+                        description": "Card Image for Wasabi hero"
+                        encoding": "png"  
                 loyalty_cards:
                   - id: 81
                     loyalty_plan_id: 201
-                    loyalty_plan_name: "Wasabi Club"
                     status:
                       state: "authorised"
                       slug:
@@ -256,12 +309,28 @@ paths:
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
                         description": "Card Image for Wasabi hero"
-                        encoding": "png"                      
+                        encoding": "png"
                     balance:
                       updated_at: 1515697663
                       current_display_value: '2 stamps'
+                  - id: 85
+                    loyalty_plan_id: 105
+                    loyalty_plan_name: "Iceland Bonus Card"
+                    status:
+                      state: "authorised"
+                      slug:
+                      description:
+                    images:
+                      - id: 1234
+                        type: 0
+                        url: 'schemes/Iceland_Card.png'
+                        description": "Iceland Slimming World hero card"
+                        encoding": "png"
+                    balance:
+                      updated_at: 1515697663
+                      current_display_value: '£0'
                 payment_accounts:
-                  - id: 555
+                  - id: 556
                     status: 'active'
                     expiry_month: '12'
                     expiry_year: '24'
@@ -272,7 +341,7 @@ paths:
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/VISA.png'
                         description": "Card Image VISA"
-                        encoding": "png"                    
+                        encoding": "png" 
         '401':
           description: Not authorised, request does not have a valid token
           content:
@@ -285,10 +354,25 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - retrieve all loyalty plans
-      summary: 'Provides a list of the Loyalty Plans, and all associated plan information, available to this user.'
+        - Loyalty Plans
+      summary: Retrieve all Loyalty Plans
       operationId: GET /loyalty_plans
-      description: "Returns information for all defined Loyalty Plans supported by Bink that are included in the partner channel. Information includes: <br><br>1. All field information required to Add, Authorise, Join and Register Loyalty cards. <br><br>2. Features of a Loyalty Plan <br><br>3. Images. <br><br>4. Descriptive information of a Loyalty Plan. <br><br>This information can be used in the consuming application to provide the user with details about supported Loyalty Plans."
+      description: "Returns information for all defined **Loyalty Plans** supported by Bink that are included in the partner channel. Information includes:
+      <html><body>
+        <ol>
+          <li>All field information to support Loyalty Card journeys:
+            <ul>
+              <li>Add.</li>
+              <li>Authorise.</li>
+              <li>Join.</li>
+              <li>Register.</li>
+            </ul>
+          <li>Features of a Loyalty Plan.</li>
+          <li>Loyalty Plan Images.</li>
+          <li>Descriptive information for a Loyalty Plan.</li>
+        </ol>
+       </body></html>
+       <br>This information can be used in the consuming application to provide the user with details about supported Loyalty Plans."
       responses:
         '200':
           description: "**Successful**"
@@ -308,10 +392,25 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - retrieve a loyalty plan
-      summary: Retrieve a Loyalty Plan by ID
+        - Loyalty Plans
+      summary: Retrieve a Loyalty Plan
       operationId: GET /loyalty_plans/{loyalty_plan_id}
-      description: "Returns information for a single, defined Loyalty Plan supported by Bink that is included in the partner channel. Information includes: <br><br>1. All field information required to Add, Authorise, Join and Register Loyalty cards. <br>2. Features of a Loyalty Plan <br>3. Images. <br>4. Descriptive information of a Loyalty Plan. <br><br>This information can be used in the consuming application to provide the user with details about supported Loyalty Plans."
+      description: "Returns information for the specified **Loyalty Plan** supported by Bink included in the partner channel. Information includes:
+      <html><body>
+        <ol>
+          <li>All field information to support Loyalty Card journeys:
+            <ul>
+              <li>Add.</li>
+              <li>Authorise.</li>
+              <li>Join.</li>
+              <li>Register.</li>
+            </ul>
+          <li>Features of the Loyalty Plan.</li>
+          <li>Loyalty Plan Images.</li>
+          <li>Descriptive information for the Loyalty Plan.</li>
+        </ol>
+       </body></html>
+       <br>This information can be used in the consuming application to provide the user with details about the supported Loyalty Plan."
       parameters:
         - in: path
           name: loyalty_plan_id
@@ -345,8 +444,18 @@ paths:
       security:
         - bearerAuth: []
       tags: 
-        - loyalty plans overview
-      description: 'This enpoints provides a list of abridged versions of the loyalty plans.'
+        - Loyalty Plans
+      summary: Retrieve Loyalty Plan Overview
+      operationId: GET /loyalty_plans_overview
+      description: "Returns a subset of all **Loyalty Plan** information for all defined **Loyalty Plans** supported by Bink that are included in the partner channel. Information includes:
+      <html><body>
+        <ol>
+          <li>Features of a Loyalty Plan.</li>
+          <li>Loyalty Plan Images.</li>
+          <li>Descriptive information for a Loyalty Plan.</li>
+        </ol>
+       </body></html>
+       <br>This information can be used in the consuming application to provide the user with details about supported Loyalty Plans."
       responses:
         '200':
           description: "**Successful**"
@@ -368,135 +477,24 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
-  /loyalty_cards/{loyalty_card_id}/balance:
-    get:
-      security: 
-        - bearerAuth: []
-      tags:
-        - retrieve loyalty card values
-      summary: View balances for a loyalty card in the wallet
-      operationId: GET /loyalty_plans/{loyalty_plan_id}/balance
-      description: "Provides balance information for a given loyalty card"
-      parameters:
-        - in: path
-          name: loyalty_card_id
-          description: loyalty_card_id
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: "**Successful**"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: 
-                  balance: 
-                    $ref: '#/components/schemas/LoyaltyCardBalance'
-        '401':
-          description: Not authorised, request does not have a valid token
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/genericresponse401'
-        '404':
-          description: "Resource specified could not be found"
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/genericresponse404'
-  /loyalty_cards/{loyalty_card_id}/transactions:
-    get:
-      security: 
-        - bearerAuth: []
-      tags:
-        - retrieve loyalty card values
-      summary: View transactions for a loyalty card in the wallet
-      operationId: GET /loyalty_plans/{loyalty_plan_id}/transactions
-      description: "Provides transactions for a given loyalty card"
-      parameters:
-        - in: path
-          name: loyalty_card_id
-          description: loyalty_card_id
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: "**Successful**"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: 
-                  transactions: 
-                    $ref: '#/components/schemas/LoyaltyCardTransactions'
-        '401':
-          description: Not authorised, request does not have a valid token
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/genericresponse401'
-        '404':
-          description: "Resource specified could not be found"
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/genericresponse404'     
-  /loyalty_cards/{loyalty_card_id}/vouchers:
-    get:
-      security: 
-        - bearerAuth: []
-      tags:
-        - retrieve loyalty card values
-      summary: View vouchers for a loyalty card in the wallet
-      operationId: GET /loyalty_plans/{loyalty_plan_id}/vouchers
-      description: "Provides voucher for a given loyalty card"
-      parameters:
-        - in: path
-          name: loyalty_card_id
-          description: loyalty_card_id
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: "**Successful**"
-          content:
-            application/json:
-              schema:
-                type: object
-                properties: 
-                  vouchers: 
-                    $ref: '#/components/schemas/Vouchers'
-        '401':
-          description: Not authorised, request does not have a valid token
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/genericresponse401'
-        '404':
-          description: "Resource specified could not be found"
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/genericresponse404'    
   /loyalty_plans/{loyalty_plan_id}/journey_fields:
     get:
       security:
         - bearerAuth: []
       tags:
-        - retrieve journey fields for a loyalty plan
-      summary: Retrieve the journey fields for a given loyalty plan
+        - Loyalty Plans
+      summary: Retrieve journey fields for a Loyalty Plan
       operationId: GET /loyalty_plans/{loyalty_plan_id}/journey_fields
-      description: "For all defined Loyalty Plans supported by Bink that are included in the partner channel, this endpoint returns all the fields required for a user to: <br>1. Add a Loyalty Card. <br>2. Authorise a Loyalty Card. <br>3. Register a Ghostcard. <br>4. Join a Loyalty Plan. <br><br>These fields are displayed in the consuming application to capture user details and consents, in order to process supported Loyalty Card journeys."
+      description: "This endpoint returns all the fields a user needs to complete in order to follow available journeys in the specified **Loyalty Plan** supported by Bink included in the partner channel. Journeys are: 
+      <html><body>
+        <ol>
+          <li>Adding a Loyalty Card.</li>
+          <li>Authorising a Loyalty Card.</li>
+          <li>Registering a Ghostcard.</li>
+          <li>Joining a Loyalty Plan.</li>
+        </ol>
+       </body></html> 
+          <br>The fields are displayed in the consuming application to capture user details and consents in order to process the journey."
       parameters:
         - in: path
           name: loyalty_plan_id
@@ -537,10 +535,10 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - loyalty card add
-      summary: Add a loyalty card as a Store card
+        - Loyalty Cards
+      summary: Add a Loyalty Card
       operationId: POST /loyalty_cards/add
-      description: "This will add a **Store** type Loyalty Card identified by a single credential field, usually Card Number or Barcode, to a users wallet.**Store** cards are digital representations of a Loyalty Card designed to be shown at the point of sale from the users digital wallet.<br><br> Call this endpoint to create a **Store** type Loyalty Card if one does not exist. <br><br>Calling this endpoint on an existing Loyalty Card will return details of the Loyalty Card and add it to the users wallet."
+      description: "This will add a **Store** type **Loyalty Card** identified by a single credential field, usually <code>card_number</code> or <code>barcode</code>, to a users wallet. **Store** cards are digital representations of a **Loyalty Card** designed to be shown at the point of sale from the users mobile application.<br><br> Call this endpoint to create a **Store** type **Loyalty Card** if one does not exist. <br><br>Calling this endpoint on an existing **Loyalty Card** will return the <code>loyalty_card_id</code> and add it to the users wallet."
       requestBody:
         content:
           application/json:
@@ -590,8 +588,8 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - loyalty card authorise
-      summary: "Add a loyalty card to a wallet and authorise credentials"
+        - Loyalty Cards
+      summary: "Add and Authorise a Loyalty Card"
       operationId: POST /loyalty_cards/add_and_authorise
       description: "This will add an **Engage** or **PLL** type Loyalty Card into a users wallet. Adding authorisation credentials allows a user to see more information about their loyalty membership such as balance and transactions.  Authorisation also enables PLL for those Loyalty Plans that support it. <br><br>Call this endpoint to create an **Engage** type Loyalty Card if one does not exist. <br><br>Calling this endpoint on an existing Loyalty Card will return details of the Loyalty Card and add it to the users wallet, authorising it if the passed in credentials are correct. <br><br>**NOTE**: <br><li>If the card is a PLL type, success will automatically create PLL links to available Payment Accounts. <li>Some Loyalty Plans might not have any ADD fields, only AUTH fields, still use this endpoint to add cards of this nature."
       responses:
@@ -652,10 +650,20 @@ paths:
   /loyalty_cards/{loyalty_card_id}/authorise:
     put:
       tags:
-        - loyalty card authorise
-      summary: Authorise a loyalty card
+        - Loyalty Cards
+      summary: Authorise a Loyalty Card
       operationId: PUT loyalty_cards/authorise
-      description: "This is used to add authorisation credentials to a **Store** type Loyalty Card promoting it to be an **Engage** or **PLL** type Loyalty Card.  Authorised cards allow a user to see more information about their loyalty membership such as balance and transactions.  Authorisation also enables PLL for those Loyalty Plans that support it. <br><br>Call this endpoint to authorise a **Store** type Loyalty Card. <br><br>Calling this endpoint on an existing Store type Loyalty Card will return details of the Loyalty Card, authorising it if the passed in credentials are correct. <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
+      description: "This is used to:<br>
+      <html><body>
+      <ol>
+        <li>Authorise an exisitng **Store** type **Loyalty Card** promoting it to be an **Engage** or **PLL** type.</li>
+        <li>Correct or update credentials on an **Engage** or **PLL** type **Loyalty Card**.</lil>
+      </ol>
+      </body></html><br>
+        Authorised cards allow a user to see more information about their loyalty membership such as balance and transactions.<br>
+
+        Authorisation also enables **PLL** for those **Loyalty Plans** that support it. 
+        <br><br>**NOTE**: A successfully authorised **Loyalty Card** that is of type **PLL** will automatically create **PLL** links to available **Payment Accounts**."
       parameters:
         - in: path
           name: loyalty_card_id
@@ -725,10 +733,10 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - loyalty card join
+        - Loyalty Cards
       summary: Join a Loyalty Plan
       operationId: POST /loyalty_cards/join
-      description: "This resources reflects the users intent to **Join** a Loyalty Plan. Bink passes the intent to the relevant merchant and waits for them to process the request. A successful response from the merchant will see the **Join** resource become an **Engage**  or **PLL** type Loyalty Card, failure leaves the resource in a failed state with an explanation. The user can delete the failure and try again. New **Join** requests to the same Loyalty plan are independent.<br><br>**NOTE**: If the card is a PLL type, success will automatically create PLL links to available Payment Accounts."
+      description: "This resources reflects the users intent to **Join** a **Loyalty Plan**. Bink passes the intent to the relevant merchant and waits for them to process the request. A successful response from the merchant will see the **Join** resource become an **Engage** or **PLL** type **Loyalty Card**, failure leaves the resource in a failed state with an explanation. The user can delete the failure and try again. New **Join** requests to the same **Loyalty Plan** are independent.<br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
       responses:
         '202':
           description: '**Accepted**, join in progress'
@@ -790,10 +798,10 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - loyalty card join
-      summary: Remove a failed loyalty card join request
+        - Loyalty Cards
+      summary: Remove a failed Join request
       operationId: DELETE loyalty_cards/joins
-      description: "Deletes a Join request that has not been successful."
+      description: "Deletes a **Join** request that has not been successful.<br><br>**NOTE:** <code>pending</code> **Join** requests cannot be deleted, we need to know the response from the merchant before this action is allowed."
       parameters:
         - in: path
           name: loyalty_card_id
@@ -830,10 +838,10 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - loyalty card registration
-      summary: 'Register a "ghost" or unregistered loyalty card'
+        - Loyalty Cards
+      summary: 'Add and Register a Ghostcard'
       operationId: 'POST /loyalty_cards/add_and_register'
-      description: "This endpoint adds a **Store** type Loyalty Card and attempts to register user details with the supported merchant. **Registration** is similar to **Join** except it involves a physical Loyalty Card picked up in store, commonly known as a Ghostcard. <br><br>If the registration fails, the user still has a **Store** type Loyalty Card in their wallet. Successful registration means the user is now a member of the Loyalty Plan and the Loyalty Card will be an **Engage** or **PLL** type in the users wallet. <br><br>**NOTE**: If the card is a PLL type, success will automatically create PLL links to available Payment Accounts."
+      description: "This endpoint adds a **Store** type **Loyalty Card** and attempts to register the user details in the request with the supported merchant. Registration is similar to **Join** except it involves a physical **Loyalty Card** picked up in store, commonly known as a **Ghostcard**. <br><br>If the registration fails, the user still has a **Store** type **Loyalty Card** in their wallet. Successful registration means the user is now a member of the **Loyalty Plan** and the **Loyalty Card** will be an **Engage** or **PLL** type in the user's wallet. <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
       responses:
         '200':
           description: "**OK** - returned if a registration request is sent while a preceding request is pending"
@@ -896,10 +904,10 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - loyalty card registration
-      summary: 'Register a "ghost" or unregistered loyalty card that has already been stored in a wallet'
-      operationId: 'PUT /loyalty_cards/registration'
-      description: "Used to add registration details to **Store** type Loyalty Card and attempts to register those details with the supported merchant. **Registration** is similar to **Join** except it involves a physical Loyalty Card picked up in store, commonly known as a Ghostcard.<br> If the registration fails, the user still has a **Store** type Loyalty Card in their wallet. Successful registration means the user is now a member of the Loyalty Plan and the Loyalty Card will be an Engage or PLL type in the users wallet. <br><br>**NOTE**: If the card is a PLL type, success will automatically create PLL links to available Payment Accounts."
+        - Loyalty Cards
+      summary: "Register a Ghostcard"
+      operationId: "PUT /loyalty_cards/registration"
+      description: "Used to add registration details to **Store** type **Loyalty Card** already in a user’s wallet and attempt to register those details with the supported merchant. **Registration** is similar to **Join** except it involves a physical **Loyalty Card** picked up in store, commonly known as a **Ghostcard**.<br> If the registration fails, the user still has the **Store** type **Loyalty Card** in their wallet. Successful registration means the user is now a member of the **Loyalty Plan** and the **Loyalty Card** will be an **Engage** or **PLL** type in the user's wallet. <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
       parameters:
         - in: path
           name: loyalty_card_id
@@ -973,15 +981,143 @@ paths:
                     - consent_slug: "merch_t_and_c"
                       value: "false"
         description: Loyalty Card Registration Request
+  /loyalty_cards/{loyalty_card_id}/balance:
+    get:
+      security: 
+        - bearerAuth: []
+      tags:
+        - Loyalty Cards
+      summary: "View Loyalty Card balance"
+      operationId: GET /loyalty_plans/{loyalty_plan_id}/balance
+      description: "Provides current balance information for the user's **Loyalty Card**."
+      parameters:
+        - in: path
+          name: loyalty_card_id
+          description: loyalty_card_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  balance: 
+                    $ref: '#/components/schemas/LoyaltyCardBalance'
+        '401':
+          description: Not authorised, request does not have a valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '404':
+          description: "Resource specified could not be found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse404'
+  /loyalty_cards/{loyalty_card_id}/transactions:
+    get:
+      security: 
+        - bearerAuth: []
+      tags:
+        - Loyalty Cards
+      summary: "View Loyalty transactions"
+      operationId: GET /loyalty_plans/{loyalty_plan_id}/transactions
+      description: "Provides a list of the last 5 Loyalty transactions for the user's **Loyalty Card**"
+      parameters:
+        - in: path
+          name: loyalty_card_id
+          description: loyalty_card_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  transactions: 
+                    $ref: '#/components/schemas/LoyaltyCardTransactions'
+        '401':
+          description: Not authorised, request does not have a valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '404':
+          description: "Resource specified could not be found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse404'     
+  /loyalty_cards/{loyalty_card_id}/vouchers:
+    get:
+      security: 
+        - bearerAuth: []
+      tags:
+        - Loyalty Cards
+      summary: "View Loyalty Card vouchers"
+      operationId: GET /loyalty_plans/{loyalty_plan_id}/vouchers
+      description: "Provides a list of the vouchers attached to the user's **Loyalty Card**. <br>Statuses can be:<html><body>
+       <ul>
+          <li>In Progress.</li>
+          <li>Issued.</li>
+          <li>Redeemed</li>
+          <li>Expired.</li>
+          <li>Cancelled.</li>
+        </ul>
+      </body></html>"
+      parameters:
+        - in: path
+          name: loyalty_card_id
+          description: loyalty_card_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  vouchers: 
+                    $ref: '#/components/schemas/Vouchers'
+        '401':
+          description: Not authorised, request does not have a valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '404':
+          description: "Resource specified could not be found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse404'    
   /loyalty_cards/{loyalty_card_id}:
     delete:
       security:
         - bearerAuth: []
       tags:
-        - loyalty card delete
-      summary: Remove a loyalty card from a wallet
+        - Loyalty Cards
+      summary: Remove a Loyalty Card 
       operationId: DELETE loyalty_cards
-      description: "Removes the Loyalty Card from the specified wallet. If the Loyalty Card is of type **PLL**, links will be removed if they are only present in the specified wallet.<br><br>If the Loyalty Card only exists in a single wallet, the Loyalty Card will be deleted and all PLL links removed."
+      description: "Removes the specified **Loyalty Card** from the user’s wallet.<br> If the **Loyalty Card** is a **PLL** type, then **PLL** links will be removed if they are only present in that user’s wallet. If the **Loyalty Card** only exists in a single wallet, the **Loyalty Card** will be removed and all **PLL** links deleted"
       parameters:
         - in: path
           name: loyalty_card_id
@@ -1019,10 +1155,19 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - payment account
+        - Payment Accounts
       summary: Create a Payment Account
       operationId: POST /payment_accounts
-      description: "This resource represents a primary account number (PAN) which can be associated with one or more physical payment cards (e.g., with different expiry dates or cardholder names). <br><br>Posting to an existing account with the same **fingerprint** with different:<br><html><body><ul><li>expiry_month</li><li>expiry_year</li><li>name_on_card</li><li>card_nickname</li></ul></body></html><br> will update these fields on the same Payment Account<br><br>Posting to an existing account with the same **fingerprint** with all the same details, the response will be details of that existing account. <br><br> **NOTE**: Payment accounts will **auto-link** to loyalty cards by default"
+      description: "This resource represents a primary account number (PAN) which can be associated with one or more physical payment cards (e.g., with different expiry dates or cardholder names). <br><br>When posting to an existing account with the same **fingerprint**, if the following fields are different in the request, the stored values will be updated:
+      <br><html><body>
+      <ul>
+        <li><code>expiry_month</code></li>
+        <li><code>expiry_year</code></li>
+        <li><code>name_on_card</code></li>
+        <li><code>card_nickname</code></li>
+        </ul></body></html>
+        <br> 
+        **NOTE**: Success will automatically create PLL links to available Authorised Loyalty Cards. We will also create **soft links** to PLL type cards not yet in an Authorised state, so when they do become Authorised, the PLL link will automatically become active."
       responses:
         '200':
           description: "**OK** - Returns details of existing account with the following fields replaced: <html><body><ul><li>expiry_month</li><li>expiry_year</li><li>name_on_card</li><li>card_nickname</li></ul></body></html>"
@@ -1064,10 +1209,19 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - payment account
+        - Payment Accounts
       summary: Update Payment Account details
       operationId: PATCH payment_account
-      description: "Certain fields on a payment account may be updated, the rest are immutable. Changing any of these fields has no functional effect on the payment account. Account status and PLL links are unaffected. <br>Fields that may be updated:<br><html><body><ul><li>expiry_month</li><li>expiry_year</li><li>name_on_card</li><li>card_nickname</li><li>issuer</li></ul></body></html><br>"
+      description: "Certain fields on a **Payment Account** may be updated, the rest are immutable. Changing any of these fields has no functional effect on the **Payment Account**. Account status and **PLL** links are unaffected. <br>Fields that may be updated:
+    <br><html><body>
+      <ul>
+        <li><code>expiry_month</code></li>
+        <li><code>expiry_year</code></li>
+        <li><code>name_on_card</code></li>
+        <li><code>card_nickname</code></li>
+        <li><code>issuer</code></li>
+        </ul></body></html>
+        <br> "
       parameters:
         - in: path
           name: payment_account_id
@@ -1116,10 +1270,10 @@ paths:
       security:
         - bearerAuth: []
       tags:
-        - payment account
-      summary: Delete payment account
+        - Payment Accounts
+      summary: Delete Payment Account
       operationId: DELETE payment_accounts
-      description: This resource removes a failed loyalty card add request, or removing a payment account from a users wallet per their request. <br><br>The payment account will only be removed from the wallet in question. Other wallets linked to the payment account with PLL links will be unaffected.
+      description: "This removes a **Payment Account**. The **Payment Account** will only be removed from the specified wallet. Other wallets linked to the **Payment Account** with **PLL** links will be unaffected."
       parameters:
         - in: path
           name: payment_account_id
@@ -1142,12 +1296,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/genericresponse404'
+
   /email_update:
     post:
       security:
         - bearerAuth: []
       tags:
-      - users
+      - Users
       summary: "Update user's e-mail address"
       operationId: post_email_update
       description: "Change a user's e-mail address. The user will be identified by the authorization token."
@@ -1204,6 +1359,7 @@ paths:
                 error_slug: "FIELD_VALIDATION_ERROR"
                 fields:
                   - "expected str for dictionary value @ data['email']"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1474,7 +1630,6 @@ components:
               type: string
               description: Short text explaining the error
               example: "An account with those details already exists"
-    
     PaymentAccountCreateRequest:
       allOf:
       - $ref: '#/components/schemas/PaymentAccountRequest'
@@ -1685,18 +1840,18 @@ components:
             items:
                 $ref: '#/components/schemas/Payment_Account_Response'
     WalletOverview: 
-      type: string
+      type: object
       properties:
-          joins:
+        joins:
             type: array
             items:
               allOf:
               - $ref: '#/components/schemas/LoyaltyCardProcessOverview'
-          loyalty_cards:
+        loyalty_cards:
             type: array
             items:
               $ref: '#/components/schemas/LoyaltyCardOverview'
-          payment_accounts:
+        payment_accounts:
             type: array
             items:
                 $ref: '#/components/schemas/Payment_Account_ResponseOverview'
@@ -1821,8 +1976,8 @@ components:
         loyalty_card_id:
           type: integer
           format: int64
-          example: 566788
-          description: "ID of loyalty card that is linked to the given payment account"
+          example: 8737645
+          description: ID of loyalty card that is linked to the given payment account
         loyalty_plan:
           type: string
           example: 'Iceland'
@@ -2799,14 +2954,9 @@ components:
           maximum: 99999999999
           example: 1617549941
 tags:
-  - name: token
-  - name: retrieve wallet
-  - name: retrieve all loyalty plans
-  - name: retrieve a loyalty plan
-  - name: retrieve journey fields for a loyalty plan
-  - name: loyalty card add
-  - name: loyalty card authorise
-  - name: loyalty card join
-  - name: loyalty card registration
-  - name: loyalty card delete
-  - name: payment account
+  - name: Token
+  - name: Users
+  - name: Loyalty Plans
+  - name: Payment Accounts
+  - name: Loyalty Cards
+  - name: Wallet
