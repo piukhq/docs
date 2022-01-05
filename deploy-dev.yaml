@@ -299,7 +299,8 @@ paths:
                         encoding": "png"  
                 loyalty_cards:
                   - id: 81
-                    loyalty_plan_id: 201
+                    loyalty_plan_id: 246
+                    loyalty_plan_name: "Wasabi Club
                     status:
                       state: "authorised"
                       slug:
