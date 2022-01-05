@@ -22,7 +22,7 @@ paths:
           <li><h3>Body claims:</h3></li>
          <ul>
           <li>**sub**: Subject - A unique, immutable identifier for the user. If this ID does not exist, a new user will be created using this value and the email provided in the email claim. **REQUIRED**</li>
-          <li>**email**: User’s e-mail address - Must be unique for the channel and is changeable only via the <code>POST /email_update</code> service. **REQUIRED** (currently being reviewed to allow optionality).</li>
+          <li>**email**: User’s e-mail address - Must be unique for the channel and is changeable only via the <code>POST /email_update</code> service. **OPTIONAL**</li>
           <li>**iat**: Issued At - This claim identifies the time at which the JWT was issued. This claim can be used to determine the age of the JWT. Its value MUST be a number containing a NumericDate value. **REQUIRED**</li>
           <li>**exp**: Expiry - This claim identifies the time at which the JWT expires. **REQUIRED**</li>
           </ul>
@@ -95,7 +95,8 @@ paths:
               example:
                 joins:
                     - loyalty_card_id: 51
-                      loyalty_plan_id: 21
+                      loyalty_plan_id: 281
+                      loyalty_plan_name: "Wasabi Club"
                       status:
                         state: "pending"
                         slug:
@@ -107,7 +108,8 @@ paths:
                         description": "Card Image for Wasabi hero"
                         encoding": "png"                  
                     - loyalty_card_id: 89
-                      loyalty_plan_id: 43
+                      loyalty_plan_id: 105
+                      loyalty_plan_name: "Iceland Bonus Card"
                       status:
                         state: "failed"
                         slug: ACCOUNT_EXISTS
@@ -121,6 +123,7 @@ paths:
                 loyalty_cards:
                   - id: 81
                     loyalty_plan_id: 201
+                    loyalty_plan_name: "Wasabi Club"
                     status:
                       state: "authorised"
                       slug:
@@ -187,6 +190,7 @@ paths:
                         status: active
                   - id: 85
                     loyalty_plan_id: 124
+                    loyalty_plan_name: "Wasabi Club"
                     status:
                       state: "authorised"
                       slug:
@@ -662,7 +666,6 @@ paths:
       </ol>
       </body></html><br>
         Authorised cards allow a user to see more information about their loyalty membership such as balance and transactions.<br>
-
         Authorisation also enables **PLL** for those **Loyalty Plans** that support it. 
         <br><br>**NOTE**: A successfully authorised **Loyalty Card** that is of type **PLL** will automatically create **PLL** links to available **Payment Accounts**."
       parameters:
@@ -1623,6 +1626,10 @@ components:
           pattern: '^[0-9]+$'
         loyalty_plan_id:
           type: integer
+        loyalty_plan_name:
+          type: string
+          description: "Name of loyalty plan"
+          example: "Wasabi Club"
         status:
           type: object
           nullable: true
@@ -1895,6 +1902,10 @@ components:
           description: The Loyalty Plan to which this Loyalty Card belongs
           minimum: 1
           maximum: 18446744073709552000
+        loyalty_plan_name:
+          type: string
+          description: "Name of loyalty plan"
+          example: "Wasabi Club"
         status:
           type: object
           nullable: true
