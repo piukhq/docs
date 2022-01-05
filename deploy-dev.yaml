@@ -300,7 +300,7 @@ paths:
                 loyalty_cards:
                   - id: 81
                     loyalty_plan_id: 246
-                    loyalty_plan_name: "Wasabi Club
+                    loyalty_plan_name: "Wasabi Club"
                     status:
                       state: "authorised"
                       slug:
