@@ -105,8 +105,8 @@ paths:
                         id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"                  
+                        description: "Card Image for Wasabi hero"
+                        encoding: "png"                  
                     - loyalty_card_id: 89
                       loyalty_plan_id: 105
                       loyalty_plan_name: "Iceland Bonus Card"
@@ -118,8 +118,8 @@ paths:
                         id: 291
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Hero_1968x732.png'
-                        description": "Hero image"
-                        encoding": "png"                        
+                        description: "Hero image"
+                        encoding: "png"                        
                 loyalty_cards:
                   - id: 81
                     loyalty_plan_id: 201
@@ -132,8 +132,8 @@ paths:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"                      
+                        description: "Card Image for Wasabi hero"
+                        encoding: "png"                      
                     balance:
                       updated_at: 1515697663
                       current_display_value: '2 stamps'
@@ -199,8 +199,8 @@ paths:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"                      
+                        description: "Card Image for Wasabi hero"
+                        encoding: "png"                      
                     balance:
                       updated_at: 1515697663
                       current_display_value: '150 points'
@@ -231,8 +231,8 @@ paths:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/VISA.png'
-                        description": "Card Image VISA"
-                        encoding": "png"                    
+                        description: "Card Image VISA"
+                        encoding: "png"                    
                     pll_links:
                     - loyalty_card_id: 92744
                       loyalty_plan: 'Wasabi'
@@ -286,8 +286,8 @@ paths:
                         id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"  
+                        description: "Card Image for Wasabi hero"
+                        encoding: "png"  
                     - loyalty_card_id: 89
                       loyalty_plan_id: 246
                       loyalty_plan_name: "Wasabi Club"
@@ -299,8 +299,8 @@ paths:
                         id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"  
+                        description: "Card Image for Wasabi hero"
+                        encoding: "png"  
                 loyalty_cards:
                   - id: 81
                     loyalty_plan_id: 246
@@ -313,8 +313,8 @@ paths:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"
+                        description: "Card Image for Wasabi hero"
+                        encoding: "png"
                     balance:
                       updated_at: 1515697663
                       current_display_value: '2 stamps'
@@ -329,8 +329,8 @@ paths:
                       - id: 1234
                         type: 0
                         url: 'schemes/Iceland_Card.png'
-                        description": "Iceland Slimming World hero card"
-                        encoding": "png"
+                        description: "Iceland Slimming World hero card"
+                        encoding: "png"
                     balance:
                       updated_at: 1515697663
                       current_display_value: '£0'
@@ -345,8 +345,8 @@ paths:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/VISA.png'
-                        description": "Card Image VISA"
-                        encoding": "png" 
+                        description: "Card Image VISA"
+                        encoding: "png" 
         '401':
           description: Not authorised, request does not have a valid token
           content:
