@@ -1383,12 +1383,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/genericresponse401'
-        '404':
-          description: Resource specified could not be found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/genericresponse404' 
 components:
   securitySchemes:
     bearerAuth:
