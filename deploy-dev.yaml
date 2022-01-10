@@ -184,6 +184,7 @@ paths:
                       barcode_type: 0
                       card_number: "633174911234567898"
                       colour: '#FFFFFF'
+                      text_colour: '#FFFFFF'
                     pll_links:
                       - payment_account_id: 555
                         payment_scheme: VISA
@@ -216,6 +217,7 @@ paths:
                       barcode_type: 0
                       card_number: "633174911234567898"
                       colour: '#FFFFFF'
+                      text_colour: '#FFFFFF'
                     pll_links:
                       - payment_account_id: 555
                         payment_scheme: VISA
@@ -1373,7 +1375,7 @@ paths:
       operationId: delete-user
       description: "Deletes a user from the Bink platform. All associated payment accounts and loyalty cards will be deleted unless associated with another user account. User will be identified using the token passed in the request header"
       responses:
-        '200':
+        '202':
           description: "**Successful**, account will be deleted"
         '401':
           description: Client does not have valid token.
@@ -1839,6 +1841,11 @@ components:
           example: '#FFFFFF'
           pattern: '^[#A-Fa-f0-9]{4,7}$'
           type: string
+        text_colour:
+          description: text colour for text on card - hex format
+          example: '#FFFFFF'
+          pattern: '^[#A-Fa-f0-9]{4,7}$'
+          type: string
     LoyaltyCardBalance:
       type: object
       properties:
@@ -2114,7 +2121,12 @@ components:
           type: string
           description: background colour for card image - hex format
           example: '#f80000'
-          pattern: '^[#A-Fa-f0-9]{4,7}$'  
+          pattern: '^[#A-Fa-f0-9]{4,7}$' 
+        text_colour:
+          type: string
+          description: text colour for text on card - hex format
+          example: '#f80000'
+          pattern: '^[#A-Fa-f0-9]{4,7}$' 
         category:
           type: string
           description: Market sector or retail category
@@ -2178,7 +2190,12 @@ components:
               type: string
               description: background colour for card image - hex format
               example: '#f80000'
-              pattern: '^[#A-Fa-f0-9]{4,7}$'  
+              pattern: '^[#A-Fa-f0-9]{4,7}$' 
+            text_colour:
+              type: string
+              description: text colour for text on card - hex format
+              example: '#f80000'
+              pattern: '^[#A-Fa-f0-9]{4,7}$' 
             journeys:
               type: array
               items:
@@ -2369,6 +2386,10 @@ components:
               - svg
             description: Encoding for this file
             example: png
+          order:
+            type: integer
+            description: 'Order in which to display given image'
+            example: 1
     PlanDocumentRequest:
       type: object
       description: ""
