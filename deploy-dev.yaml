@@ -795,9 +795,9 @@ paths:
                       value: '10 January 1990'
                     - credential_slug: email
                       value: 'joe_blogs@bink.com'
-                consents:
-                  - consent_slug: EmailOptin
-                    value: 'false'
+                  consents:
+                    - consent_slug: EmailOptin
+                      value: 'false'
         description: 'Loyalty Card Join Request'
   /loyalty_cards/{loyalty_card_id}/join:
     delete:
