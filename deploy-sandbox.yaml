@@ -22,7 +22,7 @@ paths:
           <li><h3>Body claims:</h3></li>
          <ul>
           <li>**sub**: Subject - A unique, immutable identifier for the user. If this ID does not exist, a new user will be created using this value and the email provided in the email claim. **REQUIRED**</li>
-          <li>**email**: User’s e-mail address - Must be unique for the channel and is changeable only via the <code>POST /email_update</code> service. **REQUIRED** (currently being reviewed to allow optionality).</li>
+          <li>**email**: User’s e-mail address - Must be unique for the channel and is changeable only via the <code>POST /email_update</code> service. **OPTIONAL**</li>
           <li>**iat**: Issued At - This claim identifies the time at which the JWT was issued. This claim can be used to determine the age of the JWT. Its value MUST be a number containing a NumericDate value. **REQUIRED**</li>
           <li>**exp**: Expiry - This claim identifies the time at which the JWT expires. **REQUIRED**</li>
           </ul>
@@ -95,7 +95,8 @@ paths:
               example:
                 joins:
                     - loyalty_card_id: 51
-                      loyalty_plan_id: 21
+                      loyalty_plan_id: 281
+                      loyalty_plan_name: "Wasabi Club"
                       status:
                         state: "pending"
                         slug:
@@ -104,10 +105,11 @@ paths:
                         id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"                  
+                        description: "Card Image for Wasabi hero"
+                        encoding: "png"                  
                     - loyalty_card_id: 89
-                      loyalty_plan_id: 43
+                      loyalty_plan_id: 105
+                      loyalty_plan_name: "Iceland Bonus Card"
                       status:
                         state: "failed"
                         slug: ACCOUNT_EXISTS
@@ -116,11 +118,12 @@ paths:
                         id: 291
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Hero_1968x732.png'
-                        description": "Hero image"
-                        encoding": "png"                        
+                        description: "Hero image"
+                        encoding: "png"                        
                 loyalty_cards:
                   - id: 81
                     loyalty_plan_id: 201
+                    loyalty_plan_name: "Wasabi Club"
                     status:
                       state: "authorised"
                       slug:
@@ -129,8 +132,8 @@ paths:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"                      
+                        description: "Card Image for Wasabi hero"
+                        encoding: "png"                      
                     balance:
                       updated_at: 1515697663
                       current_display_value: '2 stamps'
@@ -181,12 +184,14 @@ paths:
                       barcode_type: 0
                       card_number: "633174911234567898"
                       colour: '#FFFFFF'
+                      text_colour: '#FFFFFF'
                     pll_links:
                       - payment_account_id: 555
                         payment_scheme: VISA
                         status: active
                   - id: 85
                     loyalty_plan_id: 124
+                    loyalty_plan_name: "Wasabi Club"
                     status:
                       state: "authorised"
                       slug:
@@ -195,8 +200,8 @@ paths:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"                      
+                        description: "Card Image for Wasabi hero"
+                        encoding: "png"                      
                     balance:
                       updated_at: 1515697663
                       current_display_value: '150 points'
@@ -212,6 +217,7 @@ paths:
                       barcode_type: 0
                       card_number: "633174911234567898"
                       colour: '#FFFFFF'
+                      text_colour: '#FFFFFF'
                     pll_links:
                       - payment_account_id: 555
                         payment_scheme: VISA
@@ -227,8 +233,8 @@ paths:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/VISA.png'
-                        description": "Card Image VISA"
-                        encoding": "png"                    
+                        description: "Card Image VISA"
+                        encoding: "png"                    
                     pll_links:
                     - loyalty_card_id: 92744
                       loyalty_plan: 'Wasabi'
@@ -282,8 +288,8 @@ paths:
                         id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"  
+                        description: "Card Image for Wasabi hero"
+                        encoding: "png"  
                     - loyalty_card_id: 89
                       loyalty_plan_id: 246
                       loyalty_plan_name: "Wasabi Club"
@@ -295,11 +301,12 @@ paths:
                         id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"  
+                        description: "Card Image for Wasabi hero"
+                        encoding: "png"  
                 loyalty_cards:
                   - id: 81
-                    loyalty_plan_id: 201
+                    loyalty_plan_id: 246
+                    loyalty_plan_name: "Wasabi Club"
                     status:
                       state: "authorised"
                       slug:
@@ -308,8 +315,8 @@ paths:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"
+                        description: "Card Image for Wasabi hero"
+                        encoding: "png"
                     balance:
                       updated_at: 1515697663
                       current_display_value: '2 stamps'
@@ -324,8 +331,8 @@ paths:
                       - id: 1234
                         type: 0
                         url: 'schemes/Iceland_Card.png'
-                        description": "Iceland Slimming World hero card"
-                        encoding": "png"
+                        description: "Iceland Slimming World hero card"
+                        encoding: "png"
                     balance:
                       updated_at: 1515697663
                       current_display_value: '£0'
@@ -340,8 +347,8 @@ paths:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/VISA.png'
-                        description": "Card Image VISA"
-                        encoding": "png" 
+                        description: "Card Image VISA"
+                        encoding: "png" 
         '401':
           description: Not authorised, request does not have a valid token
           content:
@@ -661,7 +668,6 @@ paths:
       </ol>
       </body></html><br>
         Authorised cards allow a user to see more information about their loyalty membership such as balance and transactions.<br>
-
         Authorisation also enables **PLL** for those **Loyalty Plans** that support it. 
         <br><br>**NOTE**: A successfully authorised **Loyalty Card** that is of type **PLL** will automatically create **PLL** links to available **Payment Accounts**."
       parameters:
@@ -789,9 +795,9 @@ paths:
                       value: '10 January 1990'
                     - credential_slug: email
                       value: 'joe_blogs@bink.com'
-                consents:
-                  - consent_slug: EmailOptin
-                    value: 'false'
+                  consents:
+                    - consent_slug: EmailOptin
+                      value: 'false'
         description: 'Loyalty Card Join Request'
   /loyalty_cards/{loyalty_card_id}/join:
     delete:
@@ -1359,7 +1365,24 @@ paths:
                 error_slug: "FIELD_VALIDATION_ERROR"
                 fields:
                   - "expected str for dictionary value @ data['email']"
-
+  /me:
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+      - Users
+      summary: Delete a user
+      operationId: delete-user
+      description: "Deletes a user from the Bink platform. All associated payment accounts and loyalty cards will be deleted unless associated with another user account. User will be identified using the token passed in the request header"
+      responses:
+        '202':
+          description: "**Successful**, account will be deleted"
+        '401':
+          description: Client does not have valid token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericresponse401'
 components:
   securitySchemes:
     bearerAuth:
@@ -1599,6 +1622,10 @@ components:
           pattern: '^[0-9]+$'
         loyalty_plan_id:
           type: integer
+        loyalty_plan_name:
+          type: string
+          description: "Name of loyalty plan"
+          example: "Wasabi Club"
         status:
           type: object
           nullable: true
@@ -1808,6 +1835,11 @@ components:
           example: '#FFFFFF'
           pattern: '^[#A-Fa-f0-9]{4,7}$'
           type: string
+        text_colour:
+          description: text colour for text on card - hex format
+          example: '#FFFFFF'
+          pattern: '^[#A-Fa-f0-9]{4,7}$'
+          type: string
     LoyaltyCardBalance:
       type: object
       properties:
@@ -1871,6 +1903,10 @@ components:
           description: The Loyalty Plan to which this Loyalty Card belongs
           minimum: 1
           maximum: 18446744073709552000
+        loyalty_plan_name:
+          type: string
+          description: "Name of loyalty plan"
+          example: "Wasabi Club"
         status:
           type: object
           nullable: true
@@ -2079,7 +2115,12 @@ components:
           type: string
           description: background colour for card image - hex format
           example: '#f80000'
-          pattern: '^[#A-Fa-f0-9]{4,7}$'  
+          pattern: '^[#A-Fa-f0-9]{4,7}$' 
+        text_colour:
+          type: string
+          description: text colour for text on card - hex format
+          example: '#f80000'
+          pattern: '^[#A-Fa-f0-9]{4,7}$' 
         category:
           type: string
           description: Market sector or retail category
@@ -2143,7 +2184,12 @@ components:
               type: string
               description: background colour for card image - hex format
               example: '#f80000'
-              pattern: '^[#A-Fa-f0-9]{4,7}$'  
+              pattern: '^[#A-Fa-f0-9]{4,7}$' 
+            text_colour:
+              type: string
+              description: text colour for text on card - hex format
+              example: '#f80000'
+              pattern: '^[#A-Fa-f0-9]{4,7}$' 
             journeys:
               type: array
               items:
@@ -2334,6 +2380,10 @@ components:
               - svg
             description: Encoding for this file
             example: png
+          order:
+            type: integer
+            description: 'Order in which to display given image'
+            example: 1
     PlanDocumentRequest:
       type: object
       description: ""
