@@ -1,0 +1,1138 @@
+{
+	"info": {
+		"_postman_id": "5dae2a56-7e3b-407e-b1d7-49285142783e",
+		"name": "API v2.0",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var navigator = {};",
+							"var window = {};",
+							"eval(pm.globals.get(\"jsrsasign-js\"));",
+							"console.log(\"1\");",
+							"var jwtKid = pm.environment.get('jwt_kid') || ''",
+							"var header = {",
+							"    'typ': 'JWT',",
+							"    'alg': 'RS512',",
+							"    'kid': jwtKid",
+							"};",
+							"console.log(\"2\");",
+							"var currentTimestamp = Math.floor(Date.now() / 1000)",
+							"console.log(\"3\");",
+							"",
+							"var tokenExpiry = pm.environment.get('token_expiry_time_seconds') || 30",
+							"console.log(\"4\");",
+							"",
+							"var data = {",
+							"    'sub': pm.environment.get('user_sub') || '',",
+							"    'email': pm.environment.get('user_email') || '',",
+							"    'iat': currentTimestamp,",
+							"    'exp': currentTimestamp + 5000",
+							"}",
+							"console.log(\"5\");",
+							"console.log(pm.environment.get('private_key'));",
+							"",
+							"var privateKey = KEYUTIL.getKey(pm.environment.get('private_key')) || ''",
+							"var sHeader = JSON.stringify(header);",
+							"var sPayload = JSON.stringify(data);",
+							"console.log(\"6\");",
+							"",
+							"try {",
+							"    var sJWT = KJUR.jws.JWS.sign(header.alg, sHeader, sPayload, privateKey);",
+							"}",
+							"catch(err) {",
+							"  console.log(\"Error when signing JWT: \" + err)",
+							"  throw err",
+							"}",
+							"",
+							"pm.environment.set('token', sJWT);",
+							"console.log(\"Token creation complete, saving to 'token' postman environment variable. Token: \" + sJWT);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"grant_type\": \"b2b\",\n    \"scope\": [\n        \"user\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/v2/token",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "TokenRefresh",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var navigator = {};",
+							"var window = {};",
+							"eval(pm.globals.get(\"jsrsasign-js\"));",
+							"",
+							"var jwtKid = pm.environment.get('jwt_kid') || ''",
+							"var header = {",
+							"    'typ': 'JWT',",
+							"    'alg': 'RS512',",
+							"    'kid': jwtKid",
+							"};",
+							"",
+							"var currentTimestamp = Math.floor(Date.now() / 1000)",
+							"var tokenExpiry = pm.environment.get('token_expiry_time_seconds') || 30",
+							"var data = {",
+							"    'sub': pm.environment.get('user_sub') || '',",
+							"    'email': pm.environment.get('user_email') || '',",
+							"    'iat': currentTimestamp,",
+							"    'exp': currentTimestamp + 5000",
+							"}",
+							"",
+							"var privateKey = KEYUTIL.getKey(pm.environment.get('private_key')) || ''",
+							"var sHeader = JSON.stringify(header);",
+							"var sPayload = JSON.stringify(data);",
+							"",
+							"",
+							"try {",
+							"    var sJWT = KJUR.jws.JWS.sign(header.alg, sHeader, sPayload, privateKey);",
+							"}",
+							"catch(err) {",
+							"  console.log(\"Error when signing JWT: \" + err)",
+							"  throw err",
+							"}",
+							"",
+							"pm.environment.set('token', sJWT);",
+							"console.log(\"Token creation complete, saving to 'token' postman environment variable. Token: \" + sJWT)",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{refresh_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"grant_type\": \"refresh_token\",\n    \"scope\": [\n        \"user\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/v2/token",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getWallet",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/v2/wallet",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"wallet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getWalletOverview",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/v2/wallet_overview",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"wallet_overview"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getLoyaltyPlans",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/v2/loyalty_plans",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"loyalty_plans"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getLoyaltyPlansOverview",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/v2/loyalty_plans_overview",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"loyalty_plans_overview"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getLoyaltyPlansById",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/v2/loyalty_plans/105",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"loyalty_plans",
+						"105"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getLoyaltyPlansJourneyFields",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/v2/loyalty_plans/105/journey_fields",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"loyalty_plans",
+						"105",
+						"journey_fields"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "postLoyaltyCardsAdd",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"account\": {\n        \"add_fields\": {\n            \"credentials\": [\n                {\n                    \"credential_slug\": \"card_number\",\n                    \"value\": \"6332040000000000002\"\n                }\n            ]\n        }\n    },\n    \"loyalty_plan_id\": 105\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/v2/loyalty_cards/add",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"loyalty_cards",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "postLoyaltyCardsAddAuthorise",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"account\": {\n        \"add_fields\": {\n            \"credentials\": [\n                {\n                    \"credential_slug\": \"card_number\",\n                    \"value\": \"6332040000000000002\"\n                }\n            ]\n        },\n        \"authorise_fields\": {\n            \"credentials\": [\n                {\n                    \"credential_slug\": \"last_name\",\n                    \"value\": \"perfuser02\"\n                },\n                {\n                    \"credential_slug\": \"postcode\",\n                    \"value\": \"RG5 5AA\"\n                }\n            ]\n        }\n    },\n    \"loyalty_plan_id\": 105\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/v2/loyalty_cards/add_and_authorise",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"loyalty_cards",
+						"add_and_authorise"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "putLoyaltyCardsAuthorise",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"account\": {\n        \"authorise_fields\": {\n            \"credentials\": [\n                {\n                    \"credential_slug\": \"last_name\",\n                    \"value\": \"perfuser02\"\n                },\n                {\n                    \"credential_slug\": \"postcode\",\n                    \"value\": \"rg5 5aa\"\n                }\n            ]\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/v2/loyalty_cards/33304/authorise",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"loyalty_cards",
+						"33304",
+						"authorise"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "postLoyaltyCardsJoin",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"loyalty_plan_id\": 105,\n   \"account\": {\n    \"join_fields\": {\n      \"credentials\": [\n        {\n          \"credential_slug\": \"title\",\n          \"value\": \"Mr\"\n        },\n        {\n          \"credential_slug\": \"first_name\",\n          \"value\": \"Two\"\n        },       \n        {\n          \"credential_slug\": \"last_name\",\n          \"value\": \"History\"\n        },\n        {\n          \"credential_slug\": \"date_of_birth\",\n          \"value\": \"01/01/1970\"\n        },\n        {\n          \"credential_slug\": \"email\",\n          \"value\": \"htwo@testmail.com\"\n        },\n        {\n          \"credential_slug\": \"address_1\",\n          \"value\": \"1 Road rd\"\n        },\n        {\n          \"credential_slug\": \"phone\",\n          \"value\": \"07876565456\"\n        },        \n        {\n          \"credential_slug\": \"address_2\",\n          \"value\": \"Test land\"\n        },\n        {\n          \"credential_slug\": \"town_city\",\n          \"value\": \"Test City\"\n        },\n        {\n          \"credential_slug\": \"county\",\n          \"value\": \"Testshire\"\n        },\n        {\n          \"credential_slug\": \"postcode\",\n          \"value\": \"TT5 5AA\"\n        }\n      ]\n    }\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/v2/loyalty_cards/join",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"loyalty_cards",
+						"join"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteLoyaltyCardsJoin",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/v2/loyalty_cards/123/join",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"loyalty_cards",
+						"123",
+						"join"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "postLoyaltyCardsAddRegister",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"loyalty_plan_id\": 105,\n    \"account\": {\n        \"add_fields\": {\n            \"credentials\": [\n                {\n                    \"credential_slug\": \"card_number\",\n                    \"value\": \"6332040000000001235\"\n                }\n            ]\n        },\n        \"register_ghost_card_fields\": {\n            \"credentials\": [\n                {\n                    \"credential_slug\": \"title\",\n                    \"value\": \"Mr\"\n                },\n                {\n                    \"credential_slug\": \"first_name\",\n                    \"value\": \"Jon\"\n                },\n                {\n                    \"credential_slug\": \"last_name\",\n                    \"value\": \"Smith\"\n                },\n                {\n                    \"credential_slug\": \"date_of_birth\",\n                    \"value\": \"01/01/1970\"\n                },\n                {\n                    \"credential_slug\": \"email\",\n                    \"value\": \"jsmith@testmail.com\"\n                },\n                {\n                    \"credential_slug\": \"phone\",\n                    \"value\": \"077765676789\"\n                },\n                {\n                    \"credential_slug\": \"address_1\",\n                    \"value\": \"14 Test ave\"\n                },\n                {\n                    \"credential_slug\": \"address_2\",\n                    \"value\": \"Testland\"\n                },\n                {\n                    \"credential_slug\": \"town_city\",\n                    \"value\": \"Test City\"\n                },\n                {\n                    \"credential_slug\": \"county\",\n                    \"value\": \"Testshire\"\n                },\n                {\n                    \"credential_slug\": \"postcode\",\n                    \"value\": \"TT5 6AF\"\n                }\n            ],\n            \"consents\": [\n\n            ]\n        }\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/v2/loyalty_cards/add_and_register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"loyalty_cards",
+						"add_and_register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "putLoyaltyCardsRegister",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"account\": {\n        \"register_ghost_card_fields\": {\n            \"credentials\": [\n                {\n                    \"credential_slug\": \"title\",\n                    \"value\": \"Mr\"\n                },\n                {\n                    \"credential_slug\": \"first_name\",\n                    \"value\": \"Jon\"\n                },\n                {\n                    \"credential_slug\": \"last_name\",\n                    \"value\": \"Smoth\"\n                },\n                {\n                    \"credential_slug\": \"date_of_birth\",\n                    \"value\": \"01/01/1970\"\n                },\n                {\n                    \"credential_slug\": \"email\",\n                    \"value\": \"jsmith@testmail.com\"\n                },\n                {\n                    \"credential_slug\": \"phone\",\n                    \"value\": \"07876565434\"\n                },\n                {\n                    \"credential_slug\": \"address_1\",\n                    \"value\": \"1 Test rd\"\n                },\n                {\n                    \"credential_slug\": \"address_2\",\n                    \"value\": \"Testville\"\n                },\n                {\n                    \"credential_slug\": \"town_city\",\n                    \"value\": \"Test City\"\n                },\n                {\n                    \"credential_slug\": \"county\",\n                    \"value\": \"Testshire\"\n                },\n                {\n                    \"credential_slug\": \"postcode\",\n                    \"value\": \"TT5 5AA\"\n                }\n            ]\n        }\n    }\n}    ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/v2/loyalty_cards/33309/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"loyalty_cards",
+						"33309",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteLoyaltyCard",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/v2/loyalty_cards/12345",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"loyalty_cards",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "postPaymentAccounts",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"expiry_month\": \"12\",\n    \"expiry_year\": \"25\",\n    \"name_on_card\": \"History Two\",\n    \"card_nickname\": \"H2 Visa\",\n    \"issuer\": \"Halifax\",\n    \"token\": \"4gnKLRj1bb3r15htree4xjqiOcPg\",\n    \"last_four_digits\": \"4744\",\n    \"first_six_digits\": \"455555\",\n    \"fingerprint\": \"765789034456534666abcdefeda5603b5f8c31\",\n    \"provider\": \"Visa\",\n    \"type\": \"credit\",\n    \"country\": \"GB\",\n    \"currency_code\": \"GBP\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/v2/payment_accounts",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"payment_accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "patchPaymentAccounts",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"expiry_month\": \"12\",\n    \"expiry_year\": \"24\",\n    \"name_on_card\": \"Jeff Bloggs\",\n    \"card_nickname\": \"My Mastercard\",\n    \"issuer\": \"HSBC\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/v2/payment_accounts/12345",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"payment_accounts",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deletePaymentAccounts",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/v2/payment_accounts/12345",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"payment_accounts",
+						"12345"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"",
+					"let name = request.name;",
+					"",
+					"if ((name != 'Token') && (name != 'TokenRefresh')) {",
+					"    console.log('NOT the token endpoint');",
+					"    access_token = pm.environment.get(\"access_token\");",
+					"",
+					"    if (access_token == \"\" || access_token == null) {",
+					"        request_access_token();",
+					"    } else {",
+					"        console.log('We have an access token \" ' + access_token);",
+					"        if (Math.floor(Date.now() / 1000 >= pm.environment.get('access_token_expiry'))) {",
+					"            console.log('access token has expired');",
+					"            request_access_token();",
+					"        }",
+					"        ",
+					"    }",
+					"}",
+					"",
+					"",
+					"function request_access_token() {",
+					"    console.log(\"requesting a new access token\");",
+					"    sJWT = generate_b2b_jwt();",
+					"    var url = pm.environment.get(\"base_url\") + \"/v2/token\"; ",
+					"    ",
+					"    pm.sendRequest({",
+					"        url: url,",
+					"        method: 'POST',",
+					"        header: [`Authorization:Bearer ${sJWT}`, \"Content-Type: application/json\"],",
+					"        body: JSON.stringify({",
+					"            \"grant_type\": \"b2b\",",
+					"            \"scope\": [\"user\"]",
+					"        })",
+					"    }, (err, res) => {",
+					"            update_environment_variables(res);",
+					"        })",
+					"}    ",
+					"",
+					"function generate_b2b_jwt() {",
+					"    var navigator = {};",
+					"    var window = {};",
+					"    eval(pm.globals.get(\"jsrsasign-js\"));",
+					"",
+					"    var jwtKid = pm.environment.get('jwt_kid') || ''",
+					"    var header = {",
+					"        'typ': 'JWT',",
+					"        'alg': 'RS512',",
+					"        'kid': jwtKid",
+					"    };",
+					"",
+					"    var currentTimestamp = Math.floor(Date.now() / 1000)",
+					"    var tokenExpiry = pm.environment.get('token_expiry_time_seconds') || 30",
+					"    var data = {",
+					"        'sub': pm.environment.get('user_sub') || '',",
+					"        'email': pm.environment.get('user_email') || '',",
+					"        'iat': currentTimestamp,",
+					"        'exp': currentTimestamp + 5000",
+					"    }",
+					"",
+					"    var privateKey = KEYUTIL.getKey(pm.environment.get('private_key')) || ''",
+					"    var sHeader = JSON.stringify(header);",
+					"    var sPayload = JSON.stringify(data);",
+					"",
+					"",
+					"    try {",
+					"        var sJWT = KJUR.jws.JWS.sign(header.alg, sHeader, sPayload, privateKey);",
+					"        return sJWT;",
+					"",
+					"    }  catch(err) {",
+					"        console.log(\"Error when signing JWT: \" + err)",
+					"        throw err",
+					"    }",
+					"",
+					"}",
+					"",
+					"",
+					"function refresh_access_token() {",
+					"",
+					"    var currentTimestamp = Math.floor(Date.now() / 1000)",
+					"",
+					"    url = pm.environment.get('base_url') + '/v2/token';",
+					"    refresh_token = pm.environment.get('refresh_token');",
+					"",
+					"    pm.sendRequest({",
+					"        url: url,",
+					"        method: 'POST',",
+					"        header: [`Authorization:Bearer ${refresh_token}`, \"Content-Type: application/json\"],",
+					"        body: JSON.stringify({",
+					"            \"grant_type\": \"refresh_token\",",
+					"            \"scope\": [\"user\"]",
+					"        })",
+					"    }, (err, res) => {",
+					"        update_environment_variables(res);",
+					"    })",
+					"}",
+					"",
+					"function update_environment_variables(res) {",
+					"",
+					"    console.log(\">> \" + res.json.access_token);",
+					"    new_refresh_token =  res.json().refresh_token;",
+					"    new_access_token = res.json().access_token;",
+					"    expiry =  (Math.floor(Date.now() / 1000) + res.json().expires_in);",
+					"    console.log(new_access_token + new_refresh_token + expiry);",
+					"    pm.environment.set('access_token', new_access_token);",
+					"    pm.environment.set('refresh_token', new_refresh_token);",
+					"    pm.environment.set('access_token_expiry', expiry);",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
