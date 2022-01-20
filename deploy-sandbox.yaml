@@ -800,29 +800,29 @@ paths:
       summary: Authorise a Loyalty Card
       operationId: PUT loyalty_cards/authorise
       description: "This is used to:<br>
-      <html><body>
-      <ol>
-        <li>Authorise an exisitng **Store** type **Loyalty Card** promoting it to be an **Engage** or **PLL** type.</li>
-        <li>Correct or update credentials on an **Engage** or **PLL** type **Loyalty Card**.</lil>
-      </ol>
+        <html><body>
+        <ol>
+          <li>Authorise an exisitng **Store** type **Loyalty Card** promoting it to be an **Engage** or **PLL** type.</li>
+          <li>Correct or update credentials on an **Engage** or **PLL** type **Loyalty Card**.</lil>
+        </ol>
       
-      </body></html><br>
-        Authorised cards allow a user to see more information about their loyalty membership such as balance and transactions.<br>
-        Authorisation also enables **PLL** for those **Loyalty Plans** that support it. 
+        </body><br>
+          Authorised cards allow a user to see more information about their loyalty membership such as balance and transactions.<br>
+          Authorisation also enables **PLL** for those **Loyalty Plans** that support it. 
 
-          <h3>Journey Fields</h3>
+        <h3>Journey Fields</h3>
           Use the <code>journey_fields.authorise_fields</code> returned from either of the following endpoints:
-          <ul>
-            <li> <code>GET /loyalty plans</code> </li>
-            <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
-          </ul>
-          Or from <code>authorise_fields</code> in the endpoint:
-          <ul>
-            <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
-          </ul>
+        <ul>
+          <li> <code>GET /loyalty plans</code> </li>
+          <li> <code>GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+        </ul>
+        Or from <code>authorise_fields</code> in the endpoint:
+        <ul>
+          <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+        </ul>
 
         <br><br><b>NOTE</b>: A successfully authorised <b>Loyalty Card</b> that is of type <b>PLL</b> will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>.
-        </body></html"
+        </body></html>"
       parameters:
         - in: path
           name: loyalty_card_id
