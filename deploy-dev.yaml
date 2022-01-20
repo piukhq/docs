@@ -364,22 +364,53 @@ paths:
         - Loyalty Plans
       summary: Retrieve all Loyalty Plans
       operationId: GET /loyalty_plans
-      description: "Returns information for all defined **Loyalty Plans** supported by Bink that are included in the partner channel. Information includes:
-      <html><body>
-        <ol>
-          <li>All field information to support Loyalty Card journeys:
-            <ul>
-              <li>Add.</li>
-              <li>Authorise.</li>
-              <li>Join.</li>
-              <li>Register.</li>
-            </ul>
-          <li>Features of a Loyalty Plan.</li>
-          <li>Loyalty Plan Images.</li>
-          <li>Descriptive information for a Loyalty Plan.</li>
-        </ol>
-       </body></html>
-       <br>This information can be used in the consuming application to provide the user with details about supported Loyalty Plans."
+      description: "Returns information for all <b>Loyalty Plans</b> supported by Bink included in the partner channel.<br>
+        <html>
+            <body>
+              A <b>Loyalty Plan</b> is the membership scheme offered by supported retailers. <b>Loyalty Plans</b> have three types (see <code>plan_features.plan_type</code>)<br>
+              <ul>
+                <li> <b>Store</b> - A user adds their <b>Loyalty Card</b> via scanning the barcode. The digital representation of this card is stored in the user’s wallet, can be presented at point of sale in store.</li>
+                <li> <b>Engage</b> - A user provides additional information in order to prove ownership of a <b>Loyalty Card</b> and authorises it. Authorised <b>Loyalty Cards</b> provide access to additional information about the loyalty membership, such as such as balance, transactions and vouchers.<br>
+                NOTE: <b>Engage</b> type <b>Loyalty Plans</b> might also support Joining and Registering.
+                <li> <b>PLL</b> - As per <b>Engage</b> but also supports auto-points collection.</li>
+              </ul>
+
+
+              <h3>Journey Fields</h3>
+              A journey is a process by which the user adds their <b>Loyalty Card</b> into their wallet or requests to become a new member of a supported <b>Loyalty Plan</b>.
+              Bink supports the following journeys: 
+              <ul>
+                <li> <b>Add</b> </li>
+                <li> <b>Authorise</b> </li>
+                <li> <b>Register</b> </li>
+                <li> <b>Join</b>. </li>
+              </ul>
+
+              The user must provide certain pieces of information in order to complete a journey. The information required is detailed in <code>journey_fields</code> . Not all <b>Loyalty Plans</b> support the same journeys. The presence of the <code>_field</code> objects below denotes which journeys the <b>Loyalty Plan</b> supports.
+
+              <ul>
+                <li> <code>register_ghost_card_fields</code></li>
+                  <ul>
+                    <li> Physical <b>Loyalty Cards</b> picked up in store that have not yet been registered with the supported <b>Loyalty Plan</b> are called <b>Ghostcards</b>. </li>
+                  </ul> 
+                <li> <code>join_fields</code>
+                  <ul>
+                    <li> Allows the user to request to Join a supported <b>Loyalty Plan</b>.</li>
+                  </ul>
+                <li> <code>add_fields</code> </li>
+                  <ul>
+                    <li> Adds a Store type <b>Loyalty Card</b> into a user’s wallet.</li>
+                  </ul>
+                <Li> <code>authorise_fields</code></Li>
+                  <ul>
+                    <li>Used to authorise an Engage or PLL type <b>Loyalty Card</b> initially added as a Store card.</li>
+                  </ul>
+              </ul>
+
+          The API supports adding Loyalty Cards in two stages. For example if a <b>Loyalty Plan</b> is of type PLL, the user can Add their <b>Loyalty Card</b> to their wallet and Authorise it later. Or if a <b>Loyalty Plan</b> is of Engage type and supports registration, the user can Add their <b>Loyalty Card</b> to their wallet and Register it later.<br>
+          Within each of the <code>_fields</code> objects there will be <code>credentials</code> and potentially <code>plan_documents</code> and <code>consents</code>. All of these fields need to be presented to the user so the selected journey can be competed using the appropriate <code>POST or PUT /loyalty_card/</code> endpoint.
+            </body>
+          </html>"
       responses:
         '200':
           description: "**Successful**"
@@ -402,22 +433,53 @@ paths:
         - Loyalty Plans
       summary: Retrieve a Loyalty Plan
       operationId: GET /loyalty_plans/{loyalty_plan_id}
-      description: "Returns information for the specified **Loyalty Plan** supported by Bink included in the partner channel. Information includes:
-      <html><body>
-        <ol>
-          <li>All field information to support Loyalty Card journeys:
+      description: "Returns information for the specified <b>Loyalty Plan</b> supported by Bink included in the partner channel.<br>
+        <html>
+          <body>
+            A <b>Loyalty Plan</b> is the membership scheme offered by supported retailers. <b>Loyalty Plans</b> have three types (see <code>plan_features.plan_type</code>)<br>
             <ul>
-              <li>Add.</li>
-              <li>Authorise.</li>
-              <li>Join.</li>
-              <li>Register.</li>
+              <li> <b>Store</b> - A user adds their <b>Loyalty Card</b> via scanning the barcode. The digital representation of this card is stored in the user’s wallet, can be presented at point of sale in store.</li>
+              <li> <b>Engage</b> - A user provides additional information in order to prove ownership of a <b>Loyalty Card</b> and authorises it. Authorised <b>Loyalty Cards</b> provide access to additional information about the loyalty membership, such as such as balance, transactions and vouchers.<br>
+              NOTE: <b>Engage</b> type <b>Loyalty Plans</b> might also support Joining and Registering.
+              <li> <b>PLL</b> - As per <b>Engage</b> but also supports auto-points collection.</li>
             </ul>
-          <li>Features of the Loyalty Plan.</li>
-          <li>Loyalty Plan Images.</li>
-          <li>Descriptive information for the Loyalty Plan.</li>
-        </ol>
-       </body></html>
-       <br>This information can be used in the consuming application to provide the user with details about the supported Loyalty Plan."
+
+
+            <h3>Journey Fields</h3>
+            A journey is a process by which the user adds their <b>Loyalty Card</b> into their wallet or requests to become a new member of a supported <b>Loyalty Plan</b>.
+            Bink supports the following journeys: 
+            <ul>
+              <li> <b>Add</b> </li>
+              <li> <b>Authorise</b> </li>
+              <li> <b>Register</b> </li>
+              <li> <b>Join</b>. </li>
+            </ul>
+
+            The user must provide certain pieces of information in order to complete a journey. The information required is detailed in <code>journey_fields</code> . Not all <b>Loyalty Plans</b> support the same journeys. The presence of the <code>_field</code> objects below denotes which journeys the <b>Loyalty Plan</b> supports.
+
+            <ul>
+              <li> <code>register_ghost_card_fields</code></li>
+                <ul>
+                  <li> Physical <b>Loyalty Cards</b> picked up in store that have not yet been registered with the supported <b>Loyalty Plan</b> are called <b>Ghostcards</b>. </li>
+                </ul> 
+              <li> <code>join_fields</code>
+                <ul>
+                  <li> Allows the user to request to Join a supported <b>Loyalty Plan</b>.</li>
+                </ul>
+              <li> <code>add_fields</code> </li>
+                <ul>
+                  <li> Adds a Store type <b>Loyalty Card</b> into a user’s wallet.</li>
+                </ul>
+              <Li> <code>authorise_fields</code></Li>
+                <ul>
+                  <li>Used to authorise an Engage or PLL type <b>Loyalty Card</b> initially added as a Store card.</li>
+                </ul>
+            </ul>
+
+        The API supports adding Loyalty Cards in two stages. For example if a <b>Loyalty Plan</b> is of type PLL, the user can Add their <b>Loyalty Card</b> to their wallet and Authorise it later. Or if a <b>Loyalty Plan</b> is of Engage type and supports registration, the user can Add their <b>Loyalty Card</b> to their wallet and Register it later.<br>
+        Within each of the <code>_fields</code> objects there will be <code>credentials</code> and potentially <code>plan_documents</code> and <code>consents</code>. All of these fields need to be presented to the user so the selected journey can be competed using the appropriate <code>POST or PUT /loyalty_card/</code> endpoint.
+          </body>
+        </html>"
       parameters:
         - in: path
           name: loyalty_plan_id
@@ -454,15 +516,26 @@ paths:
         - Loyalty Plans
       summary: Retrieve Loyalty Plan Overview
       operationId: GET /loyalty_plans_overview
-      description: "Returns a subset of all **Loyalty Plan** information for all defined **Loyalty Plans** supported by Bink that are included in the partner channel. Information includes:
-      <html><body>
-        <ol>
-          <li>Features of a Loyalty Plan.</li>
-          <li>Loyalty Plan Images.</li>
-          <li>Descriptive information for a Loyalty Plan.</li>
-        </ol>
-       </body></html>
-       <br>This information can be used in the consuming application to provide the user with details about supported Loyalty Plans."
+      description: "Returns a subset of all <b>Loyalty Plan</b> information for all defined <b>Loyalty Plans</b> supported by Bink that are included in the partner channel. Information includes:
+      <html>
+        <body>
+          <ol>
+            <li>Features of a <b>Loyalty Plan</b>..</li>
+            <li><b>Loyalty Plan</b> Images.</li>
+            <li>Descriptive information for a <b>Loyalty Plan</b>.</li>
+          </ol>
+          <br>This information can be used in the consuming application to provide the user with a list of supported <b>Loyalty Plans</b>.<br>
+          
+
+            A <b>Loyalty Plan</b> is the membership scheme offered by supported retailers. <b>Loyalty Plans</b> have three types (see <code>plan_features.plan_type</code>)<br>
+            <ul>
+              <li> <b>Store</b> - A user adds their <b>Loyalty Card</b> via scanning the barcode. The digital representation of this card is stored in the user’s wallet, can be presented at point of sale in store.</li>
+              <li> <b>Engage</b> - A user provides additional information in order to prove ownership of a <b>Loyalty Card</b> and authorises it. Authorised <b>Loyalty Cards</b> provide access to additional information about the loyalty membership, such as such as balance, transactions and vouchers.<br>
+              NOTE: <b>Engage</b> type <b>Loyalty Plans</b> might also support Joining and Registering.
+              <li> <b>PLL</b> - As per <b>Engage</b> but also supports auto-points collection.</li>
+            </ul>
+        </body>
+      </html>"
       responses:
         '200':
           description: "**Successful**"
@@ -492,16 +565,43 @@ paths:
         - Loyalty Plans
       summary: Retrieve journey fields for a Loyalty Plan
       operationId: GET /loyalty_plans/{loyalty_plan_id}/journey_fields
-      description: "This endpoint returns all the fields a user needs to complete in order to follow available journeys in the specified **Loyalty Plan** supported by Bink included in the partner channel. Journeys are: 
-      <html><body>
-        <ol>
-          <li>Adding a Loyalty Card.</li>
-          <li>Authorising a Loyalty Card.</li>
-          <li>Registering a Ghostcard.</li>
-          <li>Joining a Loyalty Plan.</li>
-        </ol>
-       </body></html> 
-          <br>The fields are displayed in the consuming application to capture user details and consents in order to process the journey."
+      description: "
+      <html>
+          <body>
+            A journey is a process by which the user adds their <b>Loyalty Card</b> into their wallet or requests to become a new member of a supported <b>Loyalty Plan</b>.
+            Bink supports the following journeys: 
+            <ul>
+              <li> <b>Add</b> </li>
+              <li> <b>Authorise</b> </li>
+              <li> <b>Register</b> </li>
+              <li> <b>Join</b>. </li>
+            </ul>
+
+            The user must provide certain pieces of information in order to complete a journey. The information required is detailed in <code>journey_fields</code> . Not all <b>Loyalty Plans</b> support the same journeys. The presence of the <code>_field</code> objects below denotes which journeys the <b>Loyalty Plan</b> supports.
+
+            <ul>
+              <li> <code>register_ghost_card_fields</code></li>
+                <ul>
+                  <li> Physical <b>Loyalty Cards</b> picked up in store that have not yet been registered with the supported <b>Loyalty Plan</b> are called <b>Ghostcards</b>. </li>
+                </ul> 
+              <li> <code>join_fields</code>
+                <ul>
+                  <li> Allows the user to request to Join a supported <b>Loyalty Plan</b>.</li>
+                </ul>
+              <li> <code>add_fields</code> </li>
+                <ul>
+                  <li> Adds a Store type <b>Loyalty Card</b> into a user’s wallet.</li>
+                </ul>
+              <Li> <code>authorise_fields</code></Li>
+                <ul>
+                  <li>Used to authorise an Engage or PLL type <b>Loyalty Card</b> initially added as a Store card.</li>
+                </ul>
+            </ul>
+
+        The API supports adding Loyalty Cards in two stages. For example if a <b>Loyalty Plan</b> is of type PLL, the user can Add their <b>Loyalty Card</b> to their wallet and Authorise it later. Or if a <b>Loyalty Plan</b> is of Engage type and supports registration, the user can Add their <b>Loyalty Card</b> to their wallet and Register it later.<br>
+        Within each of the <code>_fields</code> objects there will be <code>credentials</code> and potentially <code>plan_documents</code> and <code>consents</code>. All of these fields need to be presented to the user so the selected journey can be competed using the appropriate <code>POST or PUT /loyalty_card/</code> endpoint.
+          </body>
+        </html>"
       parameters:
         - in: path
           name: loyalty_plan_id
@@ -545,7 +645,23 @@ paths:
         - Loyalty Cards
       summary: Add a Loyalty Card
       operationId: POST /loyalty_cards/add
-      description: "This will add a **Store** type **Loyalty Card** identified by a single credential field, usually <code>card_number</code> or <code>barcode</code>, to a users wallet. **Store** cards are digital representations of a **Loyalty Card** designed to be shown at the point of sale from the users mobile application.<br><br> Call this endpoint to create a **Store** type **Loyalty Card** if one does not exist. <br><br>Calling this endpoint on an existing **Loyalty Card** will return the <code>loyalty_card_id</code> and add it to the users wallet."
+      description: "
+      <html>
+        <body>
+          This will add a <b>Store</b> type <b>Loyalty Card</b> identified by <code>barcode</code> to a users wallet. <b>Store</b> cards are digital representations of a <b>Loyalty Card</b> designed to be shown at the point of sale from the users mobile application.<br><br> 
+
+          <h3>Journey Fields</h3>
+          Use the fields returned in the <code>journey_fields.add_fields</code> from either of the following endpoints:
+          <ul>
+            <li> <code>GET /loyalty plans</code> </li>
+            <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+          </ul>
+          Or from <code>add_fields</code> in the endpoint:
+          <ul>
+            <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+          </ul>
+        </body>
+      </html>"
       requestBody:
         content:
           application/json:
@@ -598,7 +714,30 @@ paths:
         - Loyalty Cards
       summary: "Add and Authorise a Loyalty Card"
       operationId: POST /loyalty_cards/add_and_authorise
-      description: "This will add an **Engage** or **PLL** type Loyalty Card into a users wallet. Adding authorisation credentials allows a user to see more information about their loyalty membership such as balance and transactions.  Authorisation also enables PLL for those Loyalty Plans that support it. <br><br>Call this endpoint to create an **Engage** type Loyalty Card if one does not exist. <br><br>Calling this endpoint on an existing Loyalty Card will return details of the Loyalty Card and add it to the users wallet, authorising it if the passed in credentials are correct. <br><br>**NOTE**: <br><li>If the card is a PLL type, success will automatically create PLL links to available Payment Accounts. <li>Some Loyalty Plans might not have any ADD fields, only AUTH fields, still use this endpoint to add cards of this nature."
+      description: "This will add an **Engage** or **PLL** type **Loyalty Card** into a users wallet. Adding authorisation credentials allows a user to see more information about their loyalty membership such as balance and transactions.  Authorisation also enables **PLL** for those **Loyalty Plans** that support it. <br><br>Call this endpoint to create an **Engage** type **Loyalty Card** if one does not exist. <br><br>Calling this endpoint on an existing **Loyalty Card** will return details of the **Loyalty Card** and add it to the users wallet, authorising it if the passed in credentials are correct. 
+
+          <html>
+            <body>
+              <h3>Journey Fields</h3>
+              You will need to combine the <code>journey_fields.add_fields</code> and <code>journey_fields.authorise_fields</code> returned from either of the following endpoints:
+              <ul>
+                <li> <code>GET /loyalty plans</code> </li>
+                <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+              </ul>
+              Or from <code>add_fields</code> and <code>authorise_fields</code> in the endpoint:
+              <ul>
+                <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+              </ul>
+
+
+          <br><br><b>NOTE</b>: <br>
+            <ul>
+              <li>If the card is a <b>PLL</b> type, success will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>. </li>
+              <li>Some <b>Loyalty Plans</b> might not have any ADD fields, only AUTH fields, still use this endpoint to add and authorise <b>Loyalty Cards</b> of this type.</li>
+              <li>Even if Authorisation fails, the <b>Loyalty Card</b> will still be added to the user's Wallet as a <b>Store</b> type card.</li>
+            </ul>
+            </body>
+          </html>"
       responses:
         '200':
           description: "**OK** Response contains resource ID. <br><br>Returned in cases where: <li>Card already added and authorised, or<li>Add and authorisation still in progress"
@@ -666,10 +805,24 @@ paths:
         <li>Authorise an exisitng **Store** type **Loyalty Card** promoting it to be an **Engage** or **PLL** type.</li>
         <li>Correct or update credentials on an **Engage** or **PLL** type **Loyalty Card**.</lil>
       </ol>
+      
       </body></html><br>
         Authorised cards allow a user to see more information about their loyalty membership such as balance and transactions.<br>
         Authorisation also enables **PLL** for those **Loyalty Plans** that support it. 
-        <br><br>**NOTE**: A successfully authorised **Loyalty Card** that is of type **PLL** will automatically create **PLL** links to available **Payment Accounts**."
+
+          <h3>Journey Fields</h3>
+          Use the <code>journey_fields.authorise_fields</code> returned from either of the following endpoints:
+          <ul>
+            <li> <code>GET /loyalty plans</code> </li>
+            <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+          </ul>
+          Or from <code>authorise_fields</code> in the endpoint:
+          <ul>
+            <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+          </ul>
+
+        <br><br><b>NOTE</b>: A successfully authorised <b>Loyalty Card</b> that is of type <b>PLL</b> will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>.
+        </body></html"
       parameters:
         - in: path
           name: loyalty_card_id
@@ -742,7 +895,25 @@ paths:
         - Loyalty Cards
       summary: Join a Loyalty Plan
       operationId: POST /loyalty_cards/join
-      description: "This resources reflects the users intent to **Join** a **Loyalty Plan**. Bink passes the intent to the relevant merchant and waits for them to process the request. A successful response from the merchant will see the **Join** resource become an **Engage** or **PLL** type **Loyalty Card**, failure leaves the resource in a failed state with an explanation. The user can delete the failure and try again. New **Join** requests to the same **Loyalty Plan** are independent.<br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
+      description: "This resources reflects the users intent to **Join** a **Loyalty Plan**. Bink passes the intent to the relevant merchant and waits for them to process the request. A successful response from the merchant will see the **Join** resource become an **Engage** or **PLL** type **Loyalty Card**, failure leaves the resource in a failed state with an explanation. The user can delete the failure and try again. New **Join** requests to the same **Loyalty Plan** are independent.
+
+          <html>
+            <body>
+              <h3>Journey Fields</h3>
+              Use the <code>journey_fields.join_fields</code> returned from either of the following endpoints:
+              <ul>
+                <li> <code>GET /loyalty plans</code> </li>
+                <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+              </ul>
+              Or from <code>join_fields</code> in the endpoint:
+              <ul>
+                <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+              </ul>
+            </body>
+          </html>
+
+
+        <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
       responses:
         '202':
           description: '**Accepted**, join in progress'
@@ -847,7 +1018,25 @@ paths:
         - Loyalty Cards
       summary: 'Add and Register a Ghostcard'
       operationId: 'POST /loyalty_cards/add_and_register'
-      description: "This endpoint adds a **Store** type **Loyalty Card** and attempts to register the user details in the request with the supported merchant. Registration is similar to **Join** except it involves a physical **Loyalty Card** picked up in store, commonly known as a **Ghostcard**. <br><br>If the registration fails, the user still has a **Store** type **Loyalty Card** in their wallet. Successful registration means the user is now a member of the **Loyalty Plan** and the **Loyalty Card** will be an **Engage** or **PLL** type in the user's wallet. <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
+      description: "This endpoint adds a **Store** type **Loyalty Card** and attempts to register the user details in the request with the supported merchant. Registration is similar to **Join** except it involves a physical **Loyalty Card** picked up in store, commonly known as a **Ghostcard**. <br><br>If the registration fails, the user still has a **Store** type **Loyalty Card** in their wallet. Successful registration means the user is now a member of the **Loyalty Plan** and the **Loyalty Card** will be an **Engage** or **PLL** type in the user's wallet. <br><br>
+
+          <html>
+            <body>
+              <h3>Journey Fields</h3>
+              You will need to combine the <code>journey_fields.add_fields</code> and <code>journey_fields.register_ghost_card_fields</code> returned from either of the following endpoints:
+              <ul>
+                <li> <code>GET /loyalty plans</code> </li>
+                <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+              </ul>
+              Or from <code>add_fields</code> and <code>register_ghost_card_fields</code> in the endpoint:
+              <ul>
+                <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+              </ul>
+            </body>
+          </html>  
+
+          <br><br>
+        <b>NOTE</b>: If the card is a <b>PLL</b> type, success will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>."
       responses:
         '200':
           description: "**OK** - returned if a registration request is sent while a preceding request is pending"
@@ -913,7 +1102,24 @@ paths:
         - Loyalty Cards
       summary: "Register a Ghostcard"
       operationId: "PUT /loyalty_cards/registration"
-      description: "Used to add registration details to **Store** type **Loyalty Card** already in a user’s wallet and attempt to register those details with the supported merchant. **Registration** is similar to **Join** except it involves a physical **Loyalty Card** picked up in store, commonly known as a **Ghostcard**.<br> If the registration fails, the user still has the **Store** type **Loyalty Card** in their wallet. Successful registration means the user is now a member of the **Loyalty Plan** and the **Loyalty Card** will be an **Engage** or **PLL** type in the user's wallet. <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
+      description: "Used to add registration details to **Store** type **Loyalty Card** already in a user’s wallet and attempt to register those details with the supported merchant. **Registration** is similar to **Join** except it involves a physical **Loyalty Card** picked up in store, commonly known as a **Ghostcard**.<br> If the registration fails, the user still has the **Store** type **Loyalty Card** in their wallet. Successful registration means the user is now a member of the **Loyalty Plan** and the **Loyalty Card** will be an **Engage** or **PLL** type in the user's wallet. 
+
+          <html>
+            <body>
+              <h3>Journey Fields</h3>
+              Use the <code>journey_fields.register_ghost_card_fields</code> returned from either of the following endpoints:
+              <ul>
+                <li> <code>GET /loyalty plans</code> </li>
+                <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+              </ul>
+              Or from <code>register_ghost_card_fields</code> in the endpoint:
+              <ul>
+                <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+              </ul>
+            </body>
+          </html>  
+
+      <br><br><b>NOTE</b>: If the card is a <b>PLL</b> type, success will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>."
       parameters:
         - in: path
           name: loyalty_card_id
@@ -1697,13 +1903,6 @@ components:
             minLength: 1
             maxLength: 100
             pattern: "[\\u0000-\\u2FFF]{1,100}"
-          provider:
-            type: string
-            example: MasterCard
-            description: 'Card scheme (e.g., VISA, American Express, MasterCard)'
-            minLength: 1
-            maxLength: 200
-            pattern: "[\\u0000-\\u2FFF]{1,200}"
           type:
             type: string
             example: debit
@@ -2106,7 +2305,7 @@ components:
           pattern: "[\\u0000-\\u2FFF]+"   
         plan_type:
           type: integer
-          description: 'Store = 0 | View = 1 | Link = 2'
+          description: 'Store = 0 | Engage = 1 | PLL = 2'
           example: 2
           minimum: 0
           maximum: 9
@@ -2216,6 +2415,7 @@ components:
         images:
           $ref: '#/components/schemas/Images'
         plan_details:
+          description: "Information about the Loyalty Plan"
           type: object
           properties:
             company_name:
@@ -2310,6 +2510,7 @@ components:
         journey_fields:
           $ref: '#/components/schemas/JourneyFieldSet'
         content:
+          description: "Key value pairs that can be used to support UI elements"
           type: array
           minItems: 0
           maxItems: 9999
@@ -2342,6 +2543,7 @@ components:
       items:
         $ref: '#/components/schemas/LoyaltyPlan'
     Images: 
+      description: "List of all images associated with the Loyaty Plan"
       type: array
       items:
         minItems: 0
@@ -2423,6 +2625,7 @@ components:
     RegisterCredentialSet:
       $ref: '#/components/schemas/CredentialSet'
     JourneyFieldSet:
+      description: "User information required to support Loyalty journeys"
       type: object
       properties:
         register_ghost_card_fields:
