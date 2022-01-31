@@ -81,7 +81,7 @@ paths:
                 <li>Vouchers.</li>
               </ul>
             </li>
-          <li>Payment Acccounts.</li>
+          <li>Payment Accounts.</li>
           <li>Join Requests.</li>
           <li>PLL Links.</li>
           </ol>
@@ -97,7 +97,7 @@ paths:
               example:
                 joins:
                     - loyalty_card_id: 51
-                      loyalty_plan_id: 281
+                      loyalty_plan_id: 316
                       loyalty_plan_name: "Wasabi Club"
                       status:
                         state: "pending"
@@ -109,22 +109,9 @@ paths:
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
                         description: "Card Image for Wasabi hero"
                         encoding: "png"                  
-                    - loyalty_card_id: 89
-                      loyalty_plan_id: 105
-                      loyalty_plan_name: "Iceland Bonus Card"
-                      status:
-                        state: "failed"
-                        slug: ACCOUNT_EXISTS
-                        description: "An account with those details already exists"
-                      images:
-                        id: 291
-                        type: 0
-                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Hero_1968x732.png'
-                        description: "Hero image"
-                        encoding: "png"                        
                 loyalty_cards:
                   - id: 81
-                    loyalty_plan_id: 201
+                    loyalty_plan_id: 316
                     loyalty_plan_name: "Wasabi Club"
                     status:
                       state: "authorised"
@@ -192,26 +179,23 @@ paths:
                         payment_scheme: VISA
                         status: active
                   - id: 85
-                    loyalty_plan_id: 124
-                    loyalty_plan_name: "Wasabi Club"
+                    loyalty_plan_id: 105
+                    loyalty_plan_name: "Iceland Bonus Card"
                     status:
-                      state: "authorised"
-                      slug:
-                      description:
+                      state: "failed"
+                      slug: "AUTHRORISATION_FAILED"
+                      description: "Authorisation data rejected by merchant"
                     images:
                       - id: 290
                         type: 0
-                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description: "Card Image for Wasabi hero"
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Iceland_4eQuRsL_b3lE2ua.png'
+                        description: "Card Image for Iceland hero"
                         encoding: "png"                      
                     balance:
-                      updated_at: 1515697663
-                      current_display_value: '150 points'
+                      updated_at: 
+                      current_display_value:
                     transactions:
-                      - id: "100982384448"
-                        timestamp: 1517549941
-                        description: "Test transaction: 5 items"
-                        display_value: "150 points"
+                      []
                     vouchers:
                       []
                     card:
@@ -221,9 +205,7 @@ paths:
                       colour: '#FFFFFF'
                       text_colour: '#FFFFFF'
                     pll_links:
-                      - payment_account_id: 555
-                        payment_scheme: VISA
-                        status: active
+                      []
                 payment_accounts:
                   - id: 555
                     status: 'active'
@@ -267,7 +249,7 @@ paths:
               <li>Balance details.</li>
           </ul>
           </li>
-          <li>Payment Acccounts.</li>
+          <li>Payment Accounts.</li>
           <li>Join Requests.</li>
         </ol>
         <br>**NOTE:** Empty lists at any level in the JSON structure will be returned as\\: <code>key_name: []</code>. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.
@@ -282,7 +264,7 @@ paths:
               example:
                 joins:
                     - loyalty_card_id: 51
-                      loyalty_plan_id: 246
+                      loyalty_plan_id: 316
                       loyalty_plan_name: "Wasabi Club"
                       status:
                         state: "pending"
@@ -294,22 +276,9 @@ paths:
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
                         description: "Card Image for Wasabi hero"
                         encoding: "png"  
-                    - loyalty_card_id: 89
-                      loyalty_plan_id: 246
-                      loyalty_plan_name: "Wasabi Club"
-                      status:
-                        state: "failed"
-                        slug: ACCOUNT_EXISTS
-                        description: "An account with those details already exists"
-                      images:
-                        id: 290
-                        type: 0
-                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description: "Card Image for Wasabi hero"
-                        encoding: "png"  
                 loyalty_cards:
                   - id: 81
-                    loyalty_plan_id: 246
+                    loyalty_plan_id: 316
                     loyalty_plan_name: "Wasabi Club"
                     status:
                       state: "authorised"
@@ -549,7 +518,7 @@ paths:
                       type: integer
                       format: int64
                       example: 290
-                - $ref: '#/components/schemas/LoyaltyPlanOverview'
+                - $ref: '#/components/schemas/LoyaltyPlansOverview'
         '401':
           description: Not authorised, request does not have a valid token
           content:
@@ -642,7 +611,7 @@ paths:
       summary: Add a Loyalty Card
       operationId: POST /loyalty_cards/add
       description: "
-        This will add a <b>Store</b> type <b>Loyalty Card</b> identified by <code>barcode</code> to a users wallet. <b>Store</b> cards are digital representations of a <b>Loyalty Card</b> designed to be shown at the point of sale from the users mobile application.<br><br> 
+        This will add a <b>Store</b> type <b>Loyalty Card</b> identified by <code>barcode</code> to a user's wallet. <b>Store</b> cards are digital representations of a <b>Loyalty Card</b> designed to be shown at the point of sale from the users mobile application.<br><br> 
 
         <h3>Journey Fields</h3>
         Use the fields returned in the <code>journey_fields.add_fields</code> from either of the following endpoints:
@@ -706,7 +675,7 @@ paths:
         - Loyalty Cards
       summary: "Add and Authorise a Loyalty Card"
       operationId: POST /loyalty_cards/add_and_authorise
-      description: "This will add an **Engage** or **PLL** type **Loyalty Card** into a users wallet. Adding authorisation credentials allows a user to see more information about their loyalty membership such as balance and transactions.  Authorisation also enables **PLL** for those **Loyalty Plans** that support it. <br><br>Call this endpoint to create an **Engage** type **Loyalty Card** if one does not exist. <br><br>Calling this endpoint on an existing **Loyalty Card** will return details of the **Loyalty Card** and add it to the users wallet, authorising it if the passed in credentials are correct. 
+      description: "This will add an **Engage** or **PLL** type **Loyalty Card** into a user's wallet. Adding authorisation credentials allows a user to see more information about their loyalty membership such as balance and transactions.  Authorisation also enables **PLL** for those **Loyalty Plans** that support it. <br><br>Call this endpoint to create an **Engage** type **Loyalty Card** if one does not exist. <br><br>Calling this endpoint on an existing **Loyalty Card** will return details of the **Loyalty Card** and add it to the users wallet, authorising it if the passed in credentials are correct. 
 
           <html>
             <body>
@@ -785,6 +754,17 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LoyaltyCardAddAuthoriseRequest'
+            example:
+              loyalty_plan_id: 316
+              account: 
+                add_fields:
+                  credentials:
+                    - credential_slug: card_number
+                      value: '100294385777'
+                authorise_fields:
+                  credentials:
+                    - credential_slug: password
+                      value: 'password123'
   /loyalty_cards/{loyalty_card_id}/authorise:
     put:
       tags:
@@ -887,7 +867,7 @@ paths:
         - Loyalty Cards
       summary: Join a Loyalty Plan
       operationId: POST /loyalty_cards/join
-      description: "This resources reflects the users intent to **Join** a **Loyalty Plan**. Bink passes the intent to the relevant merchant and waits for them to process the request. A successful response from the merchant will see the **Join** resource become an **Engage** or **PLL** type **Loyalty Card**, failure leaves the resource in a failed state with an explanation. The user can delete the failure and try again. New **Join** requests to the same **Loyalty Plan** are independent.
+      description: "This resource reflects the user's intent to **Join** a **Loyalty Plan**. Bink passes the intent to the relevant merchant and waits for them to process the request. A successful response from the merchant will see the **Join** resource become an **Engage** or **PLL** type **Loyalty Card**, failure leaves the resource in a failed state with an explanation. The user can delete the failure and try again. New **Join** requests to the same **Loyalty Plan** are independent.
 
           <html>
             <body>
@@ -1288,10 +1268,41 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties: 
-                  vouchers: 
-                    $ref: '#/components/schemas/Vouchers'
+                $ref: '#/components/schemas/Vouchers'
+              example:
+                vouchers:
+                    - state: "inprogress"
+                      earn_type: "stamps"
+                      reward_text: "Meal Voucher"
+                      headline: "Spend £7.00 or more to get a stamp. Collect 7 stamps to get a Meal Voucher of up to £7 off your next meal"
+                      voucher_code:
+                      barcode_type: 0
+                      progress_display_text: "2/7 stamps"
+                      prefix:
+                      suffix: 'stamps'
+                      current_value: 2
+                      target_value: 7
+                      body_text: "lorem ipsum"
+                      terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                      issued_date: null
+                      expiry_date: null
+                      redeemed_date:
+                    - state: "issued"
+                      earn_type: "stamps"
+                      reward_text: "Meal Voucher"
+                      headline: "Earned"
+                      voucher_code: "5544332211"
+                      barcode_type: 1
+                      progress_display_text:
+                      prefix:
+                      suffix:
+                      current_value: 
+                      target_value: 
+                      body_text: "lorem ipsum"
+                      terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                      issued_date: 1517549941
+                      expiry_date: 1617549941
+                      redeemed_date:
         '401':
           description: Not authorised, request does not have a valid token
           content:
@@ -1567,7 +1578,7 @@ paths:
       description: "Deletes a user from the Bink platform. All associated payment accounts and loyalty cards will be deleted unless associated with another user account. User will be identified using the token passed in the request header"
       responses:
         '202':
-          description: "**Successful**, account will be deleted"
+          description: "**Accepted**, account will be deleted"
         '401':
           description: Client does not have valid token.
           content:
@@ -1772,7 +1783,7 @@ components:
         loyalty_card_id:
           type: integer
           description: Unique identifier for this process
-          example: 556
+          example: 316
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
@@ -1813,6 +1824,7 @@ components:
           pattern: '^[0-9]+$'
         loyalty_plan_id:
           type: integer
+          example: 316
         loyalty_plan_name:
           type: string
           description: "Name of loyalty plan"
@@ -2083,7 +2095,7 @@ components:
           pattern: '^[0-9]+$'
         loyalty_plan_id:
           type: integer
-          example: 246
+          example: 316
           description: The Loyalty Plan to which this Loyalty Card belongs
           minimum: 1
           maximum: 18446744073709552000
@@ -2260,13 +2272,17 @@ components:
           example: 'My Visa'
         images: 
           $ref: '#/components/schemas/Images'
+    LoyaltyPlansOverview:
+      type: array
+      items:
+        $ref: '#/components/schemas/LoyaltyPlanOverview'         
     LoyaltyPlanOverview: 
       type: object
       properties: 
         loyalty_plan_id:
           type: integer
           format: int64
-          example: 109
+          example: 316
         plan_popularity:
           type: integer
           description: Numeric rank for this plan's popularity
@@ -2320,7 +2336,12 @@ components:
         loyalty_plan_id:
           type: integer
           format: int64
-          example: 109
+          example: 316
+        is_in_wallet:
+          type: boolean
+          example: true
+          description: 'Specifies if the user has a loyalty card in their wallet of the given loyalty plan'
+          pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
         plan_popularity:
           type: integer
           description: Numeric rank for this plan's popularity
@@ -2334,7 +2355,7 @@ components:
             has_points:
               type: boolean
               example: true
-              description: Identifies whether there is a balance for this card
+              description: 'Identifies the Loyalty Plan supports showing a balance. NOTE: This can be any type of balance and does not denote it is just a points based plan, it could be GBP, Stamps, Air Miles, etc.'
               pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
             has_transactions:
               type: boolean
@@ -2539,7 +2560,7 @@ components:
             minimum: 1
             maximum: 18446744073709552000
             pattern: '^[0-9]+$'
-            example: 290
+            example: 316
           type:
             type: integer
             minimum: 0
@@ -2878,7 +2899,6 @@ components:
           maxItems: 99
           items:
             type: string
-          example: ["Mrs", "Dr", "Prof"]
           minLength: 0
           maxLength: 50
           pattern: "[\\u0000-\\u2FFF]+"
@@ -3132,23 +3152,27 @@ components:
           example: '2/7 stamps'
         prefix:
           type: string
+          example: '£'
           description: Pre-qualifier for earned and target values - usually a currency symbol
           minLength: 0
           maxLength: 50
           pattern: "[\\u0000-\\u2FFF]+"
         suffix:
           type: string
+          example: 'stamps'
           description: Post-qualifier for earned and target values such as stamps or visits
           minLength: 0
           maxLength: 50
           pattern: "[\\u0000-\\u2FFF]+"
         target_value:
           type: number
+          example: 7
           description: Target spend value
           minimum: 0
           maximum: 9999999
         current_value:
           type: number
+          example: 2
           description: Spent so far against target
           minimum: 0
           maximum: 9999999
