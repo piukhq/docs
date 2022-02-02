@@ -1,8 +1,11 @@
-# Bink API Documentation
+# Bink API Changelog
 
-This project contains Open API Specification documents for Bink APIs. 
-The project also uses the redoc-cli tool to convert YAML files to HTML. 
+***
 
-YAML files named as 'deploy-\*.yaml' will be automatically converted to reader-friendly HTML and served at the docs.\*.gb.bink.com URL.
-
-e.g., The corresponding HTML document for deploy-dev.yaml can be viewed at: docs.dev.gb.bink.com
+## 14/01/2022
+1. Added wallet_overview endpoint
+2. Added loyalty_plans_overview endpoint
+3. Made email optional in POST /token
+4. Added images to payment_accounts in GET /wallet
+5. Added loyalty plan images to joins and loyalty_cards objects in GET /wallet
+6. Changed "loyalty_plan_id" to "loyalty_card_id" in pll_links object in GET /wallet
