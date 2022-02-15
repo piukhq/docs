@@ -220,6 +220,7 @@ paths:
                       []
                 payment_accounts:
                   - id: 555
+                    provider: 'Visa'
                     status: 'active'
                     expiry_month: '12'
                     expiry_year: '24'
@@ -335,6 +336,7 @@ paths:
                       current_display_value: '£0'
                 payment_accounts:
                   - id: 556
+                    provider: 'Visa'
                     status: 'active'
                     expiry_month: '12'
                     expiry_year: '24'
@@ -2303,6 +2305,11 @@ components:
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
+        provider:
+          type: string
+          description: "Provider of payment card. e.g. Visa, Mastercard, American Express"
+          example: 'Visa'
+          pattern: "^[\\u0000-\\u2FFF]{1,200}$"
         status:
           type: string
           example: active
@@ -2365,6 +2372,11 @@ components:
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
+        provider:
+          type: string
+          description: "Provider of payment card. e.g. Visa, Mastercard, American Express"
+          example: 'Visa'
+          pattern: "^[\\u0000-\\u2FFF]{1,200}$"
         status:
           type: string
           example: active
