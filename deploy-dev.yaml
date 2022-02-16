@@ -3106,7 +3106,7 @@ components:
           pattern: "[\\u0000-\\u2FFF]+"
         type:
           type: string
-          description: "The field type. Supported filed types arew:
+          description: "The field type. Supported filed types are:
             <ul>
               <li> text       </li>
               <li> sensitive  </li>
