@@ -2,6 +2,10 @@
 
 ***
 
+## 16/02/2022
+1. Added full list for credential type.
+2. Corrected example where is_acceptance_required = true for consents.
+
 ## 14/01/2022
 1. Added wallet_overview endpoint
 2. Added loyalty_plans_overview endpoint
