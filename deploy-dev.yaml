@@ -2927,7 +2927,7 @@ components:
               consents:
                 - order: 8
                   name: "notification_marketing"
-                  is_acceptance_required: true
+                  is_acceptance_required: false
                   description: "Check this box to receive notifications"
         join_fields:
           description: "The fields that need to be presented to the user in order to become a new member of the Loyalty Plan."
@@ -2996,7 +2996,7 @@ components:
               consents:
                 - order: 7
                   name: "notification_marketing"
-                  is_acceptance_required: true
+                  is_acceptance_required: false
                   description: "Check this box to receive notifications"
         add_fields:
           description: "The fields that need to be presented to the user in order to Add an existing Loyalty Card as Store type to the user's wallet."
@@ -3106,7 +3106,13 @@ components:
           pattern: "[\\u0000-\\u2FFF]+"
         type:
           type: string
-          description: "The field type, E.g. text, boolean, choice (for a drop-down list), etc."
+          description: "The field type. Supported filed types are:
+            <ul>
+              <li> text       </li>
+              <li> sensitive  </li>
+              <li> choice     </li>
+              <li> boolean    </li>
+            </ul>"
           example: text
           pattern: "[\\u0000-\\u2FFF]+"
         is_sensitive:
