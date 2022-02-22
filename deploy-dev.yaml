@@ -69,7 +69,7 @@ paths:
       tags:
         - Wallet
       summary: Retrieve a User’s Wallet
-      operationId: GET /wallets
+      operationId: GET /wallet
       description: "Used to display the full contents of a user's wallet including:
         <br>
           <ol>
@@ -246,6 +246,128 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
+  /wallet/loyalty_cards/{loyalty_card_id}:
+    get:
+      security: 
+        - bearerAuth: []
+      tags:
+        - Wallet
+      summary: Retrieve a single Loyalty Card from a User's Wallet
+      operationId: GET /wallet/loyalty_cards/{loyalty_card_id}
+      description: "Used to display a single loyalty card from a user's wallet, including:
+        <br>
+          <ol>
+              <ul>
+                <li>Status.</li>
+                <li>Images.</li>
+                <li>Balance details.</li>
+                <li>Transactions.</li>
+                <li>Vouchers.</li>
+                <li>PLL Links.</li>
+              </ul>
+            </li>
+            </li>
+          </ol>"
+      parameters:
+        - in: path
+          name: loyalty_card_id
+          description: "The unique resource identifier for the Loyalty Card."
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  loyalty_card: 
+                    $ref: '#/components/schemas/WalletSingleLoyaltyCard'
+              example:
+                    id: 81
+                    loyalty_plan_id: 316
+                    loyalty_plan_name: "Wasabi Club"
+                    status:
+                      state: "authorised"
+                      slug:
+                      description: 
+                    images:
+                      - id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
+                        description: "Card Image for Wasabi hero."
+                        encoding: "png"                      
+                    balance:
+                      updated_at: 1515697663
+                      current_display_value: '2 stamps'
+                    transactions:
+                      - id: "100982384448"
+                        timestamp: 1517549941
+                        description: "Paddington Station £7.45"
+                        display_value: "1 stamp"
+                      - id: "100982345321"
+                        timestamp: 1517549941
+                        description: "Paddington Station £9.55"
+                        display_value: "1 stamp"
+                    vouchers:
+                      - state: "inprogress"
+                        earn_type: "stamps"
+                        reward_text: "Meal Voucher"
+                        headline: "Spend £7.00 or more to get a stamp. Collect 7 stamps to get a Meal Voucher of up to £7 off your next meal"
+                        voucher_code:
+                        barcode_type: 0
+                        progress_display_text: "2/7 stamps"
+                        prefix:
+                        suffix: 'stamps'
+                        current_value: 2
+                        target_value: 7
+                        body_text: null
+                        terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                        issued_date: null
+                        expiry_date: null
+                        redeemed_date:
+                      - state: "issued"
+                        earn_type: "stamps"
+                        reward_text: "Meal Voucher"
+                        headline: "Earned"
+                        voucher_code: "5544332211"
+                        barcode_type: 1
+                        progress_display_text:
+                        prefix:
+                        suffix:
+                        current_value: 
+                        target_value: 
+                        body_text: null
+                        terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                        issued_date: 1517549941
+                        expiry_date: 1617549941
+                        redeemed_date:
+                    card:
+                      barcode: "633174911234567898"
+                      barcode_type: 0
+                      card_number: "633174911234567898"
+                      colour: '#FFFFFF'
+                      text_colour: '#FFFFFF'
+                    pll_links:
+                      - payment_account_id: 555
+                        payment_scheme: VISA
+                        status: active
+        '401':
+          description: Not authorised, request does not have a valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '404':
+          description: "Resource specified could not be found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse404'    
   /wallet_overview:
     get:
       security:
@@ -1181,7 +1303,7 @@ paths:
       tags:
         - Loyalty Cards
       summary: "View Loyalty Card balance"
-      operationId: GET /loyalty_plans/{loyalty_plan_id}/balance
+      operationId: GET /loyalty_cards/{loyalty_card_id}/balance
       description: "Provides current balance information for the user's **Loyalty Card**."
       parameters:
         - in: path
@@ -1221,7 +1343,7 @@ paths:
       tags:
         - Loyalty Cards
       summary: "View Loyalty transactions"
-      operationId: GET /loyalty_plans/{loyalty_plan_id}/transactions
+      operationId: GET /loyalty_cards/{loyalty_card_id}/transactions
       description: "Provides a list of the last 5 Loyalty transactions for the user's **Loyalty Card**"
       parameters:
         - in: path
@@ -1261,7 +1383,7 @@ paths:
       tags:
         - Loyalty Cards
       summary: "View Loyalty Card vouchers"
-      operationId: GET /loyalty_plans/{loyalty_plan_id}/vouchers
+      operationId: GET /loyalty_cards/{loyalty_card_id}/vouchers
       description: "Provides a list of the vouchers attached to the user's **Loyalty Card**. <br>The different Voucher statuses that can be returned are:
         <ul>
           <li><code>in_progress</code></li>
@@ -2143,6 +2265,17 @@ components:
             description: "A list of all Payment Accounts in the user's wallet."
             items:
               $ref: '#/components/schemas/WalletPaymentAccounts'
+
+    WalletSingleLoyaltyCard:
+      type: object
+      properties:
+          loyalty_card:
+            type: array
+            description: "Returns the details of a single loyalty card"
+            items:
+              allOf:
+                - $ref: '#/components/schemas/LoyaltyCards'
+                - $ref: '#/components/schemas/WalletLoyaltyCardDetails'
 
     WalletOverview: 
       type: object
