@@ -3,11 +3,27 @@ openapi: "3.0.0"
 info:
   version: '2.0'
   title: Bink API
-  description: 'This document defines the Bink API URLs, parameters, request bodies, responses. Each operation offers a mock end point. Regex patterns, minLength, and maxLength parameters are for front-end guidance only.'
+  description: "This document defines the Bink API and details:
+    <ul>
+      <li>URLs.</li> 
+      <li>Parameters.</li>
+      <li>Request bodies - Including regex patterns and min/max length of input fields.</li>
+      <li>Responses.</li>
+    </ul>
+
+    The document also offers guidance on how the Bink platform works. This includes detailing business concepts, naming conventions and how to use the API through all supported journeys.
+    <br><br>
+    Document links:
+    <ul>
+      <li> [Version History](API_Change_Log.html)</li>
+      <li> [Appendix](API_Appendix.html)</li>
+    </ul>"
   contact:
     email: mmorar@bink.com
+
   x-logo: 
     url: https://api.gb.bink.com/content/media/logos/bink_with_text.png
+  
 paths:
   /token:
     post:
@@ -424,6 +440,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
+
   /loyalty_plans/{loyalty_plan_id}:
     get:
       security:
@@ -935,6 +952,7 @@ paths:
                 error_slug: "FIELD_VALIDATION_ERROR"
                 fields:
                   - "expected str for dictionary value @ data['email']"
+
       requestBody:
         content:
           application/json:
@@ -1604,6 +1622,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/genericresponse401'
+
 components:
   securitySchemes:
     bearerAuth:
@@ -3452,6 +3471,57 @@ components:
           minimum: 0
           maximum: 99999999999
           example: 1617549941
+
+    join_errors:
+      type: object
+      properties:
+        errors:
+          description: " Supporting information BATTY.
+            <table>
+              <tr>
+                <th>Company</th>
+                <th>Contact</th>
+                <th>Country</th>
+              </tr>
+              <tr>
+                <td>Alfreds Futterkiste</td>
+                <td>Maria Anders</td>
+                <td>Germany</td>
+              </tr>
+              <tr>
+                <td>Centro comercial Moctezuma</td>
+                <td>Francisco Chang</td>
+                <td>Mexico</td>
+              </tr>
+            </table>" 
+ 
+  # appendix:
+  # # post:
+  # #   security:
+  # #     - bearerAuth: []
+  # #   operationId: POST /appendix
+  # tags:
+  #   - Batty Appendix
+  # summary: "Batty Test"      
+  # description: " Supporting information.
+  #   <table>
+  #     <tr>
+  #       <th>Company</th>
+  #       <th>Contact</th>
+  #       <th>Country</th>
+  #     </tr>
+  #     <tr>
+  #       <td>Alfreds Futterkiste</td>
+  #       <td>Maria Anders</td>
+  #       <td>Germany</td>
+  #     </tr>
+  #     <tr>
+  #       <td>Centro comercial Moctezuma</td>
+  #       <td>Francisco Chang</td>
+  #       <td>Mexico</td>
+  #     </tr>
+  #   </table>" 
+
 tags:
   - name: Token
   - name: Users
@@ -3459,3 +3529,4 @@ tags:
   - name: Payment Accounts
   - name: Loyalty Cards
   - name: Wallet
+
