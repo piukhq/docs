@@ -1,0 +1,37 @@
+<html></html>
+<head>
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <style>
+      body {
+      font-family: 'Roboto', sans-serif;
+      font-size: 100%;
+      background-color: gainsboro;
+      }
+   </style>
+</head>
+<body>
+   <h1 id="bink-api-changelog">Bink API Changelog</h1>
+   <hr>
+   <h2 id="16-02-2022">16/02/2022</h2>
+   <ol>
+      <li>Added full list for credential type.</li>
+      <li>Corrected example where is_acceptance_required = true for consents.</li>
+   </ol>
+   <h2 id="14-01-2022">14/01/2022</h2>
+   <ol>
+      <li>Added wallet_overview endpoint</li>
+      <li>Added loyalty_plans_overview endpoint</li>
+      <li>Made email optional in POST /token</li>
+      <li>Added images to payment_accounts in GET /wallet</li>
+      <li>Added loyalty plan images to joins and loyalty_cards objects in GET /wallet</li>
+      <li>Changed &quot;loyalty_plan_id&quot; to &quot;loyalty_card_id&quot; in pll_links object in GET /wallet</li>
+   </ol>
+   <h2 id="15-02-2022">15/02/2022</h2>
+   <ol>
+      <li>Added &#39;provider&#39; to payment_accounts object in GET /wallet and GET /wallet_overview endpoints</li>
+      <li>Changed &#39;barcode_type&#39; to integer in voucher object of GET /wallet and GET /loyalty_cards/{loyalty_card_id}/vouchers</li>
+      <li>Added &#39;is_in_wallet&#39; field in GET /loyalty_plan_overview , GET /loyalty_plans and GET /loyalty_plan/{loyalty_plan_id} to indicate if the given user has a loyalty card of the loyalty plan in their wallet</li>
+      <li>Documentation updates: general formatting and examples updated</li>
+   </ol>
+</body>
+</html>
