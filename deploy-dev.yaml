@@ -3,7 +3,21 @@ openapi: "3.0.0"
 info:
   version: '2.0'
   title: Bink API
-  description: 'This document defines the Bink API URLs, parameters, request bodies, responses. Each operation offers a mock end point. Regex patterns, minLength, and maxLength parameters are for front-end guidance only.'
+  description: "This document defines the Bink API and details the following:
+    <ul>
+      <li>URLs.</li> 
+      <li>Parameters.</li>
+      <li>Request bodies - Including regex patterns and min/max length of input fields.</li>
+      <li>Responses.</li>
+    </ul>
+
+    The document also offers guidance on how the Bink platform works. This includes detailing business concepts, naming conventions and how to use the API through all supported journeys.
+    <br><br>
+    Document links:
+    <ul>
+      <li> [Version History](API_Change_Log.html)</li>
+      <li> [Appendix](API_Appendix.html)</li>
+    </ul>"
   contact:
     email: mmorar@bink.com
   x-logo: 
