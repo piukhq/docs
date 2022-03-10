@@ -12,6 +12,14 @@
 <body>
    <h1 id="bink-api-changelog">Bink API Changelog</h1>
    <hr>
+   <h2 id="10-03-2022">10-03-2022</h2>
+   <ol>
+      <li>Split out current_display_value into consituent parts in balance object of wallet endpoints.</li>
+      <li>Added card object to GET /wallet_overview.</li>
+      <li>Added reward_available to GET /wallet_overview to indicate if there is an issued reward available for the given loyalty card.</li>
+      <li>Added GET /wallet/loyalty_cards/{loyalty_card_id} to retrieve a single loyalty card from the wallet.</li>
+      <li>Added functionality to limit displaying non-issued vouchers to no more than 10.</li>
+   </ol>
    <h2 id="16-02-2022">16/02/2022</h2>
    <ol>
       <li>Added full list for credential type.</li>
