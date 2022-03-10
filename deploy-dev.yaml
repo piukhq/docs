@@ -457,6 +457,7 @@ paths:
                       state: "authorised"
                       slug:
                       description:
+                    reward_available: true
                     images:
                       - id: 290
                         type: 0
@@ -470,6 +471,12 @@ paths:
                       prefix: null
                       suffix: 'stamps'
                       value: 2
+                    card:
+                      barcode: 
+                      barcode_type: 0
+                      card_number: "63317491123434566"
+                      colour: '#FFFFFF'
+                      text_colour: '#FFFFFF'
                   - id: 85
                     loyalty_plan_id: 105
                     loyalty_plan_name: "Iceland Bonus Card"
@@ -477,6 +484,7 @@ paths:
                       state: "authorised"
                       slug:
                       description:
+                    reward_available: false
                     images:
                       - id: 1234
                         type: 0
@@ -486,6 +494,12 @@ paths:
                     balance:
                       updated_at: 1515697663
                       current_display_value: '£0'
+                    card:
+                      barcode: "633174911234567890"
+                      barcode_type: 0
+                      card_number: "633174911234567898"
+                      colour: '#FFFFFF'
+                      text_colour: '#FFFFFF'
                 payment_accounts:
                   - id: 556
                     provider: 'Visa'
@@ -2376,6 +2390,12 @@ components:
           $ref: '#/components/schemas/Images'
         balance:
           $ref: '#/components/schemas/LoyaltyCardBalance'
+        reward_available:
+          type: boolean
+          example: true
+          description: "Indicates whether an issued reward is available for this loyalty card or not."
+        card:
+          $ref: '#/components/schemas/LoyaltyCardProperties'
 
     LoyaltyCards:      
       type: object
@@ -2456,6 +2476,8 @@ components:
           $ref: '#/components/schemas/Images'
         balance:
           $ref: '#/components/schemas/LoyaltyCardBalance'
+        card:
+          $ref: '#/components/schemas/LoyaltyCardProperties'
 
     LoyaltyCardPLLLinks:
       type: object
