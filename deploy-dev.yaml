@@ -303,10 +303,8 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties: 
-                  loyalty_card: 
-                    $ref: '#/components/schemas/WalletSingleLoyaltyCard'
+                allOf:
+                  - $ref: '#/components/schemas/WalletSingleLoyaltyCard'
               example:
                     id: 81
                     loyalty_plan_id: 316
@@ -457,7 +455,6 @@ paths:
                       state: "authorised"
                       slug:
                       description:
-                    reward_available: true
                     images:
                       - id: 290
                         type: 0
@@ -471,12 +468,6 @@ paths:
                       prefix: null
                       suffix: 'stamps'
                       value: 2
-                    card:
-                      barcode: 
-                      barcode_type: 0
-                      card_number: "63317491123434566"
-                      colour: '#FFFFFF'
-                      text_colour: '#FFFFFF'
                   - id: 85
                     loyalty_plan_id: 105
                     loyalty_plan_name: "Iceland Bonus Card"
@@ -484,7 +475,6 @@ paths:
                       state: "authorised"
                       slug:
                       description:
-                    reward_available: false
                     images:
                       - id: 1234
                         type: 0
@@ -494,12 +484,6 @@ paths:
                     balance:
                       updated_at: 1515697663
                       current_display_value: '£0'
-                    card:
-                      barcode: "633174911234567890"
-                      barcode_type: 0
-                      card_number: "633174911234567898"
-                      colour: '#FFFFFF'
-                      text_colour: '#FFFFFF'
                 payment_accounts:
                   - id: 556
                     provider: 'Visa'
@@ -2335,16 +2319,56 @@ components:
             items:
               $ref: '#/components/schemas/WalletPaymentAccounts'
 
-    WalletSingleLoyaltyCard:
+    WalletSingleLoyaltyCard: 
       type: object
       properties:
-          loyalty_card:
-            type: array
-            description: "Returns the details of a single loyalty card"
-            items:
-              allOf:
-                - $ref: '#/components/schemas/LoyaltyCards'
-                - $ref: '#/components/schemas/WalletLoyaltyCardDetails'
+        id:
+          type: integer
+          example: 10683
+          description: "Unique resrouce identifier for this Loyalty Card."
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+        loyalty_plan_id:
+          type: integer
+          example: 316
+          description: "The unique resource identifier for the Loyalty Plan to which the Loyalty Card belongs."
+          minimum: 1
+          maximum: 18446744073709552000
+        loyalty_plan_name:
+          type: string
+          description: "The brand name of the Loyalty Plan."
+          example: "Wasabi Club"
+        status:
+          type: object
+          nullable: true
+          description: The state of the Loyalty Card in a Wallet.
+          properties:
+            state: 
+              type: string
+              example: "active"
+            slug:
+              type: string
+              nullable: true
+              example: null
+              description: "If the Loyalty Card is in a state other than <code>active</code>, there will be a human-readable identifier that is easy to code against."
+            description:
+              type: string
+              nullable: true
+              example: null
+              description: "If the Loyalty Card is in a state other than <code>active</code>, there will be text to describe the state of the Card."
+        images: 
+          $ref: '#/components/schemas/Images'
+        balance:
+          $ref: '#/components/schemas/LoyaltyCardBalance'
+        transactions:
+          $ref: '#/components/schemas/LoyaltyCardTransactions'
+        vouchers:
+          $ref: '#/components/schemas/Vouchers'
+        card:
+          $ref: '#/components/schemas/LoyaltyCardProperties'
+        pll_links:
+          $ref: '#/components/schemas/LoyaltyCardPLLLinks'
 
     WalletOverview: 
       type: object
@@ -2390,12 +2414,6 @@ components:
           $ref: '#/components/schemas/Images'
         balance:
           $ref: '#/components/schemas/LoyaltyCardBalance'
-        reward_available:
-          type: boolean
-          example: true
-          description: "Indicates whether an issued reward is available for this loyalty card or not."
-        card:
-          $ref: '#/components/schemas/LoyaltyCardProperties'
 
     LoyaltyCards:      
       type: object
@@ -2435,6 +2453,7 @@ components:
               nullable: true
               example: null
               description: "If the Loyalty Card is in a state other than <code>active</code>, there will be text to describe the state of the Card."
+    
     LoyaltyCardOverview:
       type: object
       properties:
@@ -2476,8 +2495,6 @@ components:
           $ref: '#/components/schemas/Images'
         balance:
           $ref: '#/components/schemas/LoyaltyCardBalance'
-        card:
-          $ref: '#/components/schemas/LoyaltyCardProperties'
 
     LoyaltyCardPLLLinks:
       type: object
