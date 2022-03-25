@@ -155,7 +155,8 @@ paths:
                       loyalty_currency_name: 'stamps'
                       prefix: null
                       suffix: 'stamps'
-                      value: 2
+                      current_value: 2
+                      target_value: 7
                     transactions:
                       - id: "100982384448"
                         timestamp: 1517549941
@@ -227,7 +228,8 @@ paths:
                       loyalty_currency_name: 
                       prefix: 
                       suffix: 
-                      value: 
+                      current_value: 
+                      target_value:
                     transactions:
                       []
                     vouchers:
@@ -325,7 +327,8 @@ paths:
                       loyalty_currency_name: 'stamps'
                       prefix: null
                       suffix: 'stamps'
-                      value: 2
+                      current_value: 2
+                      target_value: 7
                     transactions:
                       - id: "100982384448"
                         timestamp: 1517549941
@@ -468,7 +471,8 @@ paths:
                       loyalty_currency_name: 'stamps'
                       prefix: null
                       suffix: 'stamps'
-                      value: 2
+                      current_value: 2
+                      target_value: 7
                     card:
                       barcode: 
                       barcode_type: 0
@@ -492,6 +496,11 @@ paths:
                     balance:
                       updated_at: 1515697663
                       current_display_value: '£0'
+                      loyalty_currency_name: 'GBP'
+                      prefix: '£'
+                      suffix: 
+                      current_value: 0
+                      target_value: 
                     card:
                       barcode: "633174911234567890"
                       barcode_type: 0
@@ -2305,12 +2314,18 @@ components:
           minLength: 0
           maxLength: 50
           pattern: "[\\u0000-\\u2FFF]+"
-        value:
+        current_value:
+          type: number
+          example: 2
+          description: "Current value held on the given Loyalty Card."
+          minimum: 0
+          maximum: 9999999
+        target_value:
           type: number
           example: 7
           description: "Target spend value before gaining a reward."
           minimum: 0
-          maximum: 9999999
+          maximum: 999999
           
     Wallet:
       type: object
@@ -3113,6 +3128,7 @@ components:
                 credential_slug: "card_number"
                 type: "text"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 2
@@ -3122,6 +3138,7 @@ components:
                 credential_slug: "email"
                 type: "text"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 3
@@ -3131,6 +3148,7 @@ components:
                 credential_slug: "password"
                 type: "text"
                 is_sensitive: true
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 4
@@ -3139,6 +3157,7 @@ components:
                 credential_slug: "title"
                 type: "choice"
                 is_sensitive: false
+                is_scannable: false
                 choice:
                   - Mr
                   - Mrs
@@ -3157,6 +3176,7 @@ components:
                 credential_slug: "first_name"
                 type: "string"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 6
@@ -3165,6 +3185,7 @@ components:
                 credential_slug: "last_name"
                 type: "string"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               plan_documents:
@@ -3191,6 +3212,7 @@ components:
                 credential_slug: "email"
                 type: "text"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 2
@@ -3200,6 +3222,7 @@ components:
                 credential_slug: "password"
                 type: "text"
                 is_sensitive: true
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 3
@@ -3208,6 +3231,7 @@ components:
                 credential_slug: "title"
                 type: "choice"
                 is_sensitive: false
+                is_scannable: false
                 choice:
                   - Mr
                   - Mrs
@@ -3226,6 +3250,7 @@ components:
                 credential_slug: "first_name"
                 type: "string"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 5
@@ -3234,6 +3259,7 @@ components:
                 credential_slug: "last_name"
                 type: "string"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               plan_documents:
@@ -3259,6 +3285,7 @@ components:
                 credential_slug: "barcode"
                 type: "text"
                 is_sensitive: false
+                is_scannable: true
                 choice: []
                 alternative:
                   order: 1
@@ -3268,6 +3295,7 @@ components:
                   credential_slug: "card_number"
                   type: "text"
                   is_sensitive: false
+                  is_scannable: false
                   choice: []
               plan_documents:
               -
@@ -3286,6 +3314,7 @@ components:
                 credential_slug: "password"
                 type: "text"
                 is_sensitive: true
+                is_scannable: false
                 choice: []
                 alternative:
               plan_documents:
@@ -3367,6 +3396,9 @@ components:
         is_sensitive:
           type: boolean
           description: "Indicates whether or not this field is sensitive and therefore requires special UI controls. For example a Password field."
+        is_scannable:
+          type: boolean
+          description: "Indicates whether or not this field can be scanned for input, such as a barcode"
         choice:
           type: array
           description: "A list of possible values to be presented to the user when the type = choice."
