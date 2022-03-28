@@ -12,7 +12,14 @@
 <body>
    <h1 id="bink-api-changelog">Bink API Changelog</h1>
    <hr>
-   <h2 id="10-03-2022">10-03-2022</h2>
+   <h2 id="28-03-2022">28/03/2022</h2>
+   <ol>
+      <li>Added the following fields to payment_accounts object in GET /wallet and GET /wallet_overview: issuer, type, country, currency_code, last_four_digits.</li>
+      <li>Added target_value to balance object and changed "value" to "current_value" in GET /wallet, GET /wallet_overview and GET /wallet/loyalty_cards/{loyalty_card_id}.</li>
+      <li>Added is_scannable field to all credential fields in GET /loyalty_plans, GET /loyalty_plans/{loyalty_card_id} and GET /loyalty_plans/{loyalty_card_id}/journey_fields to indicate if a credential field can be scanned, such as a barcode.</li>
+      <li>Added GET /loyalty_plans/{loyalty_plan_id}/plan_details endpoint.</li>
+   </ol>
+   <h2 id="10-03-2022">10/03/2022</h2>
    <ol>
       <li>Split out current_display_value into consituent parts in balance object of wallet endpoints.</li>
       <li>Added card object to GET /wallet_overview.</li>
