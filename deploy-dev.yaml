@@ -245,11 +245,16 @@ paths:
                 payment_accounts:
                   - id: 555
                     provider: 'Visa'
+                    issuer: 'Lloyds'
                     status: 'active'
                     expiry_month: '12'
                     expiry_year: '24'
                     name_on_card: 'Jeff Jeffries'
                     card_nickname: 'My Visa'
+                    type: 'debit'
+                    currency_code: 'GBP'
+                    country: 'GB'
+                    last_four_digits: '1234'
                     images:
                       - id: 290
                         type: 0
@@ -508,13 +513,18 @@ paths:
                       colour: '#FFFFFF'
                       text_colour: '#FFFFFF'
                 payment_accounts:
-                  - id: 556
+                  - id: 555
                     provider: 'Visa'
+                    issuer: 'Lloyds'
                     status: 'active'
                     expiry_month: '12'
                     expiry_year: '24'
                     name_on_card: 'Jeff Jeffries'
                     card_nickname: 'My Visa'
+                    type: 'debit'
+                    currency_code: 'GBP'
+                    country: 'GB'
+                    last_four_digits: '1234'
                     images:
                       - id: 290
                         type: 0
@@ -2621,6 +2631,33 @@ components:
           minLength: 1
           maxLength: 200
           pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        type: 
+          type: string
+          description: "Type of payment account."
+          example: "debit"
+          minLength: 1
+          maxLength: 200
+          pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        currency_code:
+          type: string
+          description: "Currency of the payment account."
+          example: "GBP"
+          minLength: 1
+          maxLength: 200
+          pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        country: 
+          type: string
+          description: "Country of the payment account."
+          minLength: 1
+          maxLength: 200
+          pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        last_four_digits:
+          type: string
+          description: "Last four digits of the payment account."
+          minLength: 4
+          maxLength: 4
+          pattern: "^[0-9]{4}$"
+
         images: 
           $ref: '#/components/schemas/Images'  
         pll_links:
@@ -2688,6 +2725,32 @@ components:
           minLength: 1
           maxLength: 200
           pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        type: 
+          type: string
+          description: "Type of payment account."
+          example: "debit"
+          minLength: 1
+          maxLength: 200
+          pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        currency_code:
+          type: string
+          description: "Currency of the payment account."
+          example: "GBP"
+          minLength: 1
+          maxLength: 200
+          pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        country: 
+          type: string
+          description: "Country of the payment account."
+          minLength: 1
+          maxLength: 200
+          pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        last_four_digits:
+          type: string
+          description: "Last four digits of the payment account."
+          minLength: 4
+          maxLength: 4
+          pattern: "^[0-9]{4}$"
         images: 
           $ref: '#/components/schemas/Images'           
 
