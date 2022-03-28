@@ -245,11 +245,16 @@ paths:
                 payment_accounts:
                   - id: 555
                     provider: 'Visa'
+                    issuer: 'Lloyds'
                     status: 'active'
                     expiry_month: '12'
                     expiry_year: '24'
                     name_on_card: 'Jeff Jeffries'
                     card_nickname: 'My Visa'
+                    type: 'debit'
+                    currency_code: 'GBP'
+                    country: 'GB'
+                    last_four_digits: '1234'
                     images:
                       - id: 290
                         type: 0
@@ -508,13 +513,18 @@ paths:
                       colour: '#FFFFFF'
                       text_colour: '#FFFFFF'
                 payment_accounts:
-                  - id: 556
+                  - id: 555
                     provider: 'Visa'
+                    issuer: 'Lloyds'
                     status: 'active'
                     expiry_month: '12'
                     expiry_year: '24'
                     name_on_card: 'Jeff Jeffries'
                     card_nickname: 'My Visa'
+                    type: 'debit'
+                    currency_code: 'GBP'
+                    country: 'GB'
+                    last_four_digits: '1234'
                     images:
                       - id: 290
                         type: 0
@@ -2621,6 +2631,34 @@ components:
           minLength: 1
           maxLength: 200
           pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        type: 
+          type: string
+          description: "Type of payment account. E.g. credit, debit etc."
+          example: "debit"
+          minLength: 1
+          maxLength: 40
+          pattern: "^[\\u0000-\u2FFF]{1,40}$"
+        currency_code:
+          type: string
+          description: "Currency code for the account in accordance with ISO 4217 Alpha-3."
+          example: "GBP"
+          minLength: 1
+          maxLength: 3
+          pattern: "^([A-Za-z]{3}|[0-9]{3})$"
+        country: 
+          type: string
+          description: "The country of origin of the payment account in accordance with ISO 3166-1 Alpha-2."
+          minLength: 1
+          maxLength: 40
+          pattern: "^[\\u0000-\u2FFF]{1,40}"
+        last_four_digits:
+          type: string
+          description: 'The last four digits of the PAN.'
+          example: "9876"
+          minLength: 4
+          maxLength: 4
+          pattern: "^[0-9]{4,4}$"
+
         images: 
           $ref: '#/components/schemas/Images'  
         pll_links:
@@ -2688,6 +2726,33 @@ components:
           minLength: 1
           maxLength: 200
           pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        type: 
+          type: string
+          description: "Type of payment account. E.g. credit, debit etc."
+          example: "debit"
+          minLength: 1
+          maxLength: 40
+          pattern: "^[\\u0000-\u2FFF]{1,40}$"
+        currency_code:
+          type: string
+          description: "Currency code for the account in accordance with ISO 4217 Alpha-3."
+          example: "GBP"
+          minLength: 1
+          maxLength: 3
+          pattern: "^([A-Za-z]{3}|[0-9]{3})$"
+        country: 
+          type: string
+          description: "The country of origin of the payment account in accordance with ISO 3166-1 Alpha-2."
+          minLength: 1
+          maxLength: 40
+          pattern: "^[\\u0000-\u2FFF]{1,40}"
+        last_four_digits:
+          type: string
+          description: 'The last four digits of the PAN.'
+          example: "9876"
+          minLength: 4
+          maxLength: 4
+          pattern: "^[0-9]{4,4}$"
         images: 
           $ref: '#/components/schemas/Images'           
 
