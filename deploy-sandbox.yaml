@@ -813,6 +813,45 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse404'
+  /loyalty_plans/{loyalty_plan_id}/plan_details:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Loyalty Plans
+      summary: Retrieve details for a Loyalty Plan
+      operationId: GET /loyalty_plans/{loyalty_plan_id}/plan_details
+      description: "
+        Returns the <b>Loyalty Plan Details</b> subset of the <b>Loyalty Plan</b> information for the Loyalty Plan id provided in the url
+        "
+      parameters:
+        - in: path
+          name: loyalty_plan_id
+          description: "The unique resource identifier for the Loyalty Plan."
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/PlanDetails'
+        '401':
+          description: Not authorised, request does not have a valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '404':
+          description: "Resource specified could not be found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse404'
   /loyalty_cards/add:
     post:
       security:
@@ -2848,6 +2887,100 @@ components:
           pattern: "[\\u0000-\\u2FFF]+"   
         images: 
           $ref: '#/components/schemas/Images'
+    PlanDetails:
+      type: object
+      properties:
+        company_name:
+          type: string
+          description: "The name of the Loyalty provider."
+          example: "Wasabi, Harvey Nichols, Iceland, etc."
+          minLength: 0
+          maxLength: 200
+          pattern: "[\\u0000-\\u2FFF]+"
+        plan_name:
+          type: string
+          description: "The brand name of the Loyalty Plan."
+          example: "Wasabi Club, Rewards by Harvey Nichols, Iceland Bonus Club, etc."
+          minLength: 0
+          maxLength: 50
+          pattern: "[\\u0000-\\u2FFF]+"
+        plan_label:
+          type: string
+          description: 'The merchant’s name for the instrument when describing the plan itself. E.g., card or account.'
+          example: 'Card'
+          minLength: 0
+          maxLength: 50
+          pattern: "[\\u0000-\\u2FFF]+"
+        plan_url:
+          type: string
+          description: "Url for the Loyalty Plan."
+          example: 'https://www.wasabi.uk.com'
+          maxLength: 2048
+          minLength: 1
+          pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
+        plan_summary:
+          type: string
+          description: Short form description for this Loyalty Plan.
+          example: 'Collect 7 stamps for a £7 OFF Meal Voucher. One stamp can be earned per customer per transaction when the qualifying spend in a single transaction for food & drink purchases totals £7.00 or more in a participating Wasabi store. Ts and Cs apply.'
+          minLength: 0
+          maxLength: 250
+          pattern: "[\\u0000-\\u2FFF]+"
+        plan_description:
+          type: string
+          description: Full description for this Loyalty Plan.
+          example: 'Please note that your vouchers are single-use and cannot be used twice. Show your Wasabi Club reward code in store to redeem £7 off your next meal.\r\nThe voucher will be available to redeem 2 months from the date it is collected. This voucher is non-refundable and cannot be exchanged for cash in part or full and is valid for a single transaction only.'
+          minLength: 0
+          maxLength: 500
+          pattern: "[\\u0000-\\u2FFF]+"
+        redeem_instructions:
+          type: string
+          description: "Explanation of how to redeem rewards or spend accrued Loyalty balances."
+          example: "At checkout, simply tell the cashier how much money you would like to save or redeem, present the barcode below and scan it using the customer facing scanners, as you normally would with your physical card."
+          minLength: 0
+          maxLength: 500
+          pattern: "[\\u0000-\\u2FFF]+"
+        plan_register_info:
+          type: string
+          description: "Instructions for unregistered Loyalty Cards."
+          example: 'You have added a temporary card. You’ll need to register it to enjoy the full benefits of the programme.'
+          minLength: 0
+          maxLength: 500
+          pattern: "[\\u0000-\\u2FFF]+"
+        join_incentive:
+          type: string
+          description: "Describes any incentives for Joining the Loyalty Plan. E.g. *Get 100 points as a new member!*"
+          example: Join now and receive free points.
+          minLength: 0
+          maxLength: 200
+          pattern: "[\\u0000-\\u2FFF]+"
+        category:
+          type: string
+          description: Market sector or retail category.
+          example: Household
+          minLength: 0
+          maxLength: 200
+          pattern: "[\\u0000-\\u2FFF]+"
+        tiers:
+          description: For plans with multiple membership levels.
+          type: array
+          minItems: 0
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Silver
+                minLength: 0
+                maxLength: 50
+                pattern: "[\\u0000-\\u2FFF]+"
+                description: "The name of the tier."
+              description:
+                type: string
+                example: Double points earned.
+                minLength: 0
+                maxLength: 50
+                pattern: "[\\u0000-\\u2FFF]+"
+                description: "Brief explanation of what the tier provides."
     LoyaltyPlan:
       type: object
       properties:
@@ -2949,100 +3082,7 @@ components:
         images:
           $ref: '#/components/schemas/Images'
         plan_details:
-          description: Information about the Loyalty Plan.
-          type: object
-          properties:
-            company_name:
-              type: string
-              description: "The name of the Loyalty provider."
-              example: "Wasabi, Harvey Nichols, Iceland, etc."
-              minLength: 0
-              maxLength: 200
-              pattern: "[\\u0000-\\u2FFF]+"
-            plan_name:
-              type: string
-              description: "The brand name of the Loyalty Plan."
-              example: "Wasabi Club, Rewards by Harvey Nichols, Iceland Bonus Club, etc."
-              minLength: 0
-              maxLength: 50
-              pattern: "[\\u0000-\\u2FFF]+"
-            plan_label:
-              type: string
-              description: 'The merchant’s name for the instrument when describing the plan itself. E.g., card or account.'
-              example: 'Card'
-              minLength: 0
-              maxLength: 50
-              pattern: "[\\u0000-\\u2FFF]+"
-            plan_url:
-              type: string
-              description: "Url for the Loyalty Plan."
-              example: 'https://www.wasabi.uk.com'
-              maxLength: 2048
-              minLength: 1
-              pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
-            plan_summary:
-              type: string
-              description: Short form description for this Loyalty Plan.
-              example: 'Collect 7 stamps for a £7 OFF Meal Voucher. One stamp can be earned per customer per transaction when the qualifying spend in a single transaction for food & drink purchases totals £7.00 or more in a participating Wasabi store. Ts and Cs apply.'
-              minLength: 0
-              maxLength: 250
-              pattern: "[\\u0000-\\u2FFF]+"
-            plan_description:
-              type: string
-              description: Full description for this Loyalty Plan.
-              example: 'Please note that your vouchers are single-use and cannot be used twice. Show your Wasabi Club reward code in store to redeem £7 off your next meal.\r\nThe voucher will be available to redeem 2 months from the date it is collected. This voucher is non-refundable and cannot be exchanged for cash in part or full and is valid for a single transaction only.'
-              minLength: 0
-              maxLength: 500
-              pattern: "[\\u0000-\\u2FFF]+"
-            redeem_instructions:
-              type: string
-              description: "Explanation of how to redeem rewards or spend accrued Loyalty balances."
-              example: "At checkout, simply tell the cashier how much money you would like to save or redeem, present the barcode below and scan it using the customer facing scanners, as you normally would with your physical card."
-              minLength: 0
-              maxLength: 500
-              pattern: "[\\u0000-\\u2FFF]+"
-            plan_register_info:
-              type: string
-              description: "Instructions for unregistered Loyalty Cards."
-              example: 'You have added a temporary card. You’ll need to register it to enjoy the full benefits of the programme.'
-              minLength: 0
-              maxLength: 500
-              pattern: "[\\u0000-\\u2FFF]+"
-            join_incentive:
-              type: string
-              description: "Describes any incentives for Joining the Loyalty Plan. E.g. *Get 100 points as a new member!*"
-              example: Join now and receive free points.
-              minLength: 0
-              maxLength: 200
-              pattern: "[\\u0000-\\u2FFF]+"
-            category:
-              type: string
-              description: Market sector or retail category.
-              example: Household
-              minLength: 0
-              maxLength: 200
-              pattern: "[\\u0000-\\u2FFF]+"
-            tiers:
-              description: For plans with multiple membership levels.
-              type: array
-              minItems: 0
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    example: Silver
-                    minLength: 0
-                    maxLength: 50
-                    pattern: "[\\u0000-\\u2FFF]+"
-                    description: "The name of the tier."
-                  description:
-                    type: string
-                    example: Double points earned.
-                    minLength: 0
-                    maxLength: 50
-                    pattern: "[\\u0000-\\u2FFF]+"
-                    description: "Brief explanation of what the tier provides."
+          $ref: '#/components/schemas/PlanDetails'
         journey_fields:
           $ref: '#/components/schemas/JourneyFieldSet'
         content:
