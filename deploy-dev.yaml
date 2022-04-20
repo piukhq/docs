@@ -208,13 +208,16 @@ paths:
                     pll_links:
                       - payment_account_id: 555
                         payment_scheme: VISA
-                        status: active
+                        status: 
+                          state: "active"
+                          slug:
+                          description:
                   - id: 85
                     loyalty_plan_id: 105
                     loyalty_plan_name: "Iceland Bonus Card"
                     status:
                       state: "failed"
-                      slug: "AUTHRORISATION_FAILED"
+                      slug: "AUTHORISATION_FAILED"
                       description: "Authorisation data rejected by merchant."
                     images:
                       - id: 290
@@ -241,7 +244,12 @@ paths:
                       colour: '#FFFFFF'
                       text_colour: '#FFFFFF'
                     pll_links:
-                      []
+                      - payment_account_id: 555
+                        payment_scheme: VISA
+                        status: 
+                          state: "inactive"
+                          slug: "LOYALTY_CARD_NOT_AUTHORISED"
+                          description: "The Loyalty Card is not authorised so no PLL link can be created."
                 payment_accounts:
                   - id: 555
                     provider: 'Visa'
@@ -262,12 +270,18 @@ paths:
                         description: "Card Image VISA."
                         encoding: "png"                    
                     pll_links:
-                    - loyalty_card_id: 92744
+                    - loyalty_card_id: 81
                       loyalty_plan: 'Wasabi'
-                      status: 'active'
-                    - loyalty_card_id: 12445
+                      status: 
+                        state: "active"
+                        slug:
+                        description:
+                    - loyalty_card_id: 85
                       loyalty_plan: 'Iceland'
-                      status: 'active'
+                      status: 
+                        state: "inactive"
+                        slug: "LOYALTY_CARD_NOT_AUTHORISED"
+                        description: "The Loyalty Card is not authorised so no PLL link can be created."
         '401':
           description: Not authorised, request does not have a valid token.
           content:
@@ -385,7 +399,10 @@ paths:
                     pll_links:
                       - payment_account_id: 555
                         payment_scheme: VISA
-                        status: active
+                        status: 
+                          state: "active"
+                          slug:
+                          description:
         '401':
           description: Not authorised, request does not have a valid token
           content:
@@ -459,6 +476,9 @@ paths:
                   - id: 81
                     loyalty_plan_id: 316
                     loyalty_plan_name: "Wasabi Club"
+                    is_fully_pll_linked: true
+                    pll_linked_payment_accounts: 1
+                    total_payment_accounts: 1
                     status:
                       state: "authorised"
                       slug:
@@ -487,6 +507,9 @@ paths:
                   - id: 85
                     loyalty_plan_id: 105
                     loyalty_plan_name: "Iceland Bonus Card"
+                    is_fully_pll_linked: true
+                    pll_linked_payment_accounts: 1
+                    total_payment_accounts: 1
                     status:
                       state: "authorised"
                       slug:
@@ -2461,7 +2484,7 @@ components:
             description: "A list of all Loyalty Cards in the user's wallet."
             items:
               allOf:
-                - $ref: '#/components/schemas/LoyaltyCards'
+                - $ref: '#/components/schemas/LoyaltyCardsOverview'
                 - $ref: '#/components/schemas/WalletOverviewLoyaltyCardDetails'
         payment_accounts:
             type: array
@@ -2522,7 +2545,7 @@ components:
         status:
           type: object
           nullable: true
-          description: The state of the Loyalty Card in a Wallet.
+          description: "The state of the Loyalty Card in a Wallet."
           properties:
             state: 
               type: string
@@ -2537,14 +2560,13 @@ components:
               nullable: true
               example: null
               description: "If the Loyalty Card is in a state other than <code>active</code>, there will be text to describe the state of the Card."
-    
-    LoyaltyCardOverview:
+    LoyaltyCardsOverview:
       type: object
       properties:
         id:
           type: integer
           example: 10683
-          description: Unique ID for this card
+          description: "Unique resrouce identifier for this Loyalty Card."
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
@@ -2556,11 +2578,24 @@ components:
           maximum: 18446744073709552000
         loyalty_plan_name:
           type: string
-          example: "Iceland Bonus Card"
+          description: "The brand name of the Loyalty Plan."
+          example: "Wasabi Club"
+        is_fully_pll_linked:
+          type: boolean
+          description: "Indicates whether or not the given Loyalty Card is PLL linked to all Payment Accounts in the user's wallet."
+          example: false
+        pll_linked_payment_accounts:
+          type: integer
+          description: "The number of Payment Accounts that are PLL linked to the given Loyalty Card."
+          example: 1
+        total_payment_accounts: 
+          type: integer
+          description: "The total number of Payment Accounts that the user has in their wallet."
+          example: 3 
         status:
           type: object
           nullable: true
-          description: state of the loyalty card in a wallet
+          description: "The state of the loyalty card in a wallet."
           properties:
             state: 
               type: string
@@ -2584,11 +2619,11 @@ components:
 
     LoyaltyCardPLLLinks:
       type: object
-      description: "List of the Payment Accounts with an <code>active</code> PLL link to the Loyalty Card."
+      description: "List of the Payment Accounts with an <code>active</code>, <code>pending</code> or <code>inactive</code> PLL link to the Loyalty Card."
       properties:
         payment_account:
           type: object
-          description: "Details of the PLL linked Payment Accounts."
+          description: "Details of the Payment Accounts associated with the Loyalty Card."
           properties:
             id:
               type: integer
@@ -2600,13 +2635,24 @@ components:
               description: "The name of the payment processor."
               example: 'VISA'
             status:
-              type: string
-              description: "The status of the PLL link:
-                <ul>
-                  <li><code>active</code></li>
-                  <li><code>pending</code></li>
-                </ul>"
-              example: active
+              type: object
+              properties: 
+                state:
+                  type: string
+                  description: "The state of the PLL link
+                    <ul>
+                      <li><code>active</code></li>
+                      <li><code>pending</code></li>
+                      <li><code>inactive</code></li></ul>"
+                  example: "pending"
+                slug:
+                  type: string
+                  description: "If the Loyalty Card or Payment Account is in a state other than <code>active</code>, there will be a human-readable identifier that is easy to code against."
+                  example: "LOYALTY_CARD_PENDING"
+                description:
+                  type: string
+                  description: "If the Loyalty Card or Payment Account is in a state other than <code>active</code>, there will be text to describe the state of the PLL link."
+                  example: "When the Loyalty Card becomes authorised, the PLL link will automatically go active."
 
     WalletPaymentAccounts:
       type: object
@@ -2813,14 +2859,26 @@ components:
             example: 'Iceland'
             description: "The brand name of the Loyalty Plan."
           status:
-            type: string
-            example: 'active'
-            description: "The status of the PLL link:
+            type: object
+            properties: 
+                state:
+                  type: string
+                  description: "The status of the PLL link:
                 <ul>
                   <li><code>active</code></li>
-                  <li><code>pending</code></li>                  
+                  <li><code>pending</code></li>   
+                  <li><code>inactive</code></li>  
                 </ul>"
-          
+                  example: "inactive"
+                slug:
+                  type: string
+                  example: "LOYALTY_CARD_NOT_AUTHORISED"
+                  description: "If the Loyalty Card or Payment Account is in a state other than <code>active</code>, there will be a human-readable identifier that is easy to code against."
+                description:
+                  type: string
+                  example: "The Loyalty Card is not authorised so no PLL link can be created"
+                  description: "If the Loyalty Card or Payment Account is in a state other than <code>active</code>, there will be text to describe the state of the PLL link."
+
     LoyaltyPlansOverview:
       type: array
       items:
