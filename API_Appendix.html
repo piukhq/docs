@@ -263,6 +263,80 @@
             <td>Something unespected has happened. First get the user to delete the Loyalty Card and retry the Registration journey. If the issue persists contact Bink support.</td>
          </tr>
       </table>
+      <h2>Statuses for PLL Links</h2>
+      Status gets returned through the API (<code>GET /wallet</code> ; <code>GET /wallet/loyalty_cards/id</code>) in the below structure: <br>
+        <pre>
+            <code>status": {</code>  
+                <code>"state": "active",</code>
+                <code>"slug": null,</code>
+                <code>"description": null</code>
+                <code>},</code>
+        </pre>
+      Please see the below table for the different values that can populate these fields. There are notes to explain how the status could get returned, with advice on how to fix issues.<br>
+      <br>
+      <table>
+         <tr>
+            <th>State</th>
+            <th>Slug</th>
+            <th>Description</th>
+            <th>Notes</th>
+            <th>Corrective Action</th>
+         </tr>
+         <tr>
+            <td>active</td>
+            <td>null</td>
+            <td>null</td>
+            <td>The PLL link is active.</td>
+            <td>No action required.</td>
+            </tr>
+         <tr>
+            <td>inactive</td>
+            <td>PAYMENT_ACCOUNT_INACTIVE</td>
+            <td>The Payment Account is not active so no PLL link can be created.</td>
+            <td>When the Payment Account is not active, no PLL link is created and the user will not earn loyalty by paying with that Payment Account.</td>
+            <td>User must delete and re-add the Payment Account.</td>
+            </tr>
+         <tr>
+            <td>pending</td>
+            <td>PAYMENT_ACCOUNT_PENDING</td>
+            <td>When the Payment Account becomes active, the PLL link will automatically go active.</td>
+            <td>While the Payment Account is pending the PLL link will not be active and the user will not earn loyalty by paying with that Payment Account.</td>
+            <td>No action required. Wait for the Payment Account to go into an active state.</td>
+             </tr>
+         <tr>
+            <td>inactive</td>
+            <td>LOYALTY_CARD_NOT_AUTHORISED</td>
+            <td>The Loyalty Card is not authorised so no PLL link can be created.</td>
+            <td>When the Loyalty Card is not authorised, there is no active PLL link.</td>
+            <td>User must resubmit the <code>auth_fields</code> for the Loyalty Card with <code>PUT /loyalty_cards/{loyalty_card_id}/authorise</code>.</td>
+         </tr>
+         <tr>
+            <td>inactive</td>
+            <td>PAYMENT_ACCOUNT_AND_LOYALTY_CARD_INACTIVE</td>
+            <td>The Payment Account and Loyalty Card are not active/authorised so no PLL link can be created.</td>
+            <td>When the Loyalty Card is not authorised and the Payment Account is not active, no PLL link is created.</td>
+            <td>The user must do two things:
+                <ol>
+                    <li>Resubmit the <code>auth_fields</code> for the Loyalty Card with <code>PUT /loyalty_cards/{loyalty_card_id}/authorise</code>.</li> 
+                    <li>Delete and re-add the Payment Account.</li></td>
+                </ol>    
+            </tr>
+         <tr>
+            <td>pending</td>
+            <td>LOYALTY_CARD_PENDING</td>
+            <td>When the Loyalty Card becomes authorised, the PLL link will automatically go active.</td></td>
+            <td>While the Loyalty Card is pending the PLL link will not be active and the user will not earn loyalty on this Loyalty Card.</td>
+            <td>No action required. Wait for the Loyalty Card to go into an authorised state.</td>
+            </tr>
+         <tr>
+            <td>inactive</td>
+            <td>UBIQUITY_COLLISION</td>
+            <td>There is already a Loyalty Card from the same Loyalty Plan PLL linked to this Payment Account.</td>
+            <td>No two Loyalty Cards from the same Loyalty Plan can be PLL linked to the same Payment Account. There is no PLL link, so earned loyalty will not be applied to this Loyalty Card. Loyalty will be applied to the first Card from this Loyalty Plan added in another Wallet.</td>
+            <td>The user should remove the Loyalty Card and replace with the one that is PLL linked in another Wallet.</td>
+         </tr>
+      </table>
+      <br>
    </body>
    </body>
 </html>
