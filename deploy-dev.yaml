@@ -2892,6 +2892,11 @@ components:
           format: int64
           example: 316
           description: "Resource identifier."
+        is_in_wallet:
+          type: boolean
+          example: true
+          description: 'Specifies if the user has a Loyalty Card in their wallet for this Loyalty Plan.'
+          pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'          
         plan_popularity:
           type: integer
           description: Numeric rank for this plan's popularity.
