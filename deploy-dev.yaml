@@ -15,8 +15,8 @@ info:
     <br><br>
     Document links:
     <ul>
-      <li> [Version History](API_Change_Log.html)</li>
-      <li> [Appendix](API_Appendix.html)</li>
+      <li>[Version History](changelog.html)</li>
+      <li>[Appendix](appendix.html)</li>
     </ul>"
   contact:
     email: mmorar@bink.com
@@ -2864,11 +2864,11 @@ components:
                 state:
                   type: string
                   description: "The status of the PLL link:
-                <ul>
-                  <li><code>active</code></li>
-                  <li><code>pending</code></li>   
-                  <li><code>inactive</code></li>  
-                </ul>"
+                    <ul>
+                      <li><code>active</code></li>
+                      <li><code>pending</code></li>   
+                      <li><code>inactive</code></li>  
+                    </ul>"
                   example: "inactive"
                 slug:
                   type: string

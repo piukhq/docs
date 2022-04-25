@@ -356,13 +356,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/v2/loyalty_plans",
+					"raw": "{{base_url}}/v2/loyalty_plans_overview",
 					"host": [
 						"{{base_url}}"
 					],
 					"path": [
 						"v2",
-						"loyalty_plans"
+						"loyalty_plans_overview"
 					]
 				}
 			},
