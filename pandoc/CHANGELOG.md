@@ -2,6 +2,17 @@
 title: Changelog
 output: html_document
 ---
+## 17-05-2022
+
+- Added the following fields to GET `/wallet_overview` endpoint:
+    - `is_fully_pll_linked`
+    - `pll_linked_payment_accounts`
+    - `total_payment_accounts`
+- Added the following fields to `loyalty_cards.pll_links` and `payment_accounts.pll_links` objects in GET `/wallet` endpoint:
+    -  `state`
+    -  `slug`
+    -  `description`
+
 ## 25-04-2022
 
 - Added Changelog and Appendix files
