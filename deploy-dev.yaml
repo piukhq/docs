@@ -1035,25 +1035,30 @@ paths:
         <html><body>
         <ol>
           <li>Authorise an exisitng **Store** type **Loyalty Card** promoting it to be an **Engage** or **PLL** type.</li>
-          <li>Correct or update credentials on an **Engage** or **PLL** type **Loyalty Card**.</lil>
+          <li>Correct or update credentials on an **Engage** or **PLL** type **Loyalty Card**.</li>
         </ol>
       
         </body><br>
           Authorised cards allow a user to see more information about their loyalty membership such as balance and transactions.<br>
-          Authorisation also enables **PLL** for those **Loyalty Plans** that support it. 
+          Authorisation also enables <b>PLL</b> for those <b>Loyalty Plans</b> that support it. 
 
         <h3>Journey Fields</h3>
-          Use the <code>journey_fields.authorise_fields</code> returned from either of the following endpoints:
+          Use the <code>journey_fields.add_fields</code> and <code>journey_fields.authorise_fields</code> returned from either of the following endpoints:
         <ul>
           <li> <code>GET /loyalty plans</code> </li>
           <li> <code>GET /loyalty_plans/{loyalty_plan_id}</code> </li>
         </ul>
-        Or from <code>authorise_fields</code> in the endpoint:
+        Or from <code>add_fields</code> and <code>authorise_fields</code> in the endpoint:
         <ul>
           <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
         </ul>
 
-        <br><br><b>NOTE</b>: A successfully authorised <b>Loyalty Card</b> that is of type <b>PLL</b> will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>.
+        <br><br><b>NOTE</b>:<br>
+            <ul>
+              <li>A successfully authorised <b>Loyalty Card</b> that is of type <b>PLL</b> will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>. </li>
+              <li>The <code>id</code> returned on a successful <code>PUT</code> may be different from the <code>loyalty_card_id</code> passed in the request if the <code>add</code> credential in the request is different from the original resource.</li>
+            </ul> 
+        <br><br> 
         </body></html>"
       parameters:
         - in: path
@@ -1069,6 +1074,10 @@ paths:
               $ref: '#/components/schemas/LoyaltyCardAuthorisationRequest'
             example:
               account:
+                add_fields:
+                  credentials:
+                  - credential_slug: 'card_number'
+                    value: '100024235346'
                 authorise_fields:
                   credentials:
                   - credential_slug: 'password'
@@ -2103,25 +2112,40 @@ components:
           type: object
           description: "Container for required journey fields."
           properties:
-            authorise_fields:
+            add_fields:
               type: object
-              description: "The fields that need to be presented to the user in order to Authorise a Store type Loyalty Card already in a user's wallet."
-              properties:
+              description: "The fields that need to be presented to the user in order to Add an existing Loyalty Card as Store type to the user's wallet."
+              properties: 
                 credentials:
+                  minItems: 0
                   type: array
                   description: "Personal information required to complete the selected journey."
                   items:
                     $ref: '#/components/schemas/CredentialRequest'
+            authorise_fields:
+              type: object
+              description: "The fields that need to be presented to the user in order to Authorise the Loyalty Card."
+              properties: 
+                credentials: 
+                  minItems: 0
+                  type: array
+                  description: "Personal information required to complete the selected journey."
+                  items:
+                    allOf: 
+                    - $ref: '#/components/schemas/CredentialRequest'
+                    example:
+                      credential_slug: 'postcode'
+                      value: 'SL5 5TD'   
                 plan_documents:
                   type: array
                   description: "Legal copy to be displayed and sometimes accepted by the user."
                   items:
-                    $ref: '#/components/schemas/DocumentBase'  
+                    $ref: '#/components/schemas/DocumentBase'                                       
                 consents: 
                   type: array
                   description: "Brand marketing information to be displayed and sometimes accepted by the user."
                   items:
-                    $ref: '#/components/schemas/ConsentRequest'                                         
+                    $ref: '#/components/schemas/ConsentRequest'                                        
     WalletJoins:
       type: object
       properties:
