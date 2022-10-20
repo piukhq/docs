@@ -1,8 +1,23 @@
+---
 openapi: "3.0.0"
 info:
   version: '2.0'
   title: Bink API
-  description: 'This document defines the Bink API URLs, parameters, request bodies, responses. Each operation offers a mock end point. Regex patterns, minLength, and maxLength parameters are for front-end guidance only.'
+  description: "This document defines the Bink API and details the following:
+    <ul>
+      <li>URLs.</li> 
+      <li>Parameters.</li>
+      <li>Request bodies - Including regex patterns and min/max length of input fields.</li>
+      <li>Responses.</li>
+    </ul>
+
+    The document also offers guidance on how the Bink platform works. This includes detailing business concepts, naming conventions and how to use the API through all supported journeys.
+    <br><br>
+    Document links:
+    <ul>
+      <li>[Version History](changelog.html)</li>
+      <li>[Appendix](appendix.html)</li>
+    </ul>"
   contact:
     email: mmorar@bink.com
   x-logo: 
@@ -12,23 +27,22 @@ paths:
     post:
       tags:
         - Token
-      summary: "User registration, login and token refresh"
-      description: "Use this endpoint to get a token for a new user, exisitng user or retrieve a refresh token.<br/><br/><h2>For grant_type\\: b2b</h2>The <code>POST /token</code> request requires an Authorization header with a Bearer token which is a signed JWT with the following claims:<body>
-      <ul>
-        <li><h3>Header claims:</h3></li>
+      summary: "User registration, login and token refresh."
+      description: "Use this endpoint to get a token for a new user, exisitng user or retrieve a refresh token.<br/><br/><h2>For grant_type\\: b2b</h2>The <code>POST /token</code> request requires an Authorization header with a Bearer token which is a signed JWT with the following claims:
+        <ul>
+          <li><h3>Header claims:</h3></li>
         <ul>
           <li>**kid**: Key ID - Refers to the key-pair used to sign this JWT. **REQUIRED** </li>
         </ul>
           <li><h3>Body claims:</h3></li>
          <ul>
           <li>**sub**: Subject - A unique, immutable identifier for the user. If this ID does not exist, a new user will be created using this value and the email provided in the email claim. **REQUIRED**</li>
-          <li>**email**: User’s e-mail address - Must be unique for the channel and is changeable only via the <code>POST /email_update</code> service. **REQUIRED** (currently being reviewed to allow optionality).</li>
+          <li>**email**: User’s e-mail address - Must be unique for the channel and is changeable only via the <code>POST /email_update</code> service. **OPTIONAL**</li>
           <li>**iat**: Issued At - This claim identifies the time at which the JWT was issued. This claim can be used to determine the age of the JWT. Its value MUST be a number containing a NumericDate value. **REQUIRED**</li>
           <li>**exp**: Expiry - This claim identifies the time at which the JWT expires. **REQUIRED**</li>
-          </ul>
-          </body></html>
-          The client must sign the JWT with a private key. Bink will validate the signature against the public key and issue an access_token (see 200 response) if valid, or an error (400 or 401) if not.<br>
-          <h2>For grant_type:refresh_token</h2>Requires an Authorisation header with a Bearer token. Provide the refresh_token value that will have been issued in a previous request to <code>POST /token</code>. This string is opaque to the client."
+        </ul>
+        The client must sign the JWT with a private key. Bink will validate the signature against the public key and issue an access_token (see 200 response) if valid, or an error (400 or 401) if not.<br>
+        <h2>For grant_type:refresh_token</h2>Requires an Authorisation header with a Bearer token. Provide the refresh_token value that will have been issued in a previous request to <code>POST /token</code>. This string is opaque to the client."
       operationId: token
       security:
         - bearerAuth: []
@@ -61,8 +75,7 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/TokenResponseError'
-                  - example:
-                      error: 'invalid_client'
+
   /wallet:
     get:
       security:
@@ -70,21 +83,36 @@ paths:
       tags:
         - Wallet
       summary: Retrieve a User’s Wallet
-      operationId: GET /wallets
-      description: "Used to display the full contents of a user's wallet including: <br><html><body><ol>
-      <li>Loyalty Cards:
-        <ul>
-          <li>Balance details.</li>
-          <li>Transactions.</li>
-          <li>Vouchers.</li>
-        </ul>
-      </li>  
-      <li>Payment Acccounts.</li>
-      <li>Join Requests.</li>
-      <li>PLL Links.</li>
-      </ol></body></html>
-      <br>**NOTE:** Empty lists at any level in the JSON structure will be returned as\\: <code>key_name: []</code>. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.
-      <br><br>In accordance with rules above, <code>joins</code>, <code>loyalty_cards</code>, and <code>payment_accounts</code> may be returned as empty lists."
+      operationId: GET /wallet
+      description: "Used to display the full contents of a user's wallet including:
+        <br>
+          <ol>
+            <li>Join Requests.
+              <ul>
+                <li>Status.</li>
+                <li>Images.</li>
+              </ul>
+            </li>
+            <li>Loyalty Cards:
+              <ul>
+                <li>Status.</li>
+                <li>Images.</li>
+                <li>Balance details.</li>
+                <li>Transactions.</li>
+                <li>Vouchers.</li>
+                <li>PLL Links.</li>
+              </ul>
+            </li>
+            <li>Payment Accounts.
+              <ul>
+                <li>Status.</li>
+                <li>Images.</li>
+                <li>PLL Links.</li>
+              </ul>
+            </li>
+          </ol>
+        <br>**NOTE:** Empty lists at any level in the JSON structure will be returned as\\: <code>key_name: []</code>. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.
+        <br><br>In accordance with rules above, <code>joins</code>, <code>loyalty_cards</code>, and <code>payment_accounts</code> may be returned as empty lists."
       responses:
         '200':
           description: "**Successful**"
@@ -95,45 +123,46 @@ paths:
               example:
                 joins:
                     - loyalty_card_id: 51
-                      loyalty_plan_id: 21
+                      loyalty_plan_id: 316
+                      loyalty_plan_name: "Wasabi Club"
                       status:
                         state: "pending"
                         slug:
-                        description:
+                        description: 
+                      card:
+                        barcode: null
+                        barcode_type: 0
+                        card_number: null
+                        colour: '#FFFFFF'
+                        text_colour: '#FFFFFF'  
                       images:
                         id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"                  
-                    - loyalty_card_id: 89
-                      loyalty_plan_id: 43
-                      status:
-                        state: "failed"
-                        slug: ACCOUNT_EXISTS
-                        description: "An account with those details already exists"
-                      images:
-                        id: 291
-                        type: 0
-                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Hero_1968x732.png'
-                        description": "Hero image"
-                        encoding": "png"                        
+                        description: "Card Image for Wasabi hero."
+                        encoding: "png"                  
                 loyalty_cards:
                   - id: 81
-                    loyalty_plan_id: 201
+                    loyalty_plan_id: 316
+                    loyalty_plan_name: "Wasabi Club"
                     status:
                       state: "authorised"
                       slug:
-                      description:
+                      description: 
                     images:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"                      
+                        description: "Card Image for Wasabi hero."
+                        encoding: "png"                      
                     balance:
                       updated_at: 1515697663
                       current_display_value: '2 stamps'
+                      loyalty_currency_name: 'stamps'
+                      prefix: null
+                      suffix: 'stamps'
+                      current_value: 2
+                      target_value: 7
                     transactions:
                       - id: "100982384448"
                         timestamp: 1517549941
@@ -155,7 +184,7 @@ paths:
                         suffix: 'stamps'
                         current_value: 2
                         target_value: 7
-                        body_text: "lorem ipsum"
+                        body_text: null
                         terms_and_conditions: "http://baseurl/terms/terms.html%22"
                         issued_date: null
                         expiry_date: null
@@ -171,7 +200,7 @@ paths:
                         suffix:
                         current_value: 
                         target_value: 
-                        body_text: "lorem ipsum"
+                        body_text: null
                         terms_and_conditions: "http://baseurl/terms/terms.html%22"
                         issued_date: 1517549941
                         expiry_date: 1617549941
@@ -181,30 +210,37 @@ paths:
                       barcode_type: 0
                       card_number: "633174911234567898"
                       colour: '#FFFFFF'
+                      text_colour: '#FFFFFF'
                     pll_links:
                       - payment_account_id: 555
                         payment_scheme: VISA
-                        status: active
+                        status: 
+                          state: "active"
+                          slug:
+                          description:
                   - id: 85
-                    loyalty_plan_id: 124
+                    loyalty_plan_id: 105
+                    loyalty_plan_name: "Iceland Bonus Card"
                     status:
-                      state: "authorised"
-                      slug:
-                      description:
+                      state: "failed"
+                      slug: "AUTHORISATION_FAILED"
+                      description: "Authorisation data rejected by merchant."
                     images:
                       - id: 290
                         type: 0
-                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"                      
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Iceland_4eQuRsL_b3lE2ua.png'
+                        description: "Card Image for Iceland hero."
+                        encoding: "png"                      
                     balance:
-                      updated_at: 1515697663
-                      current_display_value: '150 points'
+                      updated_at: 
+                      current_display_value:
+                      loyalty_currency_name: 
+                      prefix: 
+                      suffix: 
+                      current_value: 
+                      target_value:
                     transactions:
-                      - id: "100982384448"
-                        timestamp: 1517549941
-                        description: "Test transaction: 5 items"
-                        display_value: "150 points"
+                      []
                     vouchers:
                       []
                     card:
@@ -212,30 +248,168 @@ paths:
                       barcode_type: 0
                       card_number: "633174911234567898"
                       colour: '#FFFFFF'
+                      text_colour: '#FFFFFF'
                     pll_links:
                       - payment_account_id: 555
                         payment_scheme: VISA
-                        status: active
+                        status: 
+                          state: "inactive"
+                          slug: "LOYALTY_CARD_NOT_AUTHORISED"
+                          description: "The Loyalty Card is not authorised so no PLL link can be created."
                 payment_accounts:
                   - id: 555
+                    provider: 'Visa'
+                    issuer: 'Lloyds'
                     status: 'active'
                     expiry_month: '12'
                     expiry_year: '24'
                     name_on_card: 'Jeff Jeffries'
                     card_nickname: 'My Visa'
+                    type: 'debit'
+                    currency_code: 'GBP'
+                    country: 'GB'
+                    last_four_digits: '1234'
                     images:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/VISA.png'
-                        description": "Card Image VISA"
-                        encoding": "png"                    
+                        description: "Card Image VISA."
+                        encoding: "png"                    
                     pll_links:
-                    - loyalty_card_id: 92744
+                    - loyalty_card_id: 81
                       loyalty_plan: 'Wasabi'
-                      status: 'active'
-                    - loyalty_card_id: 12445
+                      status: 
+                        state: "active"
+                        slug:
+                        description:
+                    - loyalty_card_id: 85
                       loyalty_plan: 'Iceland'
-                      status: 'active'
+                      status: 
+                        state: "inactive"
+                        slug: "LOYALTY_CARD_NOT_AUTHORISED"
+                        description: "The Loyalty Card is not authorised so no PLL link can be created."
+        '401':
+          description: Not authorised, request does not have a valid token.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+  /wallet/loyalty_cards/{loyalty_card_id}:
+    get:
+      security: 
+        - bearerAuth: []
+      tags:
+        - Wallet
+      summary: Retrieve a single Loyalty Card from a User's Wallet
+      operationId: GET /wallet/loyalty_cards/{loyalty_card_id}
+      description: "Used to display a single loyalty card from a user's wallet, including:
+        <br>
+          <ol>
+              <ul>
+                <li>Status.</li>
+                <li>Images.</li>
+                <li>Balance details.</li>
+                <li>Transactions.</li>
+                <li>Vouchers.</li>
+                <li>Card features.</li>
+                <li>PLL Links.</li>
+              </ul>
+            </li>
+            </li>
+          </ol>"
+      parameters:
+        - in: path
+          name: loyalty_card_id
+          description: "The unique resource identifier for the Loyalty Card."
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/WalletSingleLoyaltyCard'
+              example:
+                    id: 81
+                    loyalty_plan_id: 316
+                    loyalty_plan_name: "Wasabi Club"
+                    status:
+                      state: "authorised"
+                      slug:
+                      description: 
+                    images:
+                      - id: 290
+                        type: 0
+                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
+                        description: "Card Image for Wasabi hero."
+                        encoding: "png"                      
+                    balance:
+                      updated_at: 1515697663
+                      current_display_value: '2 stamps'
+                      loyalty_currency_name: 'stamps'
+                      prefix: null
+                      suffix: 'stamps'
+                      current_value: 2
+                      target_value: 7
+                    transactions:
+                      - id: "100982384448"
+                        timestamp: 1517549941
+                        description: "Paddington Station £7.45"
+                        display_value: "1 stamp"
+                      - id: "100982345321"
+                        timestamp: 1517549941
+                        description: "Paddington Station £9.55"
+                        display_value: "1 stamp"
+                    vouchers:
+                      - state: "inprogress"
+                        earn_type: "stamps"
+                        reward_text: "Meal Voucher"
+                        headline: "Spend £7.00 or more to get a stamp. Collect 7 stamps to get a Meal Voucher of up to £7 off your next meal"
+                        voucher_code:
+                        barcode_type: 0
+                        progress_display_text: "2/7 stamps"
+                        prefix:
+                        suffix: 'stamps'
+                        current_value: 2
+                        target_value: 7
+                        body_text: null
+                        terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                        issued_date: null
+                        expiry_date: null
+                        redeemed_date:
+                      - state: "issued"
+                        earn_type: "stamps"
+                        reward_text: "Meal Voucher"
+                        headline: "Earned"
+                        voucher_code: "5544332211"
+                        barcode_type: 1
+                        progress_display_text:
+                        prefix:
+                        suffix:
+                        current_value: 
+                        target_value: 
+                        body_text: null
+                        terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                        issued_date: 1517549941
+                        expiry_date: 1617549941
+                        redeemed_date:
+                    card:
+                      barcode: "633174911234567898"
+                      barcode_type: 0
+                      card_number: "633174911234567898"
+                      colour: '#FFFFFF'
+                      text_colour: '#FFFFFF'
+                    pll_links:
+                      - payment_account_id: 555
+                        payment_scheme: VISA
+                        status: 
+                          state: "active"
+                          slug:
+                          description:
         '401':
           description: Not authorised, request does not have a valid token
           content:
@@ -243,6 +417,13 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
+        '404':
+          description: "Resource specified could not be found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse404'    
   /wallet_overview:
     get:
       security:
@@ -251,17 +432,31 @@ paths:
         - Wallet
       summary: Retrieve a User’s Wallet Overview
       operationId: GET /wallet_overview
-      description: "Used to display the high level contents of a user's wallet including: <br><html><body><ol>
-      <li>Loyalty Cards:
-        <ul>
-          <li>Balance details.</li>
-        </ul>
-      </li>  
-      <li>Payment Acccounts.</li>
-      <li>Join Requests.</li>
-      </ol></body></html>
-      <br>**NOTE:** Empty lists at any level in the JSON structure will be returned as\\: <code>key_name: []</code>. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.
-      <br><br>In accordance with rules above, <code>joins</code>, <code>loyalty_cards</code>, and <code>payment_accounts</code> may be returned as empty lists."     
+      description: "Used to display the high level contents of a user's wallet including:
+        <br>
+          <ol>
+            <li>Join Requests.
+              <ul>
+                <li>Status.</li>
+                <li>Images.</li>
+              </ul>
+            </li>
+            <li>Loyalty Cards:
+              <ul>
+                <li>Status.</li>
+                <li>Images.</li>
+                <li>Balance details.</li>
+              </ul>
+            </li>
+            <li>Payment Accounts.
+              <ul>
+                <li>Status.</li>
+                <li>Images.</li>
+              </ul>
+            </li>
+          </ol>
+        <br>**NOTE:** Empty lists at any level in the JSON structure will be returned as\\: <code>key_name: []</code>. Other objects will be returned with all keys and associated values or with null keyword if blank, empty or unavailable.
+        <br><br>In accordance with rules above, <code>joins</code>, <code>loyalty_cards</code>, and <code>payment_accounts</code> may be returned as empty lists."     
       responses:
         '200':
           description: "**Successful**"
@@ -272,76 +467,106 @@ paths:
               example:
                 joins:
                     - loyalty_card_id: 51
-                      loyalty_plan_id: 246
+                      loyalty_plan_id: 316
                       loyalty_plan_name: "Wasabi Club"
                       status:
                         state: "pending"
                         slug:
                         description:
+                      card:
+                        barcode: null
+                        barcode_type: 0
+                        card_number: null
+                        colour: '#FFFFFF'
+                        text_colour: '#FFFFFF'  
                       images:
                         id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"  
-                    - loyalty_card_id: 89
-                      loyalty_plan_id: 246
-                      loyalty_plan_name: "Wasabi Club"
-                      status:
-                        state: "failed"
-                        slug: ACCOUNT_EXISTS
-                        description: "An account with those details already exists"
-                      images:
-                        id: 290
-                        type: 0
-                        url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"  
+                        description: "Card Image for Wasabi hero."
+                        encoding: "png"  
                 loyalty_cards:
                   - id: 81
-                    loyalty_plan_id: 201
+                    loyalty_plan_id: 316
+                    loyalty_plan_name: "Wasabi Club"
+                    is_fully_pll_linked: true
+                    pll_linked_payment_accounts: 1
+                    total_payment_accounts: 1
                     status:
                       state: "authorised"
                       slug:
                       description:
+                    reward_available: true
                     images:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_hero_1968x732.png'
-                        description": "Card Image for Wasabi hero"
-                        encoding": "png"
+                        description: "Card Image for Wasabi hero."
+                        encoding: "png"
                     balance:
                       updated_at: 1515697663
                       current_display_value: '2 stamps'
+                      loyalty_currency_name: 'stamps'
+                      prefix: null
+                      suffix: 'stamps'
+                      current_value: 2
+                      target_value: 7
+                    card:
+                      barcode: 
+                      barcode_type: 0
+                      card_number: "63317491123434566"
+                      colour: '#FFFFFF'
+                      text_colour: '#FFFFFF'
                   - id: 85
                     loyalty_plan_id: 105
                     loyalty_plan_name: "Iceland Bonus Card"
+                    is_fully_pll_linked: true
+                    pll_linked_payment_accounts: 1
+                    total_payment_accounts: 1
                     status:
                       state: "authorised"
                       slug:
                       description:
+                    reward_available: false
                     images:
                       - id: 1234
                         type: 0
                         url: 'schemes/Iceland_Card.png'
-                        description": "Iceland Slimming World hero card"
-                        encoding": "png"
+                        description: "Iceland Slimming World hero card."
+                        encoding: "png"
                     balance:
                       updated_at: 1515697663
                       current_display_value: '£0'
+                      loyalty_currency_name: 'GBP'
+                      prefix: '£'
+                      suffix: 
+                      current_value: 0
+                      target_value: 
+                    card:
+                      barcode: "633174911234567890"
+                      barcode_type: 0
+                      card_number: "633174911234567898"
+                      colour: '#FFFFFF'
+                      text_colour: '#FFFFFF'
                 payment_accounts:
-                  - id: 556
+                  - id: 555
+                    provider: 'Visa'
+                    issuer: 'Lloyds'
                     status: 'active'
                     expiry_month: '12'
                     expiry_year: '24'
                     name_on_card: 'Jeff Jeffries'
                     card_nickname: 'My Visa'
+                    type: 'debit'
+                    currency_code: 'GBP'
+                    country: 'GB'
+                    last_four_digits: '1234'
                     images:
                       - id: 290
                         type: 0
                         url: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/VISA.png'
-                        description": "Card Image VISA"
-                        encoding": "png" 
+                        description: "Card Image VISA."
+                        encoding: "png" 
         '401':
           description: Not authorised, request does not have a valid token
           content:
@@ -357,22 +582,53 @@ paths:
         - Loyalty Plans
       summary: Retrieve all Loyalty Plans
       operationId: GET /loyalty_plans
-      description: "Returns information for all defined **Loyalty Plans** supported by Bink that are included in the partner channel. Information includes:
-      <html><body>
-        <ol>
-          <li>All field information to support Loyalty Card journeys:
-            <ul>
-              <li>Add.</li>
-              <li>Authorise.</li>
-              <li>Join.</li>
-              <li>Register.</li>
-            </ul>
-          <li>Features of a Loyalty Plan.</li>
-          <li>Loyalty Plan Images.</li>
-          <li>Descriptive information for a Loyalty Plan.</li>
-        </ol>
-       </body></html>
-       <br>This information can be used in the consuming application to provide the user with details about supported Loyalty Plans."
+      description: "Returns information for all <b>Loyalty Plans</b> supported by Bink included in the partner channel.<br>
+        <html>
+            <body>
+              A <b>Loyalty Plan</b> is the membership scheme offered by supported retailers. <b>Loyalty Plans</b> have three types (see <code>plan_features.plan_type</code>)<br>
+              <ul>
+                <li> <b>Store</b> - A user adds their <b>Loyalty Card</b> via scanning the barcode. The digital representation of this card is stored in the user’s wallet, can be presented at point of sale in store.</li>
+                <li> <b>Engage</b> - A user provides additional information in order to prove ownership of a <b>Loyalty Card</b> and authorises it. Authorised <b>Loyalty Cards</b> provide access to additional information about the loyalty membership, such as such as balance, transactions and vouchers.<br>
+                NOTE: <b>Engage</b> type <b>Loyalty Plans</b> might also support Joining and Registering.
+                <li> <b>PLL</b> - As per <b>Engage</b> but also supports auto-points collection.</li>
+              </ul>
+
+
+              <h3>Journey Fields</h3>
+              A journey is a process by which the user adds their <b>Loyalty Card</b> into their wallet or requests to become a new member of a supported <b>Loyalty Plan</b>.
+              Bink supports the following journeys: 
+              <ul>
+                <li> <b>Add.</b> </li>
+                <li> <b>Authorise.</b> </li>
+                <li> <b>Register.</b> </li>
+                <li> <b>Join.</b> </li>
+              </ul>
+
+              The user must provide certain pieces of information in order to complete a journey. The information required is detailed in <code>journey_fields</code> . Not all <b>Loyalty Plans</b> support the same journeys. The presence of the <code>_field</code> objects below denotes which journeys the <b>Loyalty Plan</b> supports.
+
+              <ul>
+                <li> <code>register_ghost_card_fields</code></li>
+                  <ul>
+                    <li> Physical <b>Loyalty Cards</b> picked up in store that have not yet been registered with the supported <b>Loyalty Plan</b> are called <b>Ghostcards</b>. </li>
+                  </ul> 
+                <li> <code>join_fields</code>
+                  <ul>
+                    <li> Allows the user to request to Join a supported <b>Loyalty Plan</b>.</li>
+                  </ul>
+                <li> <code>add_fields</code> </li>
+                  <ul>
+                    <li> Adds a Store type <b>Loyalty Card</b> into a user’s wallet.</li>
+                  </ul>
+                <Li> <code>authorise_fields</code></Li>
+                  <ul>
+                    <li>Used to authorise an Engage or PLL type <b>Loyalty Card</b> initially added as a Store card.</li>
+                  </ul>
+              </ul>
+
+          The API supports adding Loyalty Cards in two stages. For example if a <b>Loyalty Plan</b> is of type PLL, the user can Add their <b>Loyalty Card</b> to their wallet and Authorise it later. Or if a <b>Loyalty Plan</b> is of Engage type and supports registration, the user can Add their <b>Loyalty Card</b> to their wallet and Register it later.<br>
+          Within each of the <code>_fields</code> objects there will be <code>credentials</code> and potentially <code>plan_documents</code> and <code>consents</code>. All of these fields need to be presented to the user so the selected journey can be completed using the appropriate <code>POST or PUT /loyalty_card/</code> endpoint.
+            </body>
+          </html>"
       responses:
         '200':
           description: "**Successful**"
@@ -395,26 +651,57 @@ paths:
         - Loyalty Plans
       summary: Retrieve a Loyalty Plan
       operationId: GET /loyalty_plans/{loyalty_plan_id}
-      description: "Returns information for the specified **Loyalty Plan** supported by Bink included in the partner channel. Information includes:
-      <html><body>
-        <ol>
-          <li>All field information to support Loyalty Card journeys:
+      description: "Returns information for the specified <b>Loyalty Plan</b> supported by Bink included in the partner channel.<br>
+        <html>
+          <body>
+            A <b>Loyalty Plan</b> is the membership scheme offered by supported retailers. <b>Loyalty Plans</b> have three types (see <code>plan_features.plan_type</code>)<br>
             <ul>
-              <li>Add.</li>
-              <li>Authorise.</li>
-              <li>Join.</li>
-              <li>Register.</li>
+              <li> <b>Store</b> - A user adds their <b>Loyalty Card</b> via scanning the barcode. The digital representation of this card is stored in the user’s wallet, can be presented at point of sale in store.</li>
+              <li> <b>Engage</b> - A user provides additional information in order to prove ownership of a <b>Loyalty Card</b> and authorises it. Authorised <b>Loyalty Cards</b> provide access to additional information about the loyalty membership, such as such as balance, transactions and vouchers.<br>
+              NOTE: <b>Engage</b> type <b>Loyalty Plans</b> might also support Joining and Registering.
+              <li> <b>PLL</b> - As per <b>Engage</b> but also supports auto-points collection.</li>
             </ul>
-          <li>Features of the Loyalty Plan.</li>
-          <li>Loyalty Plan Images.</li>
-          <li>Descriptive information for the Loyalty Plan.</li>
-        </ol>
-       </body></html>
-       <br>This information can be used in the consuming application to provide the user with details about the supported Loyalty Plan."
+
+
+            <h3>Journey Fields</h3>
+            A journey is a process by which the user adds their <b>Loyalty Card</b> into their wallet or requests to become a new member of a supported <b>Loyalty Plan</b>.
+            Bink supports the following journeys: 
+            <ul>
+              <li> <b>Add.</b> </li>
+              <li> <b>Authorise.</b> </li>
+              <li> <b>Register.</b> </li>
+              <li> <b>Join</b>. </li>
+            </ul>
+
+            The user must provide certain pieces of information in order to complete a journey. The information required is detailed in <code>journey_fields</code> . Not all <b>Loyalty Plans</b> support the same journeys. The presence of the <code>_field</code> objects below denotes which journeys the <b>Loyalty Plan</b> supports.
+
+            <ul>
+              <li> <code>register_ghost_card_fields</code></li>
+                <ul>
+                  <li> Physical <b>Loyalty Cards</b> picked up in store that have not yet been registered with the supported <b>Loyalty Plan</b> are called <b>Ghostcards</b>. </li>
+                </ul> 
+              <li> <code>join_fields</code>
+                <ul>
+                  <li> Allows the user to request to Join a supported <b>Loyalty Plan</b>.</li>
+                </ul>
+              <li> <code>add_fields</code> </li>
+                <ul>
+                  <li> Adds a Store type <b>Loyalty Card</b> into a user’s wallet.</li>
+                </ul>
+              <Li> <code>authorise_fields</code></Li>
+                <ul>
+                  <li>Used to authorise an Engage or PLL type <b>Loyalty Card</b> initially added as a Store card.</li>
+                </ul>
+            </ul>
+
+        The API supports adding Loyalty Cards in two stages. For example if a <b>Loyalty Plan</b> is of type PLL, the user can Add their <b>Loyalty Card</b> to their wallet and Authorise it later. Or if a <b>Loyalty Plan</b> is of Engage type and supports registration, the user can Add their <b>Loyalty Card</b> to their wallet and Register it later.<br>
+        Within each of the <code>_fields</code> objects there will be <code>credentials</code> and potentially <code>plan_documents</code> and <code>consents</code>. All of these fields need to be presented to the user so the selected journey can be completed using the appropriate <code>POST or PUT /loyalty_card/</code> endpoint.
+          </body>
+        </html>"
       parameters:
         - in: path
           name: loyalty_plan_id
-          description: Loyalty_Plan_Id
+          description: "The unique resource identifier for the Loyalty Plan."
           required: true
           schema:
             type: integer
@@ -447,15 +734,22 @@ paths:
         - Loyalty Plans
       summary: Retrieve Loyalty Plan Overview
       operationId: GET /loyalty_plans_overview
-      description: "Returns a subset of all **Loyalty Plan** information for all defined **Loyalty Plans** supported by Bink that are included in the partner channel. Information includes:
-      <html><body>
+      description: "Returns a subset of all <b>Loyalty Plan</b> information for all defined <b>Loyalty Plans</b> supported by Bink that are included in the partner channel. Information includes:
         <ol>
-          <li>Features of a Loyalty Plan.</li>
-          <li>Loyalty Plan Images.</li>
-          <li>Descriptive information for a Loyalty Plan.</li>
+          <li>Features of a <b>Loyalty Plan</b></li>
+          <li><b>Loyalty Plan</b> Images</li>
+          <li>Descriptive information for a <b>Loyalty Plan</b>.</li>
         </ol>
-       </body></html>
-       <br>This information can be used in the consuming application to provide the user with details about supported Loyalty Plans."
+        <br>This information can be used in the consuming application to provide the user with a list of supported <b>Loyalty Plans</b><br>
+
+
+        A <b>Loyalty Plan</b> is the membership scheme offered by supported retailers. <b>Loyalty Plans</b> have three types (see <code>plan_features.plan_type</code>)<br>
+        <ul>
+          <li> <b>Store</b> - A user adds their <b>Loyalty Card</b> via scanning the barcode. The digital representation of this card is stored in the user’s wallet, can be presented at point of sale in store.</li>
+          <li> <b>Engage</b> - A user provides additional information in order to prove ownership of a <b>Loyalty Card</b> and authorises it. Authorised <b>Loyalty Cards</b> provide access to additional information about the loyalty membership, such as such as balance, transactions and vouchers.<br>
+            NOTE: <b>Engage</b> type <b>Loyalty Plans</b> might also support Joining and Registering.
+            <li><b>PLL</b> - As per <b>Engage</b> but also supports auto-points collection.</li>
+        </ul>"
       responses:
         '200':
           description: "**Successful**"
@@ -469,7 +763,8 @@ paths:
                       type: integer
                       format: int64
                       example: 290
-                - $ref: '#/components/schemas/LoyaltyPlanOverview'
+                      description: "Resource identifier."
+                - $ref: '#/components/schemas/LoyaltyPlansOverview'
         '401':
           description: Not authorised, request does not have a valid token
           content:
@@ -485,20 +780,43 @@ paths:
         - Loyalty Plans
       summary: Retrieve journey fields for a Loyalty Plan
       operationId: GET /loyalty_plans/{loyalty_plan_id}/journey_fields
-      description: "This endpoint returns all the fields a user needs to complete in order to follow available journeys in the specified **Loyalty Plan** supported by Bink included in the partner channel. Journeys are: 
-      <html><body>
-        <ol>
-          <li>Adding a Loyalty Card.</li>
-          <li>Authorising a Loyalty Card.</li>
-          <li>Registering a Ghostcard.</li>
-          <li>Joining a Loyalty Plan.</li>
-        </ol>
-       </body></html> 
-          <br>The fields are displayed in the consuming application to capture user details and consents in order to process the journey."
+      description: "
+        A journey is a process by which the user adds their <b>Loyalty Card</b> into their wallet or requests to become a new member of a supported <b>Loyalty Plan</b>.
+        Bink supports the following journeys: 
+        <ul>
+          <li> <b>Add.</b> </li>
+          <li> <b>Authorise.</b> </li>
+          <li> <b>Register.</b> </li>
+          <li> <b>Join</b>. </li>
+        </ul>
+
+        The user must provide certain pieces of information in order to complete a journey. The information required is detailed in <code>journey_fields</code> . Not all <b>Loyalty Plans</b> support the same journeys. The presence of the <code>_field</code> objects below denotes which journeys the <b>Loyalty Plan</b> supports.
+
+        <ul>
+          <li> <code>register_ghost_card_fields</code></li>
+            <ul>
+              <li> Physical <b>Loyalty Cards</b> picked up in store that have not yet been registered with the supported <b>Loyalty Plan</b> are called <b>Ghostcards</b>. </li>
+            </ul> 
+          <li> <code>join_fields</code>
+            <ul>
+              <li> Allows the user to request to Join a supported <b>Loyalty Plan</b>.</li>
+            </ul>
+          <li> <code>add_fields</code> </li>
+            <ul>
+              <li> Adds a Store type <b>Loyalty Card</b> into a user’s wallet.</li>
+            </ul>
+          <Li> <code>authorise_fields</code></Li>
+            <ul>
+              <li>Used to authorise an Engage or PLL type <b>Loyalty Card</b> initially added as a Store card.</li>
+            </ul>
+        </ul>
+
+        The API supports adding Loyalty Cards in two stages. For example if a <b>Loyalty Plan</b> is of type PLL, the user can Add their <b>Loyalty Card</b> to their wallet and Authorise it later. Or if a <b>Loyalty Plan</b> is of Engage type and supports registration, the user can Add their <b>Loyalty Card</b> to their wallet and Register it later.<br>
+        Within each of the <code>_fields</code> objects there will be <code>credentials</code> and potentially <code>plan_documents</code> and <code>consents</code>. All of these fields need to be presented to the user so the selected journey can be completed using the appropriate <code>POST or PUT /loyalty_card/</code> endpoint."
       parameters:
         - in: path
           name: loyalty_plan_id
-          description: Loyalty_Plan_Id
+          description: "The unique resource identifier for the Loyalty Plan."
           required: true
           schema:
             type: integer
@@ -515,7 +833,47 @@ paths:
                       type: integer
                       format: int64
                       example: 290
+                      description: "Resource identifier."
                 - $ref: '#/components/schemas/JourneyFieldSet'
+        '401':
+          description: Not authorised, request does not have a valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '404':
+          description: "Resource specified could not be found"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse404'
+  /loyalty_plans/{loyalty_plan_id}/plan_details:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - Loyalty Plans
+      summary: Retrieve details for a Loyalty Plan
+      operationId: GET /loyalty_plans/{loyalty_plan_id}/plan_details
+      description: "
+        Returns the <b>Loyalty Plan Details</b> subset of the <b>Loyalty Plan</b> information for the Loyalty Plan id provided in the url
+        "
+      parameters:
+        - in: path
+          name: loyalty_plan_id
+          description: "The unique resource identifier for the Loyalty Plan."
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/PlanDetails'
         '401':
           description: Not authorised, request does not have a valid token
           content:
@@ -538,7 +896,19 @@ paths:
         - Loyalty Cards
       summary: Add a Loyalty Card
       operationId: POST /loyalty_cards/add
-      description: "This will add a **Store** type **Loyalty Card** identified by a single credential field, usually <code>card_number</code> or <code>barcode</code>, to a users wallet. **Store** cards are digital representations of a **Loyalty Card** designed to be shown at the point of sale from the users mobile application.<br><br> Call this endpoint to create a **Store** type **Loyalty Card** if one does not exist. <br><br>Calling this endpoint on an existing **Loyalty Card** will return the <code>loyalty_card_id</code> and add it to the users wallet."
+      description: "
+        This will add a <b>Store</b> type <b>Loyalty Card</b> identified by <code>barcode</code> to a user's wallet. <b>Store</b> cards are digital representations of a <b>Loyalty Card</b> designed to be shown at the point of sale from the user's mobile application.<br><br> 
+
+        <h3>Journey Fields</h3>
+        Use the fields returned in the <code>journey_fields.add_fields</code> from either of the following endpoints:
+        <ul>
+          <li> <code>GET /loyalty plans</code> </li>
+          <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+        </ul>
+        Or from <code>add_fields</code> in the endpoint:
+        <ul>
+          <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+        </ul>"
       requestBody:
         content:
           application/json:
@@ -572,7 +942,7 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
         '422':
-          description: "**Unprocessable entity** Submitted credentials did not pass validation. One or more fields in the request did not pass the required validation**"
+          description: "**Unprocessable entity** One or more fields in the request did not pass the required validation"
           content:
             application/json:
               schema:
@@ -591,10 +961,30 @@ paths:
         - Loyalty Cards
       summary: "Add and Authorise a Loyalty Card"
       operationId: POST /loyalty_cards/add_and_authorise
-      description: "This will add an **Engage** or **PLL** type Loyalty Card into a users wallet. Adding authorisation credentials allows a user to see more information about their loyalty membership such as balance and transactions.  Authorisation also enables PLL for those Loyalty Plans that support it. <br><br>Call this endpoint to create an **Engage** type Loyalty Card if one does not exist. <br><br>Calling this endpoint on an existing Loyalty Card will return details of the Loyalty Card and add it to the users wallet, authorising it if the passed in credentials are correct. <br><br>**NOTE**: <br><li>If the card is a PLL type, success will automatically create PLL links to available Payment Accounts. <li>Some Loyalty Plans might not have any ADD fields, only AUTH fields, still use this endpoint to add cards of this nature."
+      description: "This will add an **Engage** or **PLL** type **Loyalty Card** into a user's wallet. Adding authorisation credentials allows a user to see more information about their loyalty membership such as balance and transactions.  Authorisation also enables **PLL** for those **Loyalty Plans** that support it. <br><br>Call this endpoint to create an **Engage** type **Loyalty Card** if one does not exist. <br><br>Calling this endpoint on an existing **Loyalty Card** will return details of the **Loyalty Card** and add it to the user's wallet, authorising it if the passed in credentials are correct. 
+          <html>
+            <body>
+              <h3>Journey Fields</h3>
+              You will need to combine the <code>journey_fields.add_fields</code> and <code>journey_fields.authorise_fields</code> returned from either of the following endpoints:
+              <ul>
+                <li> <code>GET /loyalty plans</code> </li>
+                <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+              </ul>
+              Or from <code>add_fields</code> and <code>authorise_fields</code> in the endpoint:
+              <ul>
+                <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+              </ul>
+            <br><br><b>NOTE</b>: <br>
+            <ul>
+              <li>If the card is a <b>PLL</b> type, success will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>. </li>
+              <li>Some <b>Loyalty Plans</b> might not have any ADD fields, only AUTH fields, still use this endpoint to add and authorise <b>Loyalty Cards</b> of this type.</li>
+              <li>Even if Authorisation fails, the <b>Loyalty Card</b> will still be added to the user's wallet as a <b>Store</b> type card.</li>
+            </ul>
+            </body>
+          </html>"
       responses:
         '200':
-          description: "**OK** Response contains resource ID. <br><br>Returned in cases where: <li>Card already added and authorised, or<li>Add and authorisation still in progress"
+          description: "**OK** Response contains resource ID."
           content:
             application/json:
               schema:
@@ -621,7 +1011,7 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
         '409':
-          description: "**Conflict:** This request conflicts with the target resource's internal state. Possible error codes and messages:<pre>**ALREADY_ADDED**: Card already added. Use POST /loyalty_cards/authorise to authorise this card.<p/><p/>**ALREADY_AUTHORISED**: Card already authorised. Use POST /loyalty_cards/authorise to modify authorisation credentials.</pre>"
+          description: "**Conflict:** This request conflicts with the target resource's internal state."
           content:
             application/json:
               schema:
@@ -631,7 +1021,7 @@ paths:
                       error_message: "Card already added. Use POST /loyalty_cards/authorise to authorise this card."
                       error_slug: "ALREADY_ADDED"
         '422':
-          description: '**Unprocessable entity** One or more fields in the request did not pass the required validation. Possible error codes and messages:<pre>**FIELD_VALIDATION_ERROR**: Could not validate fields.<p/><p/>**CARD_CREDENTIALS_INCORRECT**: Credentials provided are not correct.</pre>'
+          description: '**Unprocessable entity** One or more fields in the request did not pass the required validation.'
           content:
             application/json:
               schema:
@@ -646,7 +1036,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LoyaltyCardAddAuthoriseRequest'
+              $ref: '#/components/schemas/LoyaltyCardAddAndAuthoriseRequest'
+        description: "Loyalty Card Registration Request."
   /loyalty_cards/{loyalty_card_id}/authorise:
     put:
       tags:
@@ -654,20 +1045,38 @@ paths:
       summary: Authorise a Loyalty Card
       operationId: PUT loyalty_cards/authorise
       description: "This is used to:<br>
-      <html><body>
-      <ol>
-        <li>Authorise an exisitng **Store** type **Loyalty Card** promoting it to be an **Engage** or **PLL** type.</li>
-        <li>Correct or update credentials on an **Engage** or **PLL** type **Loyalty Card**.</lil>
-      </ol>
-      </body></html><br>
-        Authorised cards allow a user to see more information about their loyalty membership such as balance and transactions.<br>
+        <html><body>
+        <ol>
+          <li>Authorise an exisitng <b>Store</b> type <b>Loyalty Card</b> promoting it to be an <b>Engage</b> or <b>PLL</b> type.</li>
+          <li>Correct or update credentials on an <b>Engage</b> or <b>PLL</b> type <b>Loyalty Card</b>.</li>
+        </ol>
+      
+        </body><br>
+          Authorised cards allow a user to see more information about their loyalty membership such as balance and transactions.<br>
+          Authorisation also enables <b>PLL</b> for those <b>Loyalty Plans</b> that support it. 
 
-        Authorisation also enables **PLL** for those **Loyalty Plans** that support it. 
-        <br><br>**NOTE**: A successfully authorised **Loyalty Card** that is of type **PLL** will automatically create **PLL** links to available **Payment Accounts**."
+        <h3>Journey Fields</h3>
+          Use the <code>journey_fields.add_fields</code> and <code>journey_fields.authorise_fields</code> returned from either of the following endpoints:
+        <ul>
+          <li> <code>GET /loyalty plans</code> </li>
+          <li> <code>GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+        </ul>
+        Or from <code>add_fields</code> and <code>authorise_fields</code> in the endpoint:
+        <ul>
+          <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+        </ul>
+
+        <br><br><b>NOTE</b>:<br>
+            <ul>
+              <li>A successfully authorised <b>Loyalty Card</b> that is of type <b>PLL</b> will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>. </li>
+              <li>The <code>id</code> returned on a successful <code>PUT</code> may be different from the <code>loyalty_card_id</code> passed in the request if the <code>add</code> credential in the request is different from the original resource.</li>
+            </ul> 
+        <br><br> 
+        </body></html>"
       parameters:
         - in: path
           name: loyalty_card_id
-          description: Loyalty Card ID
+          description: "The unique resource identifier for the Loyalty Card."
           required: true
           schema:
             type: integer
@@ -678,6 +1087,10 @@ paths:
               $ref: '#/components/schemas/LoyaltyCardAuthorisationRequest'
             example:
               account:
+                add_fields:
+                  credentials:
+                  - credential_slug: 'card_number'
+                    value: '100024235346'
                 authorise_fields:
                   credentials:
                   - credential_slug: 'password'
@@ -717,7 +1130,7 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse404'
         '422':
-          description: "**Unprocessable entity:** One or more fields in the request did not pass the required validation. Possible error codes and messages:<pre>**FIELD_VALIDATION_ERROR**: Could not validate fields.<p/>**CARD_CREDENTIALS_INCORRECT:** Credentials provided are not correct.</pre>"
+          description: "**Unprocessable entity:** One or more fields in the request did not pass the required validation."
           content:
             application/json:
               schema:
@@ -730,13 +1143,31 @@ paths:
                   - "expected str for dictionary value @ data['post_code']"
   /loyalty_cards/join:
     post:
-      security:
+      security: 
         - bearerAuth: []
       tags:
         - Loyalty Cards
       summary: Join a Loyalty Plan
       operationId: POST /loyalty_cards/join
-      description: "This resources reflects the users intent to **Join** a **Loyalty Plan**. Bink passes the intent to the relevant merchant and waits for them to process the request. A successful response from the merchant will see the **Join** resource become an **Engage** or **PLL** type **Loyalty Card**, failure leaves the resource in a failed state with an explanation. The user can delete the failure and try again. New **Join** requests to the same **Loyalty Plan** are independent.<br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
+      description: "This resource reflects the user's intent to **Join** a **Loyalty Plan**. Bink passes the intent to the relevant merchant and waits for them to process the request. A successful response from the merchant will see the **Join** resource become an **Engage** or **PLL** type **Loyalty Card**, failure leaves the resource in a failed state with an explanation. The user can delete the failure and try again. New **Join** requests to the same **Loyalty Plan** are independent.
+
+          <html>
+            <body>
+              <h3>Journey Fields</h3>
+              Use the <code>journey_fields.join_fields</code> returned from either of the following endpoints:
+              <ul>
+                <li> <code>GET /loyalty plans</code> </li>
+                <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+              </ul>
+              Or from <code>join_fields</code> in the endpoint:
+              <ul>
+                <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+              </ul>
+            </body>
+          </html>
+
+
+        <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
       responses:
         '202':
           description: '**Accepted**, join in progress'
@@ -744,7 +1175,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: '#/components/schemas/LoyaltyCardProcessResponse'
+                  - $ref: '#/components/schemas/Join202Response'
         '400':
           description: Client needs to modify the request before it can be retried
           content:
@@ -760,7 +1191,7 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
         '422':
-          description: Submitted credentials did not pass validation. One or more fields in the request did not pass the required validation
+          description: One or more fields in the request did not pass the required validation
           content:
             application/json:
               schema:
@@ -789,10 +1220,95 @@ paths:
                       value: '10 January 1990'
                     - credential_slug: email
                       value: 'joe_blogs@bink.com'
-                consents:
-                  - consent_slug: EmailOptin
-                    value: 'false'
+                  consents:
+                    - consent_slug: EmailOptin
+                      value: 'false'
         description: 'Loyalty Card Join Request'
+  /loyalty_cards/{loyalty_card_id}join:
+    put:
+      security: 
+        - bearerAuth: []
+      tags:
+        - Loyalty Cards
+      summary: Update a failed Join request
+      operationId: POST /loyalty_cards/{loyalty_card_id}/join
+      description: "
+        Update a failed **Join** request and reprocess new user details. The **Join** request will then follow the same process as a new **Join** intent where Bink passes the intent to the relevant merchant and waits for them to process the request. 
+        A successful response from the merchant will see the **Join** resource become an **Engage** or **PLL** type **Loyalty Card**, failure leaves the resource in a failed state with an explanation. The user can delete the failure and try again. New **Join** requests to the same **Loyalty Plan** are independent.
+
+          <html>
+            <body>
+              <h3>Journey Fields</h3>
+              Use the <code>journey_fields.join_fields</code> returned from either of the following endpoints:
+              <ul>
+                <li> <code>GET /loyalty plans</code> </li>
+                <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+              </ul>
+              Or from <code>join_fields</code> in the endpoint:
+              <ul>
+                <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+              </ul>
+            </body>
+          </html>
+
+
+        <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
+      responses:
+        '202':
+          description: '**Accepted**, join in progress'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Join202Response'
+        '400':
+          description: Client needs to modify the request before it can be retried
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse400'
+        '401':
+          description: Client does not have valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '422':
+          description: One or more fields in the request did not pass the required validation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse422'
+              example:
+                error_message: "Could not validate fields"
+                error_slug: "FIELD_VALIDATION_ERROR"
+                fields:
+                  - "expected str for dictionary value @ data['email']"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoyaltyCardJoinRequest'
+            example: 
+              loyalty_plan_id: 242
+              account: 
+                join_fields:
+                  credentials:
+                    - credential_slug: first_name
+                      value: 'Joe'
+                    - credential_slug: last_name
+                      value: 'Blogs'
+                    - credential_slug: date_of_birth
+                      value: '10 January 1990'
+                    - credential_slug: email
+                      value: 'joe_blogs@bink.com'
+                  consents:
+                    - consent_slug: EmailOptin
+                      value: 'false'
+        description: 'Loyalty Card Join Request'        
   /loyalty_cards/{loyalty_card_id}/join:
     delete:
       security:
@@ -805,7 +1321,7 @@ paths:
       parameters:
         - in: path
           name: loyalty_card_id
-          description: the loyalty card join request identifier
+          description: "The unique resource identifier for the Join request. NOTE: Even though a Join is a separate resource, the unique identifier is shared with Loyalty Cards."
           required: true
           schema:
             type: integer
@@ -841,7 +1357,25 @@ paths:
         - Loyalty Cards
       summary: 'Add and Register a Ghostcard'
       operationId: 'POST /loyalty_cards/add_and_register'
-      description: "This endpoint adds a **Store** type **Loyalty Card** and attempts to register the user details in the request with the supported merchant. Registration is similar to **Join** except it involves a physical **Loyalty Card** picked up in store, commonly known as a **Ghostcard**. <br><br>If the registration fails, the user still has a **Store** type **Loyalty Card** in their wallet. Successful registration means the user is now a member of the **Loyalty Plan** and the **Loyalty Card** will be an **Engage** or **PLL** type in the user's wallet. <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
+      description: "This endpoint adds a **Store** type **Loyalty Card** and attempts to register the user details in the request with the supported merchant. Registration is similar to **Join** except it involves a physical **Loyalty Card** picked up in store, commonly known as a **Ghostcard**. <br><br>If the registration fails, the user still has a **Store** type **Loyalty Card** in their wallet. Successful registration means the user is now a member of the **Loyalty Plan** and the **Loyalty Card** will be an **Engage** or **PLL** type in the user's wallet. <br><br>
+
+          <html>
+            <body>
+              <h3>Journey Fields</h3>
+              You will need to combine the <code>journey_fields.add_fields</code> and <code>journey_fields.register_ghost_card_fields</code> returned from either of the following endpoints:
+              <ul>
+                <li> <code>GET /loyalty plans</code> </li>
+                <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+              </ul>
+              Or from <code>add_fields</code> and <code>register_ghost_card_fields</code> in the endpoint:
+              <ul>
+                <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+              </ul>
+            </body>
+          </html>  
+
+          <br><br>
+        <b>NOTE</b>: If the card is a <b>PLL</b> type, success will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>."
       responses:
         '200':
           description: "**OK** - returned if a registration request is sent while a preceding request is pending"
@@ -872,7 +1406,7 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
         '409':
-          description: "**Conflict:** This request conflicts with the target resource's internal state. Possible error codes and messages:<pre>**ALREADY_REGISTERED**: Card is already registered. Use POST /loyalty_cards/add_and_authorise to add this card to your wallet.<p/>**ALREADY_ADDED:** Card is already added. Use PUT /loyalty_cards/{loyalty_card_id}/register to register this card.<p/>**REGISTRATION_ALREADY_IN_PROGRESS:** Card cannot be registered at this time - an existing registration is still in progress in another wallet.</pre>"
+          description: "**Conflict:** This request conflicts with the target resource's internal state."
           content:
             application/json:
               schema:
@@ -882,7 +1416,7 @@ paths:
                       error_message: "Card is already registered"
                       error_slug: "ALREADY_REGISTERED"
         '422':
-          description: Submitted credentials did not pass validation. One or more fields in the request did not pass the required validation
+          description: One or more fields in the request did not pass the required validation
           content:
             application/json:
               schema:
@@ -898,7 +1432,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/LoyaltyCardAddAndRegistrationRequest'
-        description: Loyalty Card Registration Request
+        description: "Loyalty Card Registration Request."
   /loyalty_cards/{loyalty_card_id}/register:
     put:
       security:
@@ -907,11 +1441,22 @@ paths:
         - Loyalty Cards
       summary: "Register a Ghostcard"
       operationId: "PUT /loyalty_cards/registration"
-      description: "Used to add registration details to **Store** type **Loyalty Card** already in a user’s wallet and attempt to register those details with the supported merchant. **Registration** is similar to **Join** except it involves a physical **Loyalty Card** picked up in store, commonly known as a **Ghostcard**.<br> If the registration fails, the user still has the **Store** type **Loyalty Card** in their wallet. Successful registration means the user is now a member of the **Loyalty Plan** and the **Loyalty Card** will be an **Engage** or **PLL** type in the user's wallet. <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
+      description: "Used to add registration details to **Store** type **Loyalty Card** already in a user’s wallet and attempt to register those details with the supported merchant. **Registration** is similar to **Join** except it involves a physical **Loyalty Card** picked up in store, commonly known as a **Ghostcard**.<br> If the registration fails, the user still has the **Store** type **Loyalty Card** in their wallet. Successful registration means the user is now a member of the **Loyalty Plan** and the **Loyalty Card** will be an **Engage** or **PLL** type in the user's wallet.
+        <h3>Journey Fields</h3>
+        Use the <code>journey_fields.register_ghost_card_fields</code> returned from either of the following endpoints:
+        <ul>
+          <li> <code>GET /loyalty plans</code> </li>
+          <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+        </ul>
+        Or from <code>register_ghost_card_fields</code> in the endpoint:
+        <ul>
+          <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+        </ul>
+        <br><br><b>NOTE</b>: If the card is a <b>PLL</b> type, success will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>."
       parameters:
         - in: path
           name: loyalty_card_id
-          description: Loyalty Card ID
+          description: "The unique resource identifier for the Loyalty Card."
           required: true
           schema:
             type: integer
@@ -945,7 +1490,7 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
         '409':
-          description: "**Conflict:** This request conflicts with the target resource's internal state. Possible error codes and messages:<pre>**ALREADY_REGISTERED**: Card is already registered. Use PUT /loyalty_cards/{loyalty_card_id}/authorise to authorise this card in your wallet, or to update authorisation credentials.<p/>**REGISTRATION_ALREADY_IN_PROGRESS:** Card cannot be registered at this time - an existing registration is still in progress in another wallet.</pre>"
+          description: "**Conflict:** This request conflicts with the target resource's internal state."
           content:
             application/json:
               schema:
@@ -955,7 +1500,7 @@ paths:
                       error_message: "Card is already registered."
                       error_slug: "ALREADY_REGISTERED"
         '422':
-          description: '**Unauthorized** Submitted credentials did not pass validation. One or more fields in the request did not pass the required validation'
+          description: '**Unauthorized** One or more fields in the request did not pass the required validation'
           content:
             application/json:
               schema:
@@ -988,12 +1533,12 @@ paths:
       tags:
         - Loyalty Cards
       summary: "View Loyalty Card balance"
-      operationId: GET /loyalty_plans/{loyalty_plan_id}/balance
+      operationId: GET /loyalty_cards/{loyalty_card_id}/balance
       description: "Provides current balance information for the user's **Loyalty Card**."
       parameters:
         - in: path
           name: loyalty_card_id
-          description: loyalty_card_id
+          description: "The unique resource identifier for the Loyalty Card."
           required: true
           schema:
             type: integer
@@ -1028,12 +1573,12 @@ paths:
       tags:
         - Loyalty Cards
       summary: "View Loyalty transactions"
-      operationId: GET /loyalty_plans/{loyalty_plan_id}/transactions
+      operationId: GET /loyalty_cards/{loyalty_card_id}/transactions
       description: "Provides a list of the last 5 Loyalty transactions for the user's **Loyalty Card**"
       parameters:
         - in: path
           name: loyalty_card_id
-          description: loyalty_card_id
+          description: "The unique resource identifier for the Loyalty Card."
           required: true
           schema:
             type: integer
@@ -1068,20 +1613,19 @@ paths:
       tags:
         - Loyalty Cards
       summary: "View Loyalty Card vouchers"
-      operationId: GET /loyalty_plans/{loyalty_plan_id}/vouchers
-      description: "Provides a list of the vouchers attached to the user's **Loyalty Card**. <br>Statuses can be:<html><body>
-       <ul>
-          <li>In Progress.</li>
-          <li>Issued.</li>
-          <li>Redeemed</li>
-          <li>Expired.</li>
-          <li>Cancelled.</li>
-        </ul>
-      </body></html>"
+      operationId: GET /loyalty_cards/{loyalty_card_id}/vouchers
+      description: "Provides a list of the vouchers attached to the user's **Loyalty Card**. <br>The different voucher statuses that can be returned are:
+        <ul>
+          <li><code>in_progress</code></li>
+          <li><code>issued</code></li>
+          <li><code>redeemed</code></li>
+          <li><code>expired</code></li>
+          <li><code>cancelled</code></li>
+        </ul>"
       parameters:
         - in: path
           name: loyalty_card_id
-          description: loyalty_card_id
+          description: "The unique resource identifier for the Loyalty Card."
           required: true
           schema:
             type: integer
@@ -1095,6 +1639,40 @@ paths:
                 properties: 
                   vouchers: 
                     $ref: '#/components/schemas/Vouchers'
+              example:
+                vouchers:
+                    - state: "inprogress"
+                      earn_type: "stamps"
+                      reward_text: "Meal Voucher"
+                      headline: "Spend £7.00 or more to get a stamp. Collect 7 stamps to get a Meal Voucher of up to £7 off your next meal"
+                      voucher_code:
+                      barcode_type: 0
+                      progress_display_text: "2/7 stamps"
+                      prefix:
+                      suffix: 'stamps'
+                      current_value: 2
+                      target_value: 7
+                      body_text: null
+                      terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                      issued_date: null
+                      expiry_date: null
+                      redeemed_date:
+                    - state: "issued"
+                      earn_type: "stamps"
+                      reward_text: "Meal Voucher"
+                      headline: "Earned"
+                      voucher_code: "5544332211"
+                      barcode_type: 1
+                      progress_display_text:
+                      prefix:
+                      suffix:
+                      current_value: 
+                      target_value: 
+                      body_text: null
+                      terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                      issued_date: 1517549941
+                      expiry_date: 1617549941
+                      redeemed_date:
         '401':
           description: Not authorised, request does not have a valid token
           content:
@@ -1121,7 +1699,7 @@ paths:
       parameters:
         - in: path
           name: loyalty_card_id
-          description: the loyalty card identifier
+          description: "The unique resource identifier for the Loyalty Card."
           required: true
           schema:
             type: integer
@@ -1159,13 +1737,13 @@ paths:
       summary: Create a Payment Account
       operationId: POST /payment_accounts
       description: "This resource represents a primary account number (PAN) which can be associated with one or more physical payment cards (e.g., with different expiry dates or cardholder names). <br><br>When posting to an existing account with the same **fingerprint**, if the following fields are different in the request, the stored values will be updated:
-      <br><html><body>
-      <ul>
-        <li><code>expiry_month</code></li>
-        <li><code>expiry_year</code></li>
-        <li><code>name_on_card</code></li>
-        <li><code>card_nickname</code></li>
-        </ul></body></html>
+        <br>
+        <ul>
+          <li><code>expiry_month</code></li>
+          <li><code>expiry_year</code></li>
+          <li><code>name_on_card</code></li>
+          <li><code>card_nickname</code></li>
+        </ul>
         <br> 
         **NOTE**: Success will automatically create PLL links to available Authorised Loyalty Cards. We will also create **soft links** to PLL type cards not yet in an Authorised state, so when they do become Authorised, the PLL link will automatically become active."
       responses:
@@ -1213,19 +1791,19 @@ paths:
       summary: Update Payment Account details
       operationId: PATCH payment_account
       description: "Certain fields on a **Payment Account** may be updated, the rest are immutable. Changing any of these fields has no functional effect on the **Payment Account**. Account status and **PLL** links are unaffected. <br>Fields that may be updated:
-    <br><html><body>
-      <ul>
-        <li><code>expiry_month</code></li>
-        <li><code>expiry_year</code></li>
-        <li><code>name_on_card</code></li>
-        <li><code>card_nickname</code></li>
-        <li><code>issuer</code></li>
-        </ul></body></html>
-        <br> "
+        <br>
+        <ul>
+          <li><code>expiry_month</code></li>
+          <li><code>expiry_year</code></li>
+          <li><code>name_on_card</code></li>
+          <li><code>card_nickname</code></li>
+          <li><code>issuer</code></li>
+        </ul>
+        <br>"
       parameters:
         - in: path
           name: payment_account_id
-          description: the payment account identifier
+          description: "The unique resource identifier for the Payment Account."
           required: true
           schema:
             type: integer
@@ -1277,13 +1855,13 @@ paths:
       parameters:
         - in: path
           name: payment_account_id
-          description: the loyalty card add request identifier
+          description: "The unique resource identifier for the Payment Account."
           required: true
           schema:
             type: integer
       responses:
         '202':
-          description: Accepted, account will be deleted
+          description: Accepted, account will be deleted.
         '401':
           description: Client does not have valid token.
           content:
@@ -1291,7 +1869,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/genericresponse401'
         '404':
-          description: Resource specified could not be found
+          description: Resource specified could not be found.
           content:
             application/json:
               schema:
@@ -1314,6 +1892,7 @@ paths:
               properties: 
                 email: 
                   type: string 
+                  description: "Replacement email address."
               example: 
                 email: 'mymail@bink.com'
       responses:
@@ -1338,7 +1917,7 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
         '409':
-          description: "**Conflict:** This request conflicts with the target resource's internal state. Possible error codes and messages:<pre>**DUPLICATE_EMAIL**: This email is already in use for this channel</pre>"
+          description: "**Conflict:** This request conflicts with the target resource's internal state."
           content:
             application/json:
               schema:
@@ -1348,7 +1927,7 @@ paths:
                       error_message: "This email is already in use for this channel"
                       error_slug: "DUPLICATE_EMAIL"
         '422':
-          description: "Submitted credentials did not pass validation. One or more fields in the request did not pass the required validation"
+          description: "One or more fields in the request did not pass the required validation"
           content:
             application/json:
               schema:
@@ -1359,7 +1938,24 @@ paths:
                 error_slug: "FIELD_VALIDATION_ERROR"
                 fields:
                   - "expected str for dictionary value @ data['email']"
-
+  /me:
+    delete:
+      security:
+        - bearerAuth: []
+      tags:
+      - Users
+      summary: Delete a user
+      operationId: delete-user
+      description: "Deletes a user from the Bink platform. All associated payment accounts and loyalty cards will be deleted unless associated with another user account. User will be identified using the token passed in the request header"
+      responses:
+        '202':
+          description: "**Accepted**, account will be deleted"
+        '401':
+          description: Client does not have valid token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericresponse401'
 components:
   securitySchemes:
     bearerAuth:
@@ -1420,35 +2016,48 @@ components:
       properties:
         error:
           type: string
-          description: "One of the below error codes"
-          enum:
-            - invalid_request
-            - invalid_client
-            - invalid_grant
-            - unauthorized_client
-            - unsupported_grant_type
+          description: "One of the below error codes:
+            <ul>
+              <li><code>invalid_request</code>          </li> 
+              <li><code>invalid_client</code>           </li>
+              <li><code>invalid_grant</code>            </li>
+              <li><code>unauthorized_client</code>      </li>
+              <li><code>unsupported_grant_type</code>   </li>
+            </ul>"
+          example:
+            error: 'invalid_client'
     LoyaltyCardJoinRequest:
       type: object
+      description: "The fields that need to be presented to the user in order to become a new member of the Loyalty Plan."
       properties:
         loyalty_plan_id:
           type: integer
           example: 242
-          description: The Loyalty Plan to which this join request pertains
+          description: "The unique resource identifier for the Loyalty Plan the user wants to become a member of."
           minimum: 1
           maximum: 18446744073709552000
         account:
           type: object
+          description: "Container for required journey fields."
           properties:
             join_fields:
               type: object
+              description: "The fields that need to be presented to the user in order to become a new member of the Loyalty Plan."
               properties: 
                 credentials: 
                   minItems: 0
                   type: array
+                  description: "Personal information required to complete the selected journey."
                   items:
                     $ref: '#/components/schemas/CredentialRequest'
+                plan_documents:
+                  type: array
+                  description: "Legal copy to be displayed and sometimes accepted by the user."
+                  items:
+                    $ref: '#/components/schemas/DocumentBase'                    
                 consents: 
                   type: array
+                  description: "Brand marketing information to be displayed and sometimes accepted by the user."
                   items:
                     $ref: '#/components/schemas/ConsentRequest'
     LoyaltyCardAddRequest:
@@ -1457,68 +2066,114 @@ components:
         loyalty_plan_id:
           type: integer
           example: 719
-          description: The Loyalty Plan to which this card belongs
+          description: "The unique resource identifier for the Loyalty Plan to which the Loyalty Card belongs."
           minimum: 1
           maximum: 18446744073709552000
         account:
           type: object
+          description: "Container for required journey fields."
           properties:
             add_fields: 
               type: object
+              description: "The fields that need to be presented to the user in order to Add an existing Loyalty Card as Store type to the user's wallet."
               properties: 
                 credentials:
                   type: array
+                  description: "Personal information required to complete the selected journey."
                   items:
                     $ref: '#/components/schemas/CredentialRequest'
-    LoyaltyCardAddAuthoriseRequest:
-      allOf: 
-        - $ref: '#/components/schemas/LoyaltyCardAddRequest'
-        - type: object
+    LoyaltyCardAddAndAuthoriseRequest:
+      type: object
+      properties:
+        loyalty_plan_id:
+          type: integer
+          example: 242
+          description: "The unique resource identifier for the Loyalty Plan to which the Loyalty Card belongs."
+          minimum: 1
+          maximum: 18446744073709552000
+        account:
+          type: object
+          description: "Container for required journey fields."
           properties:
-            account:
+            add_fields:
               type: object
-              properties:
-                authorise_fields:
-                  allOf:
-                  - $ref: '#/components/schemas/CredentialRequest'
-                  - example:
-                      credentials:
-                        - credential_slug: 'password'
-                          value: 'password123'
+              description: "The fields that need to be presented to the user in order to Add an existing Loyalty Card as Store type to the user's wallet."
+              properties: 
+                credentials:
+                  minItems: 0
+                  type: array
+                  description: "Personal information required to complete the selected journey."
+                  items:
+                    $ref: '#/components/schemas/CredentialRequest'
+            authorise_fields:
+              type: object
+              description: "The fields that need to be presented to the user in order to Authorise the Loyalty Card."
+              properties: 
+                credentials: 
+                  minItems: 0
+                  type: array
+                  description: "Personal information required to complete the selected journey."
+                  items:
+                    allOf: 
+                    - $ref: '#/components/schemas/CredentialRequest'
+                    example:
+                      credential_slug: 'postcode'
+                      value: 'SL5 5TD'   
+                plan_documents:
+                  type: array
+                  description: "Legal copy to be displayed and sometimes accepted by the user."
+                  items:
+                    $ref: '#/components/schemas/DocumentBase'                                       
+                consents: 
+                  type: array
+                  description: "Brand marketing information to be displayed and sometimes accepted by the user."
+                  items:
+                    $ref: '#/components/schemas/ConsentRequest'
     LoyaltyCardAddAndRegistrationRequest:
       type: object
       properties:
         loyalty_plan_id:
           type: integer
           example: 242
-          description: The Loyalty Plan to which this card belongs
+          description: "The unique resource identifier for the Loyalty Plan to which the Loyalty Card belongs."
           minimum: 1
           maximum: 18446744073709552000
         account:
           type: object
+          description: "Container for required journey fields."
           properties:
             add_fields:
               type: object
+              description: "The fields that need to be presented to the user in order to Add an existing Loyalty Card as Store type to the user's wallet."
               properties: 
                 credentials:
                   minItems: 0
                   type: array
+                  description: "Personal information required to complete the selected journey."
                   items:
                     $ref: '#/components/schemas/CredentialRequest'
             register_ghost_card_fields:
               type: object
+              description: "The fields that need to be presented to the user in order to Register a Ghostcard."
               properties: 
                 credentials: 
                   minItems: 0
                   type: array
+                  description: "Personal information required to complete the selected journey."
                   items:
                     allOf: 
                     - $ref: '#/components/schemas/CredentialRequest'
                     example:
                       credential_slug: 'postcode'
-                      value: 'SL5 5TD'                      
+                      value: 'SL5 5TD'   
+                plan_documents:
+                  type: array
+                  description: "Legal copy to be displayed and sometimes accepted by the user."
+                  items:
+                    $ref: '#/components/schemas/DocumentBase'                                       
                 consents: 
                   type: array
+                  description: "Brand marketing information to be displayed and sometimes accepted by the user."
                   items:
                     $ref: '#/components/schemas/ConsentRequest'
     LoyaltyCardRegistrationRequest:
@@ -1526,17 +2181,26 @@ components:
       properties:
         account:
           type: object
+          description: "Container for required journey fields."
           properties:
             register_ghost_card_fields:
               type: object
+              description: "The fields that need to be presented to the user in order to Register a Ghostcard."             
               properties: 
                 credentials: 
                   minItems: 0
                   type: array
+                  description: "Personal information required to complete the selected journey."
                   items:
                     $ref: '#/components/schemas/CredentialRequest'
+                plan_documents:
+                  type: array
+                  description: "Legal copy to be displayed and sometimes accepted by the user."
+                  items:
+                    $ref: '#/components/schemas/DocumentBase'                           
                 consents: 
                   type: array
+                  description: "Brand marketing information to be displayed and sometimes accepted by the user."
                   items:
                     $ref: '#/components/schemas/ConsentRequest'
     LoyaltyCardAuthorisationRequest:
@@ -1544,92 +2208,83 @@ components:
       properties:
         account:
           type: object
+          description: "Container for required journey fields."
           properties:
-            authorise_fields:
+            add_fields:
               type: object
-              properties:
+              description: "The fields that need to be presented to the user in order to Add an existing Loyalty Card as Store type to the user's wallet."
+              properties: 
                 credentials:
+                  minItems: 0
                   type: array
+                  description: "Personal information required to complete the selected journey."
                   items:
                     $ref: '#/components/schemas/CredentialRequest'
-    LoyaltyCardProcessOverview:
+            authorise_fields:
+              type: object
+              description: "The fields that need to be presented to the user in order to Authorise the Loyalty Card."
+              properties: 
+                credentials: 
+                  minItems: 0
+                  type: array
+                  description: "Personal information required to complete the selected journey."
+                  items:
+                    allOf: 
+                    - $ref: '#/components/schemas/CredentialRequest'
+                    example:
+                      credential_slug: 'postcode'
+                      value: 'SL5 5TD'   
+                plan_documents:
+                  type: array
+                  description: "Legal copy to be displayed and sometimes accepted by the user."
+                  items:
+                    $ref: '#/components/schemas/DocumentBase'                                       
+                consents: 
+                  type: array
+                  description: "Brand marketing information to be displayed and sometimes accepted by the user."
+                  items:
+                    $ref: '#/components/schemas/ConsentRequest'                                        
+    WalletJoins:
       type: object
       properties:
         loyalty_card_id:
           type: integer
-          description: Unique identifier for this process
+          description: "The unique resource identifier for the Join."
           example: 556
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
         loyalty_plan_id:
           type: integer
+          description: "The unique resource identifier for the Loyalty Plan the user is trying to Join."
+          example: 316
         loyalty_plan_name:
           type: string
+          description: "The brand name of the Loyalty Plan."
           example: "Wasabi Club"
         status:
           type: object
           nullable: true
-          description: state of the loyalty card in a wallet
+          description: "State of the Join in the Wallet."
           properties:
             state: 
               type: string
-              example: "active"
+              example: "pending"
             slug:
               type: string
               nullable: true
               example: null
-              description: if the loyalty card is in a state other than active, there will be a slug to describe the state
+              description: "Human-readable identifier that is easy to code against."
             description:
               type: string
               nullable: true
               example: null
-              description: if the loyalty card is in a state other than active, there will be a description to describe the state of the card
+              description: "Descrioption of the state of the Join."
+        card:
+          $ref: '#/components/schemas/LoyaltyCardProperties'
         images: 
           $ref: '#/components/schemas/Images'
-    LoyaltyCardProcess:
-      type: object
-      properties:
-        loyalty_card_id:
-          type: integer
-          description: Unique identifier for this process
-          example: 556
-          minimum: 1
-          maximum: 18446744073709552000
-          pattern: '^[0-9]+$'
-        loyalty_plan_id:
-          type: integer
-        status:
-          type: object
-          nullable: true
-          description: state of the loyalty card in a wallet
-          properties:
-            state: 
-              type: string
-              example: "active"
-            slug:
-              type: string
-              nullable: true
-              example: null
-              description: if the loyalty card is in a state other than active, there will be a slug to describe the state
-            description:
-              type: string
-              nullable: true
-              example: null
-              description: if the loyalty card is in a state other than active, there will be a description to describe the state of the card
-        images: 
-          $ref: '#/components/schemas/Images'
-        error:
-          type: object
-          properties:
-            error_slug:
-              type: string
-              description: 'Human-readable identifier that is easy to code against'
-              example: 'ACCOUNT_EXISTS'
-            error_message:
-              type: string
-              description: Short text explaining the error
-              example: "An account with those details already exists"
+
     PaymentAccountCreateRequest:
       allOf:
       - $ref: '#/components/schemas/PaymentAccountRequest'
@@ -1644,21 +2299,23 @@ components:
         properties:
           token:
             type: string
-            description: Unique token for this card
+            description: 
+              "Unique identifier for this account. Supplied by the tokenisation service. <br>
+              NOTE: This will be the <code>payment_method</code> token from the Spreedly tokenisation response."
             example: "H7FdKWKPOPhepzxS4MfUuvTDHxr"
             minLength: 1
             maxLength: 255
             pattern: "[\\u0000-\\u2FFF]{1,255}"
           last_four_digits:
             type: string
-            description: 'The last four digits of PAN'
+            description: 'The last four digits of the PAN.'
             example: "9876"
             minLength: 4
             maxLength: 4
             pattern: "^[0-9]{4,4}$"
           first_six_digits:
             type: string
-            description: 'The leading six digits of PAN'
+            description: 'The leading six digits of the PAN.'
             example: "444444"
             minLength: 6
             maxLength: 6
@@ -1666,35 +2323,28 @@ components:
           fingerprint:
             type: string
             example: b5fe350d5135ab64a8f3c1097fadefd9effb
-            description: fingerprint value for this card
+            description: "Generated by the tokenisation service, fingerprint is a unique identifer for the Payment Account."
             minLength: 1
             maxLength: 100
             pattern: "[\\u0000-\\u2FFF]{1,100}"
-          provider:
-            type: string
-            example: MasterCard
-            description: 'Card scheme (e.g., VISA, American Express, MasterCard)'
-            minLength: 1
-            maxLength: 200
-            pattern: "[\\u0000-\\u2FFF]{1,200}"
           type:
             type: string
             example: debit
-            description: 'type of payment card, credit, debit etc.,'
+            description: "Type of payment account. E.g. credit, debit etc."
             minLength: 1
             maxLength: 40
             pattern: "[\\u0000-\\u2FFF]{1,40}"
           country:
             type: string
             example: GB
-            description: 'The country of origin of the payment card in accordance with ISO 3166-1 Alpha-2'
+            description: "The country of origin of the payment account in accordance with ISO 3166-1 Alpha-2."
             minLength: 1
             maxLength: 40
             pattern: "[\\u0000-\\u2FFF]{1,40}"
           currency_code:
             type: string
             example: GBP
-            description: currency code for this card
+            description: "Currency code for the account in accordance with ISO 4217 Alpha-3."
             minLength: 3
             maxLength: 3
             pattern: "^([A-Za-z]{3}|[0-9]{3})$"
@@ -1718,21 +2368,21 @@ components:
         name_on_card:
           type: string
           example: Jeff Bloggs
-          description: Card holder name printed on card
+          description: Card holder name as printed on card.
           minLength: 1
           maxLength: 150
           pattern: "^[\\u0000-\\u2FFF]{1,150}$"
         card_nickname:
           type: string
           example: 'My Mastercard'
-          description: 'User-defined nickname for this card'
+          description: 'User defined nickname for this account.'
           minLength: 1
           maxLength: 150
           pattern: "^[\\u0000-\\u2FFF]{1,150}$"
         issuer:
           type: string
           example: 'HSBC'
-          description: 'Card issuing institution'
+          description: 'Card issuing institution.'
           minLength: 1
           maxLength: 200
           pattern: "^[\\u0000-\\u2FFF]{1,200}$"
@@ -1743,7 +2393,7 @@ components:
           properties:
             id:
               type: integer
-              description: Unique identifier for this Payment Account
+              description: "Unique identifier for this Payment Account."
               example: 34237
               minimum: 1
               maximum: 18446744073709552000
@@ -1751,14 +2401,17 @@ components:
             status:
               type: string
               example: active
-              description: The current state of this payment card
+              description: "The current state of the Payment Account:
+                <ul>
+                  <li><code>active</code></li>
+                  <li><code>pending</code></li>
+                  <li><code>failed</code></li>
+                  <li><code>inactive</code></li>
+                  <li><code>retired</code></li>
+                </ul>
+                "
               pattern: '[A-Za-z0-9]+'
-              enum:
-                - active
-                - pending
-                - failed
-                - inactive
-                - retired
+    
     LoyaltyCardProcessResponse:
       type: object
       required:
@@ -1767,114 +2420,161 @@ components:
         id:
           type: integer
           example: 10683
-          description: Unique ID for this loyalty card
+          description: "Unique resrouce identifier for this Loyalty Card."
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+    Join202Response:
+      type: object
+      required:
+        - loyalty_plan
+      properties:
+        id:
+          type: integer
+          example: 10683
+          description: "Unique resrouce identifier for this Join request."
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
     LoyaltyCardProperties:
       type: object
+      description: "Properties of the Loyalty Card."
       properties:
         barcode:
-          description: Barcode value for this Loyalty card
+          description: "Barcode value for this Loyalty Card."
           example: '633174911234567898'
           minLength: 0
           maxLength: 50
           pattern: "[\\u0000-\\u2FFF]+"
           type: string
         barcode_type:
-          description: 0=Code128(B or C); 1=QRCode;2=AztecCode;3=Pdf417;4=EAN(13);5=Datamatrix;6=ITF(Interleaved 2 of 5);7=Code39
-          enum:
-            - 0
-            - 1
-            - 2
-            - 3
-            - 4
-            - 5
-            - 6
-            - 7
-            - 8
-            - 9
+          description: "Used to render the barcode in the UI.  
+            <ul>
+              <li> 0 = Code128 (B or C)        </li>
+              <li> 1 = QR Code                 </li>
+              <li> 2 = AztecCode              </li>
+              <li> 3 = Pdf417                 </li>
+              <li> 4 = EAN(13)                </li>
+              <li> 5  =Datamatrix             </li>
+              <li> 6 = ITF(Interleaved 2 of 5)</li>
+              <li> 7 = Code39                 </li>
+              <li> 9 = Barcode Not Supported  </li>
+            </ul>"
           example: 0
-          pattern: 0-9
+          pattern: 0-7
           type: integer
         card_number:
-          description: Account number for the retailer/merchant/loyalty scheme
+          description: "Loyalty membership number."
           example: '633174911234567898'
           minLength: 1
           maxLength: 50
           type: string
         colour:
-          description: background colour for card image - hex format
+          description: "Brand approved background colour - hex format."
+          example: '#FFFFFF'
+          pattern: '^[#A-Fa-f0-9]{4,7}$'
+          type: string
+        text_colour:
+          description: "Brand approved text colour - hex format."
           example: '#FFFFFF'
           pattern: '^[#A-Fa-f0-9]{4,7}$'
           type: string
     LoyaltyCardBalance:
       type: object
+      description: "Current loyalty balance for the Loyalty Card."
       properties:
         updated_at:
           type: integer
-          description: Indicates the time the balance information was last verified
+          description: "Indicates the time the balance information was last verified."
           example: 1515697663
           pattern: '[0-9]+'
           minimum: 0
           maximum: 99999999999
         current_display_value:
           type: string
-          description: Loyalty balance for this  card
+          description: "Current loyalty balance as supplied by the merchant."
           example: '100 points'
           minimum: 0
+        loyalty_currency_name:
+          type: string
+          description: "The currency of the loyalty plan balance, such as points, GBP or stamps"
+          example: 'points'
+        prefix:
+          type: string
+          example: '£'
+          description: "Pre-qualifier for earned and target values - usually a currency symbol."
+          minLength: 0
+          maxLength: 50
+          pattern: "[\\u0000-\\u2FFF]+"
+        suffix:
+          type: string
+          example: 'stamps'
+          description: "Post-qualifier for earned and target values such as stamps or visits."
+          minLength: 0
+          maxLength: 50
+          pattern: "[\\u0000-\\u2FFF]+"
+        current_value:
+          type: number
+          example: 2
+          description: "Current value held on the given Loyalty Card."
+          minimum: 0
+          maximum: 9999999
+        target_value:
+          type: number
+          example: 7
+          description: "Target spend value before gaining a reward."
+          minimum: 0
+          maximum: 999999
+          
     Wallet:
       type: object
       properties:
           joins:
             type: array
+            description: "A list of all pending or failed Join requests."
             items:
-              allOf:
-              - $ref: '#/components/schemas/LoyaltyCardProcess'
+              $ref: '#/components/schemas/WalletJoins'
           loyalty_cards:
             type: array
-            items:
-              $ref: '#/components/schemas/LoyaltyCard'
-          payment_accounts:
-            type: array
-            items:
-                $ref: '#/components/schemas/Payment_Account_Response'
-    WalletOverview: 
-      type: object
-      properties:
-        joins:
-            type: array
+            description: "A list of all Loyalty Cards in the user's wallet."
             items:
               allOf:
-              - $ref: '#/components/schemas/LoyaltyCardProcessOverview'
-        loyalty_cards:
+                - $ref: '#/components/schemas/LoyaltyCards'
+                - $ref: '#/components/schemas/WalletLoyaltyCardDetails'
+          payment_accounts:
             type: array
+            description: "A list of all Payment Accounts in the user's wallet."
             items:
-              $ref: '#/components/schemas/LoyaltyCardOverview'
-        payment_accounts:
-            type: array
-            items:
-                $ref: '#/components/schemas/Payment_Account_ResponseOverview'
-    LoyaltyCard:
+              $ref: '#/components/schemas/WalletPaymentAccounts'
+
+    WalletSingleLoyaltyCard: 
       type: object
       properties:
         id:
           type: integer
           example: 10683
-          description: Unique ID for this card
+          description: "Unique resrouce identifier for this Loyalty Card."
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
         loyalty_plan_id:
           type: integer
-          example: 246
-          description: The Loyalty Plan to which this Loyalty Card belongs
+          example: 316
+          description: "The unique resource identifier for the Loyalty Plan to which the Loyalty Card belongs."
           minimum: 1
           maximum: 18446744073709552000
+        loyalty_plan_name:
+          type: string
+          description: "The brand name of the Loyalty Plan."
+          example: "Wasabi Club"
+        reward_available:
+          type: boolean
+          description: "Indicates whether there is an issued reward ready to use."
+          example: false          
         status:
           type: object
           nullable: true
-          description: state of the loyalty card in a wallet
+          description: The state of the Loyalty Card in a Wallet.
           properties:
             state: 
               type: string
@@ -1883,12 +2583,12 @@ components:
               type: string
               nullable: true
               example: null
-              description: if the loyalty card is in a state other than active, there will be a slug to describe the state
+              description: "If the Loyalty Card is in a state other than <code>active</code>, there will be a human-readable identifier that is easy to code against."
             description:
               type: string
               nullable: true
               example: null
-              description: if the loyalty card is in a state other than active, there will be a description to describe the state of the card
+              description: "If the Loyalty Card is in a state other than <code>active</code>, there will be text to describe the state of the Card."
         images: 
           $ref: '#/components/schemas/Images'
         balance:
@@ -1900,30 +2600,87 @@ components:
         card:
           $ref: '#/components/schemas/LoyaltyCardProperties'
         pll_links:
-          $ref: '#/components/schemas/PLL_Link_Loyalty_Card_Response'
-    LoyaltyCardOverview:
+          $ref: '#/components/schemas/LoyaltyCardPLLLinks'
+
+    WalletOverview: 
+      type: object
+      properties:
+        joins:
+            type: array
+            description: "A list of all pending or failed Join requests."
+            items:
+              $ref: '#/components/schemas/WalletJoins'
+        loyalty_cards:
+            type: array
+            description: "A list of all Loyalty Cards in the user's wallet."
+            items:
+              allOf:
+                - $ref: '#/components/schemas/LoyaltyCardsOverview'
+                - $ref: '#/components/schemas/WalletOverviewLoyaltyCardDetails'
+        payment_accounts:
+            type: array
+            description: "A list of all Payment Accounts in the user's wallet."
+            items:
+              $ref: '#/components/schemas/WalletOverviewPaymentAccounts'
+
+    WalletLoyaltyCardDetails:
+      type: object
+      properties:
+        images: 
+          $ref: '#/components/schemas/Images'
+        balance:
+          $ref: '#/components/schemas/LoyaltyCardBalance'
+        transactions:
+          $ref: '#/components/schemas/LoyaltyCardTransactions'
+        vouchers:
+          $ref: '#/components/schemas/Vouchers'
+        card:
+          $ref: '#/components/schemas/LoyaltyCardProperties'
+        pll_links:
+          $ref: '#/components/schemas/LoyaltyCardPLLLinks'
+
+    WalletOverviewLoyaltyCardDetails:
+      type: object
+      properties:
+        images: 
+          $ref: '#/components/schemas/Images'
+        balance:
+          $ref: '#/components/schemas/LoyaltyCardBalance'
+        reward_available:
+          type: boolean
+          example: true
+          description: "Indicates whether an issued reward is available for this Loyalty Card or not."
+        card:
+          $ref: '#/components/schemas/LoyaltyCardProperties'
+
+    LoyaltyCards:      
       type: object
       properties:
         id:
           type: integer
           example: 10683
-          description: Unique ID for this card
+          description: "Unique resrouce identifier for this Loyalty Card."
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
         loyalty_plan_id:
           type: integer
-          example: 246
-          description: The Loyalty Plan to which this Loyalty Card belongs
+          example: 316
+          description: "The unique resource identifier for the Loyalty Plan to which the Loyalty Card belongs."
           minimum: 1
           maximum: 18446744073709552000
         loyalty_plan_name:
           type: string
-          example: "Iceland Bonus Card"
+          description: "The brand name of the Loyalty Plan."
+          example: "Wasabi Club"
+        reward_available:
+          type: boolean
+          description: "Indicates whether there is an issued reward ready to use."
+          example: false          
         status:
           type: object
           nullable: true
-          description: state of the loyalty card in a wallet
+          description: "The state of the Loyalty Card in a Wallet."
           properties:
             state: 
               type: string
@@ -1932,154 +2689,397 @@ components:
               type: string
               nullable: true
               example: null
-              description: if the loyalty card is in a state other than active, there will be a slug to describe the state
+              description: "If the Loyalty Card is in a state other than <code>active</code>, there will be a human-readable identifier that is easy to code against."
             description:
               type: string
               nullable: true
               example: null
-              description: if the loyalty card is in a state other than active, there will be a description to describe the state of the card
+              description: "If the Loyalty Card is in a state other than <code>active</code>, there will be text to describe the state of the Card."
+    LoyaltyCardsOverview:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 10683
+          description: "Unique resrouce identifier for this Loyalty Card."
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+        loyalty_plan_id:
+          type: integer
+          example: 246
+          description: "The unique resource identifier for the Loyalty Plan to which the Loyalty Card belongs."
+          minimum: 1
+          maximum: 18446744073709552000
+        loyalty_plan_name:
+          type: string
+          description: "The brand name of the Loyalty Plan."
+          example: "Wasabi Club"
+        reward_available:
+          type: boolean
+          description: "Indicates whether there is an issued reward ready to use."
+          example: false
+        is_fully_pll_linked:
+          type: boolean
+          description: "Indicates whether or not the given Loyalty Card is PLL linked to all Payment Accounts in the user's wallet."
+          example: false
+        pll_linked_payment_accounts:
+          type: integer
+          description: "The number of Payment Accounts that are PLL linked to the given Loyalty Card."
+          example: 1
+        total_payment_accounts: 
+          type: integer
+          description: "The total number of Payment Accounts that the user has in their wallet."
+          example: 3 
+        status:
+          type: object
+          nullable: true
+          description: "The state of the loyalty card in a wallet."
+          properties:
+            state: 
+              type: string
+              example: "active"
+            slug:
+              type: string
+              nullable: true
+              example: null
+              description: "If the Loyalty Card is in a state other than <code>active</code>, there will be a human-readable identifier that is easy to code against."
+            description:
+              type: string
+              nullable: true
+              example: null
+              description: "If the Loyalty Card is in a state other than <code>active</code>, there will be text to describe the state of the Card."
         images: 
           $ref: '#/components/schemas/Images'
         balance:
           $ref: '#/components/schemas/LoyaltyCardBalance'
-    PLL_Link_Loyalty_Card:
+        card:
+          $ref: '#/components/schemas/LoyaltyCardProperties'
+
+    LoyaltyCardPLLLinks:
       type: object
-      description: Payment-Linked Loyalty (PLL) link between payment account and loyalty card.
+      description: "List of the Payment Accounts with an <code>active</code>, <code>pending</code> or <code>inactive</code> PLL link to the Loyalty Card."
       properties:
         payment_account:
           type: object
+          description: "Details of the Payment Accounts associated with the Loyalty Card."
           properties:
             id:
               type: integer
+              description: "Unique identifier for the Payment Account."
               format: int64
               example: 1234
             payment_scheme:
               type: string
+              description: "The name of the payment processor."
               example: 'VISA'
             status:
-              type: string
-              enum:
-                - active
-                - pending
-              example: active
-    PLL_Link_Loyalty_Card_Response:
+              type: object
+              properties: 
+                state:
+                  type: string
+                  description: "The state of the PLL link
+                    <ul>
+                      <li><code>active</code></li>
+                      <li><code>pending</code></li>
+                      <li><code>inactive</code></li></ul>"
+                  example: "pending"
+                slug:
+                  type: string
+                  description: "If the Loyalty Card or Payment Account is in a state other than <code>active</code>, there will be a human-readable identifier that is easy to code against."
+                  example: "LOYALTY_CARD_PENDING"
+                description:
+                  type: string
+                  description: "If the Loyalty Card or Payment Account is in a state other than <code>active</code>, there will be text to describe the state of the PLL link."
+                  example: "When the Loyalty Card becomes authorised, the PLL link will automatically go active."
+
+    WalletPaymentAccounts:
+      type: object
+      properties:
+        payment_account_id:
+          type: integer
+          description: "Unique identifier for this Payment Account."
+          example: 34237
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+        provider:
+          type: string
+          description: "Provider of payment card. e.g. Visa, Mastercard, American Express"
+          example: 'Visa'
+          pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        status:
+          type: string
+          example: active
+          description: "The current state of the Payment Account:
+            <ul>
+              <li><code>active</code></li>
+              <li><code>pending</code></li>
+              <li><code>failed</code></li>
+              <li><code>inactive</code></li>
+              <li><code>retired</code></li>
+            </ul>
+            "            
+        expiry_month:
+          type: string
+          description: Expiry month for this card.
+          example: "12"
+          minLength: 1
+          maxLength: 2
+          pattern: "^(0?[1-9]|1[012])$"
+        expiry_year:
+          type: string
+          description: Expiry year for this card.
+          example: "24"
+          minLength: 2
+          maxLength: 2
+          pattern: "^[0-9]{2}$"
+        name_on_card:
+          type: string
+          example: Jeff Bloggs
+          description: Card holder name as printed on card.
+          minLength: 1
+          maxLength: 150
+          pattern: "^[\\u0000-\\u2FFF]{1,150}$"
+        card_nickname:
+          type: string
+          example: 'My Mastercard'
+          description: 'User defined nickname for this account.'
+          minLength: 1
+          maxLength: 150
+          pattern: "^[\\u0000-\\u2FFF]{1,150}$"
+        issuer:
+          type: string
+          example: 'HSBC'
+          description: 'Card issuing institution.'
+          minLength: 1
+          maxLength: 200
+          pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        type: 
+          type: string
+          description: "Type of payment account. E.g. credit, debit etc."
+          example: "debit"
+          minLength: 1
+          maxLength: 40
+          pattern: "^[\\u0000-\u2FFF]{1,40}$"
+        currency_code:
+          type: string
+          description: "Currency code for the account in accordance with ISO 4217 Alpha-3."
+          example: "GBP"
+          minLength: 1
+          maxLength: 3
+          pattern: "^([A-Za-z]{3}|[0-9]{3})$"
+        country: 
+          type: string
+          description: "The country of origin of the payment account in accordance with ISO 3166-1 Alpha-2."
+          minLength: 1
+          maxLength: 40
+          pattern: "^[\\u0000-\u2FFF]{1,40}"
+        last_four_digits:
+          type: string
+          description: 'The last four digits of the PAN.'
+          example: "9876"
+          minLength: 4
+          maxLength: 4
+          pattern: "^[0-9]{4,4}$"
+
+        images: 
+          $ref: '#/components/schemas/Images'  
+        pll_links:
+          $ref: '#/components/schemas/PaymentAccountPLLLinks'
+
+    WalletOverviewPaymentAccounts:
+      type: object
+      properties:
+        payment_account_id:
+          type: integer
+          description: "Unique identifier for this Payment Account."
+          example: 34237
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+        provider:
+          type: string
+          description: "Provider of payment card. e.g. Visa, Mastercard, American Express"
+          example: 'Visa'
+          pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        status:
+          type: string
+          example: active
+          description: "The current state of the Payment Account:
+            <ul>
+              <li><code>active</code></li>
+              <li><code>pending</code></li>
+              <li><code>failed</code></li>
+              <li><code>inactive</code></li>
+              <li><code>retired</code></li>
+            </ul>
+            "            
+        expiry_month:
+          type: string
+          description: Expiry month for this card.
+          example: "12"
+          minLength: 1
+          maxLength: 2
+          pattern: "^(0?[1-9]|1[012])$"
+        expiry_year:
+          type: string
+          description: Expiry year for this card.
+          example: "24"
+          minLength: 2
+          maxLength: 2
+          pattern: "^[0-9]{2}$"
+        name_on_card:
+          type: string
+          example: Jeff Bloggs
+          description: Card holder name as printed on card.
+          minLength: 1
+          maxLength: 150
+          pattern: "^[\\u0000-\\u2FFF]{1,150}$"
+        card_nickname:
+          type: string
+          example: 'My Mastercard'
+          description: 'User defined nickname for this account.'
+          minLength: 1
+          maxLength: 150
+          pattern: "^[\\u0000-\\u2FFF]{1,150}$"
+        issuer:
+          type: string
+          example: 'HSBC'
+          description: 'Card issuing institution.'
+          minLength: 1
+          maxLength: 200
+          pattern: "^[\\u0000-\\u2FFF]{1,200}$"
+        type: 
+          type: string
+          description: "Type of payment account. E.g. credit, debit etc."
+          example: "debit"
+          minLength: 1
+          maxLength: 40
+          pattern: "^[\\u0000-\u2FFF]{1,40}$"
+        currency_code:
+          type: string
+          description: "Currency code for the account in accordance with ISO 4217 Alpha-3."
+          example: "GBP"
+          minLength: 1
+          maxLength: 3
+          pattern: "^([A-Za-z]{3}|[0-9]{3})$"
+        country: 
+          type: string
+          description: "The country of origin of the payment account in accordance with ISO 3166-1 Alpha-2."
+          minLength: 1
+          maxLength: 40
+          pattern: "^[\\u0000-\u2FFF]{1,40}"
+        last_four_digits:
+          type: string
+          description: 'The last four digits of the PAN.'
+          example: "9876"
+          minLength: 4
+          maxLength: 4
+          pattern: "^[0-9]{4,4}$"
+        images: 
+          $ref: '#/components/schemas/Images'           
+
+    PaymentAccountPLLLinks:
+      description: "List of the Loyalty Cards with a PLL link to the Payment Account."
       type: array
       items:
-        allOf:
-          - $ref: '#/components/schemas/PLL_Link_Loyalty_Card'
-          - type: object
-            description: Payment-Linked Loyalty (PLL) link between payment account and loyalty card.
-    PLL_Link_Payment_Card:
-      type: object
-      description: Payment-Linked Loyalty (PLL) link between payment account and loyalty card.
-      properties:
-        loyalty_card_id:
-          type: integer
-          format: int64
-          example: 8737645
-          description: ID of loyalty card that is linked to the given payment account
-        loyalty_plan:
-          type: string
-          example: 'Iceland'
-        status:
-          type: string
-          example: 'active'
-    Payment_Account_Response:
-      type: object
-      properties:
-        payment_account_id:
-          type: string
-          example: '555'
-        status:
-          type: string
-          enum:
-            - active
-            - pending
-          example: "active"
-        expiry_month:
-          type: string
-          example: '05'
-        expiry_year:
-          type: string
-          example: '24'
-        name_on_card:
-          type: string
-          example: 'Jeff Jeffries'
-        card_nickname:
-          type: string
-          example: 'My Visa'
-        images: 
-          $ref: '#/components/schemas/Images'
-        pll_links:
-          type: array
-          items:
-            $ref: '#/components/schemas/PLL_Link_Payment_Card'
-    Payment_Account_ResponseOverview:
-      type: object
-      properties:
-        payment_account_id:
-          type: string
-          example: '555'
-        status:
-          type: string
-          enum:
-            - active
-            - pending
-          example: "active"
-        expiry_month:
-          type: string
-          example: '05'
-        expiry_year:
-          type: string
-          example: '24'
-        name_on_card:
-          type: string
-          example: 'Jeff Jeffries'
-        card_nickname:
-          type: string
-          example: 'My Visa'
-        images: 
-          $ref: '#/components/schemas/Images'
+        minItems: 0
+        type: object
+        description: "Details of the PLL linked Loyalty Cards."
+        properties:
+          loyalty_card_id:
+            type: integer
+            format: int64
+            example: 8737645
+            description: "Unique identifier for the Loyalty Card."
+          loyalty_plan:
+            type: string
+            example: 'Iceland'
+            description: "The brand name of the Loyalty Plan."
+          status:
+            type: object
+            properties: 
+                state:
+                  type: string
+                  description: "The status of the PLL link:
+                    <ul>
+                      <li><code>active</code></li>
+                      <li><code>pending</code></li>   
+                      <li><code>inactive</code></li>  
+                    </ul>"
+                  example: "inactive"
+                slug:
+                  type: string
+                  example: "LOYALTY_CARD_NOT_AUTHORISED"
+                  description: "If the Loyalty Card or Payment Account is in a state other than <code>active</code>, there will be a human-readable identifier that is easy to code against."
+                description:
+                  type: string
+                  example: "The Loyalty Card is not authorised so no PLL link can be created"
+                  description: "If the Loyalty Card or Payment Account is in a state other than <code>active</code>, there will be text to describe the state of the PLL link."
+
+    LoyaltyPlansOverview:
+      type: array
+      items:
+        $ref: '#/components/schemas/LoyaltyPlanOverview'  
+
     LoyaltyPlanOverview: 
       type: object
       properties: 
         loyalty_plan_id:
           type: integer
           format: int64
-          example: 109
+          example: 316
+          description: "Resource identifier."
+        is_in_wallet:
+          type: boolean
+          example: true
+          description: 'Specifies if the user has a Loyalty Card in their wallet for this Loyalty Plan.'
+          pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'          
         plan_popularity:
           type: integer
-          description: Numeric rank for this plan's popularity
+          description: Numeric rank for this plan's popularity.
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
           example: 2        
         company_name:
           type: string
-          description: Merchant or loyalty provider name
+          description: The name of the Loyalty provider.
           example: Wasabi
           minLength: 0
           maxLength: 200
           pattern: "[\\u0000-\\u2FFF]+"
         plan_name:
           type: string
-          description: The merchant’s plan name - Brand + scheme name - not to be used in conjunction with plan_name_card
+          description: The brand name of the Loyalty Plan.
           example: 'Wasabi Club'
           minLength: 0
           maxLength: 50
           pattern: "[\\u0000-\\u2FFF]+"   
         plan_type:
           type: integer
-          description: 'Store = 0 | View = 1 | Link = 2'
+          description: "
+                <ul>
+                  <li>0 = <b>Store</b> - The digital representation of a Loyalty Card in the user’s wallet, to be presented in store at point of sale.</li>
+                  <li>1 = <b>Engage</b> - An authorised Loyalty Card providing access to additional information about the Loyalty membership.</li>
+                  <li>2 = <b>PLL</b> - As per an <b>Engage</b> card but also supports automatic collection of Loyalty.</li>
+                  <li>3 = <b>Coming Soon</b> - Used to showcase that a new merchant will be soon be available.</li>
+                </ul>"
           example: 2
           minimum: 0
           maximum: 9
           pattern: '[0-9]'    
         colour:
           type: string
-          description: background colour for card image - hex format
+          description: Brand approved background colour - hex format.
           example: '#f80000'
-          pattern: '^[#A-Fa-f0-9]{4,7}$'  
+          pattern: '^[#A-Fa-f0-9]{4,7}$' 
+        text_colour:
+          type: string
+          description: Brand approved text colour - hex format.
+          example: '#f80000'
+          pattern: '^[#A-Fa-f0-9]{4,7}$' 
         category:
           type: string
           description: Market sector or retail category
@@ -2089,63 +3089,186 @@ components:
           pattern: "[\\u0000-\\u2FFF]+"   
         images: 
           $ref: '#/components/schemas/Images'
+    PlanDetails:
+      type: object
+      properties:
+        company_name:
+          type: string
+          description: "The name of the Loyalty provider."
+          example: "Wasabi, Harvey Nichols, Iceland, etc."
+          minLength: 0
+          maxLength: 200
+          pattern: "[\\u0000-\\u2FFF]+"
+        plan_name:
+          type: string
+          description: "The brand name of the Loyalty Plan."
+          example: "Wasabi Club, Rewards by Harvey Nichols, Iceland Bonus Club, etc."
+          minLength: 0
+          maxLength: 50
+          pattern: "[\\u0000-\\u2FFF]+"
+        plan_label:
+          type: string
+          description: 'The merchant’s name for the instrument when describing the plan itself. E.g., card or account.'
+          example: 'Card'
+          minLength: 0
+          maxLength: 50
+          pattern: "[\\u0000-\\u2FFF]+"
+        plan_url:
+          type: string
+          description: "Url for the Loyalty Plan."
+          example: 'https://www.wasabi.uk.com'
+          maxLength: 2048
+          minLength: 1
+          pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
+        plan_summary:
+          type: string
+          description: Short form description for this Loyalty Plan.
+          example: 'Collect 7 stamps for a £7 OFF Meal Voucher. One stamp can be earned per customer per transaction when the qualifying spend in a single transaction for food & drink purchases totals £7.00 or more in a participating Wasabi store. Ts and Cs apply.'
+          minLength: 0
+          maxLength: 250
+          pattern: "[\\u0000-\\u2FFF]+"
+        plan_description:
+          type: string
+          description: Full description for this Loyalty Plan.
+          example: 'Please note that your vouchers are single-use and cannot be used twice. Show your Wasabi Club reward code in store to redeem £7 off your next meal.\r\nThe voucher will be available to redeem 2 months from the date it is collected. This voucher is non-refundable and cannot be exchanged for cash in part or full and is valid for a single transaction only.'
+          minLength: 0
+          maxLength: 500
+          pattern: "[\\u0000-\\u2FFF]+"
+        redeem_instructions:
+          type: string
+          description: "Explanation of how to redeem rewards or spend accrued Loyalty balances."
+          example: "At checkout, simply tell the cashier how much money you would like to save or redeem, present the barcode below and scan it using the customer facing scanners, as you normally would with your physical card."
+          minLength: 0
+          maxLength: 500
+          pattern: "[\\u0000-\\u2FFF]+"
+        plan_register_info:
+          type: string
+          description: "Instructions for unregistered Loyalty Cards."
+          example: 'You have added a temporary card. You’ll need to register it to enjoy the full benefits of the programme.'
+          minLength: 0
+          maxLength: 500
+          pattern: "[\\u0000-\\u2FFF]+"
+        join_incentive:
+          type: string
+          description: "Describes any incentives for Joining the Loyalty Plan. E.g. *Get 100 points as a new member!*"
+          example: Join now and receive free points.
+          minLength: 0
+          maxLength: 200
+          pattern: "[\\u0000-\\u2FFF]+"
+        category:
+          type: string
+          description: Market sector or retail category.
+          example: Household
+          minLength: 0
+          maxLength: 200
+          pattern: "[\\u0000-\\u2FFF]+"
+        colour:
+          description: "Brand approved background colour - hex format."
+          example: '#FFFFFF'
+          pattern: '^[#A-Fa-f0-9]{4,7}$'
+          type: string
+        text_colour:
+          description: "Brand approved text colour - hex format."
+          example: '#FFFFFF'
+          pattern: '^[#A-Fa-f0-9]{4,7}$'
+          type: string          
+        tiers:
+          description: "This is used for plans that have multiple membership levels. For example: Tier 1 for members up to 10000 points, Tier 2 for members between 10001 and 20000 points, and Tier 3 for members between 30001 and above. Each Tier may provide additional benefits to the previous."
+          type: array
+          minItems: 0
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                example: Silver
+                minLength: 0
+                maxLength: 50
+                pattern: "[\\u0000-\\u2FFF]+"
+                description: "The name of the tier."
+              description:
+                type: string
+                example: Double points earned.
+                minLength: 0
+                maxLength: 50
+                pattern: "[\\u0000-\\u2FFF]+"
+                description: "Brief explanation of what the tier provides."
     LoyaltyPlan:
       type: object
       properties:
         loyalty_plan_id:
           type: integer
           format: int64
-          example: 109
+          description: Resource identifier.
+          example: 316
+        is_in_wallet:
+          type: boolean
+          example: true
+          description: 'Specifies if the user has a Loyalty Card in their wallet for this Loyalty Plan.'
+          pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
         plan_popularity:
           type: integer
-          description: Numeric rank for this plan's popularity
+          description: Numeric rank for this plan's popularity. 
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
           example: 2
         plan_features:
           type: object
+          description: List of the Loyalty Plan properties.
           properties:
             has_points:
               type: boolean
               example: true
-              description: Identifies whether there is a balance for this card
+              description: 'Identifies that the Loyalty Plan supports showing a balance. NOTE: This can be any type of balance and does not denote it is just a points based plan, it could be; GBP, Stamps, Air Miles, etc.'
               pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
             has_transactions:
               type: boolean
               example: true
-              description: 'Specifies if this plan supports display of transaction history'
+              description: 'Specifies if this plan supports display of transaction history.'
               pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
             plan_type:
               type: integer
-              description: 'Store = 0 | View = 1 | Link = 2'
+              description: "
+                <ul>
+                  <li>0 = <b>Store</b> - The digital representation of a Loyalty Card in the user’s wallet, to be presented in store at point of sale.</li>
+                  <li>1 = <b>Engage</b> - An authorised Loyalty Card providing access to additional information about the Loyalty membership.</li>
+                  <li>2 = <b>PLL</b> - As per an <b>Engage</b> card but also supports automatic collection of Loyalty.</li>
+                  <li>3 = <b>Coming Soon</b> - Used to showcase that a new merchant will soon be available.</li>
+                </ul>"
               example: 2
               minimum: 0
               maximum: 9
               pattern: '[0-9]'
             barcode_type:
               type: integer
-              description: 0=Code128(B or C); 1=QRCode;2=AztecCode;3=Pdf417;4=EAN(13);5=Datamatrix;6=ITF(Interleaved 2 of 5);7=Code39
-              enum:
-                - 0
-                - 1
-                - 2
-                - 3
-                - 4
-                - 5
-                - 6
-                - 7
-                - 8
-                - 9
+              description: "Used to render the barcode in the UI.  
+                <ul>
+                  <li> 0 = Code128 (B or C)        </li>
+                  <li> 1 = QR Code                 </li>
+                  <li> 2 = AztecCode              </li>
+                  <li> 3 = Pdf417                 </li>
+                  <li> 4 = EAN(13)                </li>
+                  <li> 5  =Datamatrix             </li>
+                  <li> 6 = ITF(Interleaved 2 of 5)</li>
+                  <li> 7 = Code39                 </li>
+                  <li> 9 = Barcode Not Supported  </li>
+                </ul>"
               example: 0
-              pattern: 0-9
+              pattern: 0-7
             colour:
               type: string
-              description: background colour for card image - hex format
+              description: Brand approved background colour - hex format.
               example: '#f80000'
-              pattern: '^[#A-Fa-f0-9]{4,7}$'  
+              pattern: '^[#A-Fa-f0-9]{4,7}$' 
+            text_colour:
+              type: string
+              description: Brand approved text colour - hex format.
+              example: '#f80000'
+              pattern: '^[#A-Fa-f0-9]{4,7}$' 
             journeys:
               type: array
+              description: Types of journeys that this plan supports.
               items:
                 type: object
                 properties:
@@ -2154,116 +3277,29 @@ components:
                     minimum: 0
                     maximum: 99999
                     pattern: "[0-9]+"
-                    example: 0
+                    example: 136
+                    description: Resource identifier.
                   description: 
                     type: string
                     minLength: 1
                     maxLength: 50
                     pattern: "[A-Z]+"
-                    description: 'Types of journeys that this plan supports. 0 / ADD - Link an existing card. 1 / AUTHORISE - connect to the loyalty account for points and transactions. 2 / REGISTER - of existing ghost cards.  3 /JOIN - Sign up for a new loyalty account, card, or membership. '
-                    enum:
-                      - ADD
-                      - REGISTER
-                      - JOIN
-                      - AUTHORISE
+                    description: "
+                      <ul>
+                        <li> <b>ADD</b> a Loyalty Card as a Store type.             </li>
+                        <li> <b>AUTHORISE</b> a Store type Loyalty Card to become Engage or PLL.                                                </li>
+                        <li> <b>REGISTER</b> a Ghostcard.                            </li>
+                        <li> <b>JOIN</b> a Loyalty Plan as a new member. NOTE: This journey submits a request to Join. If successful, the Join resource automatically becomes a Loyalty Card in the user's Wallet.</li>
+                      </ul>"
                     example: "ADD"
         images:
           $ref: '#/components/schemas/Images'
         plan_details:
-          type: object
-          properties:
-            company_name:
-              type: string
-              description: Merchant or loyalty provider name
-              example: Wasabi
-              minLength: 0
-              maxLength: 200
-              pattern: "[\\u0000-\\u2FFF]+"
-            plan_name:
-              type: string
-              description: The merchant’s plan name - Brand + scheme name - not to be used in conjunction with plan_name_card
-              example: 'Wasabi Club'
-              minLength: 0
-              maxLength: 50
-              pattern: "[\\u0000-\\u2FFF]+"
-            plan_label:
-              type: string
-              description: 'The merchant’s name for the instrument when describing the plan itself. E.g., card or account'
-              example: 'Card'
-              minLength: 0
-              maxLength: 50
-              pattern: "[\\u0000-\\u2FFF]+"
-            plan_url:
-              type: string
-              description: URL relating to this membership plan
-              example: 'https://www.wasabi.uk.com'
-              maxLength: 2048
-              minLength: 1
-              pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
-            plan_summary:
-              type: string
-              description: Short form description for this plan
-              example: 'Collect 7 stamps for a £7 OFF Meal Voucher. One stamp can be earned per customer per transaction when the qualifying spend in a single transaction for food & drink purchases totals £7.00 or more in a participating Wasabi store. Ts and Cs apply.'
-              minLength: 0
-              maxLength: 250
-              pattern: "[\\u0000-\\u2FFF]+"
-            plan_description:
-              type: string
-              description: Full description for this membership plan
-              example: 'Please note that your vouchers are single-use and cannot be used twice. Show your Wasabi Club reward code in store to redeem £7 off your next meal.\r\nThe voucher will be available to redeem 2 months from the date it is collected. This voucher is non-refundable and cannot be exchanged for cash in part or full and is valid for a single transaction only.'
-              minLength: 0
-              maxLength: 500
-              pattern: "[\\u0000-\\u2FFF]+"
-            redeem_instructions:
-              type: string
-              description: 'How to redeem points using this barcode'
-              example: "At checkout, simply tell the cashier how much money you would like to save or redeem, present the barcode below and scan it using the customer facing scanners, as you normally would with your physical card."
-              minLength: 0
-              maxLength: 500
-              pattern: "[\\u0000-\\u2FFF]+"
-            plan_register_info:
-              type: string
-              description: 'Instructions for unregistered loyalty cards'
-              example: 'You have added a temporary card. You’ll need to register it to enjoy the full benefits of the programme.'
-              minLength: 0
-              maxLength: 500
-              pattern: "[\\u0000-\\u2FFF]+"
-            join_incentive:
-              type: string
-              description: Describing the incentives for enrolling
-              example: 'Join now and receive free points'
-              minLength: 0
-              maxLength: 200
-              pattern: "[\\u0000-\\u2FFF]+"
-            category:
-              type: string
-              description: Market sector or retail category
-              example: Household
-              minLength: 0
-              maxLength: 200
-              pattern: "[\\u0000-\\u2FFF]+"
-            tiers:
-              description: 'For plans with multiple membership levels'
-              type: array
-              minItems: 0
-              items:
-                type: object
-                properties:
-                  name:
-                    type: string
-                    example: Silver
-                    minLength: 0
-                    maxLength: 50
-                    pattern: "[\\u0000-\\u2FFF]+"
-                  description:
-                    type: string
-                    example: Double points earned
-                    minLength: 0
-                    maxLength: 50
-                    pattern: "[\\u0000-\\u2FFF]+"
+          $ref: '#/components/schemas/PlanDetails'
         journey_fields:
           $ref: '#/components/schemas/JourneyFieldSet'
         content:
+          description: Key value pairs that can be used to support UI elements.
           type: array
           minItems: 0
           maxItems: 9999
@@ -2275,11 +3311,13 @@ components:
                 minLength: 0
                 maxLength: 250
                 pattern: "[\\u0000-\\u2FFF]+"
+                description: "Key for the UI text description."
               value:
                 type: string
                 minLength: 0
                 maxLength: 500
                 pattern: "[\\u0000-\\u2FFF]+"
+                description: "Text that can be used in UI elements."
           example:
             - column: Voucher_Stamps_Inprogress_Detail
               value: 'Text from merchant - how to earn voucher.'
@@ -2296,6 +3334,7 @@ components:
       items:
         $ref: '#/components/schemas/LoyaltyPlan'
     Images: 
+      description: "List of all images associated with the resource."
       type: array
       items:
         minItems: 0
@@ -2306,53 +3345,71 @@ components:
             minimum: 1
             maximum: 18446744073709552000
             pattern: '^[0-9]+$'
-            example: 290
+            example: 316
+            description: Resource identifier.
           type:
             type: integer
             minimum: 0
             maximum: 9
             example: 0
             pattern: '[0-9]'
-            description: "0=HERO, 1=BANNER, 2=OFFER, 3=ICON, 4=ASSET, 5=REFERENCE, 6=PERSONAL_OFFERS, 7=PROMOTIONS, 8=TIER, 9=ALTERNATIVE"
+            description: "
+              <ul>
+                <li>0 = HERO            </li>
+                <li>1 = BANNER          </li>
+                <li>2 = OFFER           </li>
+                <li>3 = ICON            </li>
+                <li>4 = ASSET           </li>
+                <li>5 = REFERENCE       </li>
+                <li>6 = PERSONAL_OFFERS </li>
+                <li>7 = PROMOTIONS      </li>
+                <li>8 = TIER            </li>
+                <li>9 = ALTERNATIVE     </li>
+              </ul>"
           url:
             type: string
-            description: Full URL for image
+            description: "Url for an image that can be used as a call to action."
             example: 'https://api.staging.gb.bink.com/content/media/hermes/schemes/Wasabi_Promo_1968x732.png'
             pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
           description:
             type: string
-            description: Image Type description
-            example: Join now and start saving
+            description: "A description of the image."
+            example: "Wasabi Offer or Icelnd Hero Image"
             minLength: 0
             maxLength: 500
             pattern: "[\\u0000-\\u2FFF]+"
           encoding:
             type: string
-            enum:
-              - png
-              - jpg
-              - svg
-            description: Encoding for this file
+            description: "Encoding for this file.
+              <ul>
+                <li> <code>png</code> </li>
+                <li> <code>jpg</code>  </li>
+                <li> <code>svg</code>  </li>
+              </ul>"
             example: png
+          order:
+            type: integer
+            description: Order in which to display given image.
+            example: 1
     PlanDocumentRequest:
       type: object
-      description: ""
+      description: "PLaceholder"
       properties:
         name:
           type: string
-          description: "Specifies the document name as provided in this plan's journey fields"
-          example: "Terms & conditions"
+          description: Specifies the document name as provided in this plan's journey fields.
+          example: Terms & conditions.
         value:
           type: string
-          description: 'Value associated with this field.'
+          description: Value associated with this field.
           example: "Terms & conditions"
     CredentialRequest:
       type: object
-      description: "Refer to Loyalty Plan Validation GET /loyalty_plan for the relevant plan field for allowed input pattern and length"
+      description: "The fields that need to be presented to the user in order to Authorise the Loyalty Card"
       properties:
         credential_slug:
           type: string
-          description: Specifies the input field common name or key. Relevant 'add', 'authorisation', 'join' and 'register' fields for an asscociated loyalty plan can be found in GET /loyalty_plans
+          description: "A common name which can be used in mapping or prepopulating data."
           example: 'card_number'
         value:
           type: string
@@ -2360,11 +3417,11 @@ components:
           example: '198749238749'
     ConsentRequest:
       type: object
-      description: ""
+      description: "Placeholder 2"
       properties:
         consent_slug:
           type: string
-          description: "The merchant consent as provided in Journey Fields"
+          description: "A common name which can be used in mapping or prepopulating data."
           example: 'merch_t_and_c'
         value:
           type: string
@@ -2374,8 +3431,10 @@ components:
       $ref: '#/components/schemas/CredentialSet'
     JourneyFieldSet:
       type: object
+      description: "User information required to support Loyalty journeys."
       properties:
         register_ghost_card_fields:
+          description: "The fields that need to be presented to the user in order to Register a Ghostcard."
           allOf:
           - $ref: '#/components/schemas/JourneyFields'
           - example:
@@ -2387,6 +3446,7 @@ components:
                 credential_slug: "card_number"
                 type: "text"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 2
@@ -2396,6 +3456,7 @@ components:
                 credential_slug: "email"
                 type: "text"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 3
@@ -2405,6 +3466,7 @@ components:
                 credential_slug: "password"
                 type: "text"
                 is_sensitive: true
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 4
@@ -2413,6 +3475,7 @@ components:
                 credential_slug: "title"
                 type: "choice"
                 is_sensitive: false
+                is_scannable: false
                 choice:
                   - Mr
                   - Mrs
@@ -2431,6 +3494,7 @@ components:
                 credential_slug: "first_name"
                 type: "string"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 6
@@ -2439,6 +3503,7 @@ components:
                 credential_slug: "last_name"
                 type: "string"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               plan_documents:
@@ -2450,9 +3515,10 @@ components:
               consents:
                 - order: 8
                   name: "notification_marketing"
-                  is_acceptance_required: true
+                  is_acceptance_required: false
                   description: "Check this box to receive notifications"
         join_fields:
+          description: "The fields that need to be presented to the user in order to become a new member of the Loyalty Plan."
           allOf:
           - $ref: '#/components/schemas/JourneyFields'
           - example:
@@ -2464,6 +3530,7 @@ components:
                 credential_slug: "email"
                 type: "text"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 2
@@ -2473,6 +3540,7 @@ components:
                 credential_slug: "password"
                 type: "text"
                 is_sensitive: true
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 3
@@ -2481,6 +3549,7 @@ components:
                 credential_slug: "title"
                 type: "choice"
                 is_sensitive: false
+                is_scannable: false
                 choice:
                   - Mr
                   - Mrs
@@ -2499,6 +3568,7 @@ components:
                 credential_slug: "first_name"
                 type: "string"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               - order: 5
@@ -2507,6 +3577,7 @@ components:
                 credential_slug: "last_name"
                 type: "string"
                 is_sensitive: false
+                is_scannable: false
                 choice: []
                 alternative:
               plan_documents:
@@ -2518,9 +3589,10 @@ components:
               consents:
                 - order: 7
                   name: "notification_marketing"
-                  is_acceptance_required: true
+                  is_acceptance_required: false
                   description: "Check this box to receive notifications"
         add_fields:
+          description: "The fields that need to be presented to the user in order to Add an existing Loyalty Card as Store type to the user's wallet."
           allOf:
           - $ref: '#/components/schemas/JourneyFields'
           - example:
@@ -2531,6 +3603,7 @@ components:
                 credential_slug: "barcode"
                 type: "text"
                 is_sensitive: false
+                is_scannable: true
                 choice: []
                 alternative:
                   order: 1
@@ -2540,12 +3613,14 @@ components:
                   credential_slug: "card_number"
                   type: "text"
                   is_sensitive: false
+                  is_scannable: false
                   choice: []
               plan_documents:
               -
               consents:
               -
         authorise_fields:
+          description: "The fields that need to be presented to the user in order to Authorise a Store type Loyalty Card already in a user's wallet."
           allOf:
           - $ref: '#/components/schemas/JourneyFields'
           - example:
@@ -2557,6 +3632,7 @@ components:
                 credential_slug: "password"
                 type: "text"
                 is_sensitive: true
+                is_scannable: false
                 choice: []
                 alternative:
               plan_documents:
@@ -2570,14 +3646,17 @@ components:
           $ref: '#/components/schemas/CredentialSet'
         plan_documents:
           type: array
+          description: "Legal copy to be displayed and sometimes accepted by the user."
           items:
             $ref: '#/components/schemas/DocumentBase'
         consents:
           type: array
+          description: "Brand marketing information to be displayed and sometimes accepted by the user."
           items:
             $ref: '#/components/schemas/ConsentBase'
     CredentialSet:
       type: array
+      description: "Personal information required to complete the selected journey."
       minItems: 0
       items:
         allOf:
@@ -2588,80 +3667,87 @@ components:
       properties:
         order:
           type: integer
-          description: 'Specifies the order in which to display this credential'
+          description: "Specifies the order in which to display this field. The order is unique within the entire list of fields that need to be displayed to support the chosen journey. The field list can be made up of **Credentials**, **Plan Documents** and **Consents**."
           example: 1
           minimum: 1
           maximum: 9999
           pattern: "[0-9]+"
         display_label:
           type: string
-          description: Column name for metadata
+          description: "Text label used in the UI to identify the required information."
           example: "First Name"
           minLength: 0
           maxLength: 250
           pattern: "[A-Za-z0-9_\\s]"
         validation:
           type: string
-          description: Regular expression to validate input value
+          description: "Regular expression to validate input value."
           example: '^((63317491)|(63317492))[0-9]{10}$'
           minLength: 0
           maxLength: 250
           pattern: ".*"
         description:
           type: string
-          description: A description of this field to display to the user
+          description: "Text field that can be used as a hint to the user, guiding them on input."
           example: Your 18 digit card number
           minLength: 0
           maxLength: 250
           pattern: "[\\u0000-\\u2FFF]+"
         credential_slug:
           type: string
-          description: A common name of the field used for mapping or prepopulating data into this column
+          description: "A common name which can be used in mapping or prepopulating data."
           example: first_name
           minLength: 0
           maxLength: 250
           pattern: "[\\u0000-\\u2FFF]+"
         type:
           type: string
-          description: 'The field type text, boolean, choice (e.g., for a drop-down list)'
-          enum:
-            - text
-            - boolean
-            - choice
+          description: "Supported field types are:
+            <ul>
+              <li> <code>text</code>       </li>
+              <li> <code>sensitive</code>  </li>
+              <li> <code>choice</code>     </li>
+              <li> <code>boolean</code>    </li>
+            </ul>"
           example: text
           pattern: "[\\u0000-\\u2FFF]+"
         is_sensitive:
           type: boolean
-          description: 'Indicates whether or not this field is sensitive and therefore requires field-level encryption'
+          description: "Indicates whether or not this field is sensitive and therefore requires special UI controls. For example a Password field."
+        is_scannable:
+          type: boolean
+          description: "Indicates whether or not this field can be scanned for input, such as a barcode"
         choice:
           type: array
-          description: An array of values if this field is a choice type
+          description: "A list of possible values to be presented to the user when the type = choice."
           minItems: 0
           maxItems: 99
           items:
             type: string
-          example: ["Mrs", "Dr", "Prof"]
           minLength: 0
           maxLength: 50
           pattern: "[\\u0000-\\u2FFF]+"
     CredentialAlternative:
       type: object
+      description: "Sometimes fields can have an alternative if the primary cannot capture the required information. For example: If the **barcode** can't be scanned, we will want the **card number** entered manually."
       properties:
         alternative:
-          $ref: '#/components/schemas/CredentialBase'
+          type: object
+          description: "Will display the same keys as the primary credential but with alternative values. E.g. <code>card_number</code> as an alternative to <code>barcode</code>."
     LoyaltyCardBalanceResponse:
       type: object
       properties:
         updated_at:
           type: integer
           example: 1517549941
-          description: 'The date and time that Bink successfully retrieved a balance for the loyalty card'
+          description: "The date and time that Bink successfully retrieved a balance for the Loyalty Card."
         current_display_value:
           type: string
           example: '£30'
-          description: 'The value of the loyalty card - points, currency, etc'
+          description: "String showing the current balance of the Loyalty Card."
     LoyaltyCardTransactions:
       type: array
+      description: "List of transactions associated with the Loyalty Card."
       minItems: 0
       items:
         allOf:
@@ -2672,19 +3758,19 @@ components:
         id:
           type: string
           example: '100982384448'
-          description: 'The transaction identifier from the merchant'
+          description: "Transaction identifier as supplied by the merchant."
         timestamp:
           type: integer
           example: 1517549941
-          description: 'Time and date of the transaction'
+          description: "Time and date of the transaction as supplied by the merchant."
         description: 
           type: string
           example: 'Purchase at Iceland Brighton'
-          description: human readable string from the merchant
+          description: "Human readable description of the transaction as supplied by the the merchant."
         display_value:
           type: string
           example: '150 points'
-          description: Value of transaction awarded to the loyalty card received from the merchant
+          description: "Value of transaction awarded as supplied by the merchant"
     ConsentBase:
       type: object
       properties:
@@ -2695,18 +3781,19 @@ components:
         is_acceptance_required:
           type: boolean
           example: true
-          description: 'Indicates whether or not the user must accept this document'
+          description: "Indicates whether or not the user must accept this Consent."
         order:
           type: integer
-          description: 'Specifies the order in which to display this field'
+          description: "Specifies the order in which to display this field. The order is unique within the entire list of fields that need to be displayed to support the chosen journey. The field list can be made up of **Credentials**, **Plan Documents** and **Consents**."
           example: 1
           minimum: 1
           maximum: 9999
           pattern: "[0-9]+"
         description:
           type: string
-          example: "Check this box to receive notifications"
+          example: "Check this box to receive notifications."
           pattern: "[\\u0000-\\u2FFF]+"
+          description: "Describes how to use the Consent."
     DocumentBase:
       type: object
       properties:
@@ -2714,17 +3801,19 @@ components:
           type: string
           example: 'Retailer terms and conditions'
           pattern: "[\\u0000-\\u2FFF]+"
+          description: "The refenerence name of the Document."
         url:
           type: string
           example: 'https://policies.address.com/retailer/tc.html%22'
           pattern: "[\\u0000-\\u2FFF]+"
+          description: "Link to the Document contents."
         is_acceptance_required:
           type: boolean
           example: true
-          description: 'Indicates whether or not the user must accept this document'
+          description: "Indicates whether or not the user must accept this Document before being allowed to proceed with the journey."
         order:
           type: integer
-          description: 'Specifies the order in which to display this field'
+          description: "Specifies the order in which to display this field. The order is unique within the entire list of fields that need to be displayed to support the chosen journey. The field list can be made up of **Credentials**, **Plan Documents** and **Consents**."
           example: 1
           minimum: 1
           maximum: 9999
@@ -2733,6 +3822,7 @@ components:
           type: string
           example: "I accept the "
           pattern: "[\\u0000-\\u2FFF]+"
+          description: "Describes how to use the Plan Document."
     ID:
       type: object
       required:
@@ -2740,7 +3830,7 @@ components:
       properties:
         id:
           type: number
-          description: 'Resource identifier'
+          description: 'Resource identifier.'
           example: 134
     genericresponse400:
       type: object
@@ -2750,11 +3840,11 @@ components:
       properties:
         error_message:
           type: string
-          description: 'error message that could be displayed to a user'
+          description: 'Error message that could be displayed to a user.'
           example: 'Invalid JSON'
         error_slug:
           type: string
-          description: 'Human-readable identifier that is easy to code against'
+          description: 'Human-readable identifier that is easy to code against.'
           example: 'MALFORMED_REQUEST'
     genericresponse401:
       type: object
@@ -2764,11 +3854,11 @@ components:
       properties:
         error_message:
           type: string
-          description: 'error message that could be displayed to a user'
+          description: 'Error message that could be displayed to a user.'
           example: 'Supplied token is invalid'
         error_slug:
           type: string
-          description: 'Human-readable identifier that is easy to code against'
+          description: 'Human-readable identifier that is easy to code against.'
           example: 'INVALID_TOKEN'
     genericresponse404:
       type: object
@@ -2778,11 +3868,11 @@ components:
       properties:
         error_message:
           type: string
-          description: 'error message that could be displayed to a user'
+          description: 'Error message that could be displayed to a user.'
           example: 'Could not find this account or card'
         error_slug:
           type: string
-          description: 'Human-readable identifier that is easy to code against'
+          description: 'Human-readable identifier that is easy to code against.'
           example: 'RESOURCE_NOT_FOUND'
     genericresponse409:
       type: object
@@ -2792,7 +3882,7 @@ components:
       properties:
         error_message:
           type: string
-          description: 'error message that could be displayed to a user'
+          description: 'Error message that could be displayed to a user.'
           example: 'Could not process request due to a conflict'
         error_slug:
           type: string
@@ -2807,14 +3897,14 @@ components:
       properties:
         error_message:
           type: string
-          description: 'error message that could be displayed to a user'
+          description: 'Error message that could be displayed to a user.'
           example: 'Could not validate fields'
         error_slug:
           type: string
-          description: 'Human-readable identifier that is easy to code against'
+          description: 'Human-readable identifier that is easy to code against.'
           example: 'FIELD_VALIDATION_ERROR'
         fields:
-          description: 'list of fields that failed validation'
+          description: 'List of fields that failed validation.'
           type: array
           items:
             type: string
@@ -2824,6 +3914,7 @@ components:
             - "required key not provided @ data['expiry_month']"
     Vouchers:
       type: array
+      description: "List of vouchers associated with the Loyalty Card."
       items: 
         $ref: '#/components/schemas/Voucher'
     Voucher:
@@ -2834,19 +3925,21 @@ components:
           type: string
           nullable: true
           example: inprogress
-          description: "This voucher's current state"
-          enum:
-            - redeemed
-            - issued
-            - inprogress
-            - expired
-            - cancelled
+          description: "The Voucher's current state, one of:
+            <ul>
+              <li>In Progress.</li>
+              <li>Issued.</li>
+              <li>Redeemed.</li>
+              <li>Expired.</li>
+              <li>Cancelled.</li>
+            </ul>"
           minLength: 0
           maxLength: 50
           pattern: '[A-Za-z0-9]+'
         earn_type: 
           type: string
           example: 'stamps'
+          description: "Descriptive text for how Loyalty accrual is measured. E.g. Stamps, Accumulator, etc."
         reward_text: 
           type: string
           nullable: true
@@ -2854,83 +3947,89 @@ components:
           minLength: 0
           maxLength: 250
           pattern: "[\\u0000-\\u2FFF]+"
+          description: "Descriptive text for the voucher reward."
         headline:
           example: 'Spend £7.00 or more to get a stamp. Collect 7 stamps to get a Meal Voucher of up to £7 off your next meal'
           type: string
           nullable: true
-          description: "A string that describes this voucher's disposition in a readable way"
+          description: "A string that describes this voucher's disposition in a readable way."
           minLength: 0
           maxLength: 250
           pattern: "[\\u0000-\\u2FFF]+"  
         voucher_code: 
           type: string
           nullable: true
-          description: Voucher code
+          description: "Unique identifier for the voucher as supplied by the merchant. When combined with <code>barcode_type</code> it allows the client to render a barcode for use at point of sale."
           minLength: 0
           maxLength: 50
           example: '5544332211'
         barcode_type:
+          description: "Used to render the barcode in the UI.  
+            <ul>
+              <li> 0 = Code128 (B or C)        </li>
+              <li> 1 = QR Code                 </li>
+              <li> 2 = AztecCode              </li>
+              <li> 3 = Pdf417                 </li>
+              <li> 4 = EAN(13)                </li>
+              <li> 5  =Datamatrix             </li>
+              <li> 6 = ITF(Interleaved 2 of 5)</li>
+              <li> 7 = Code39                 </li>
+              <li> 9 = Barcode Not Supported  </li>
+            </ul>"
+          example: 0
+          pattern: 0-7
           type: integer
-          description: '0=Code128(B or C); 1=QRCode;2=AztecCode;3=Pdf417;4=EAN(13);5=Datamatrix;6=ITF(Interleaved 2 of 5);7=Code39'
-          enum:
-            - 0
-            - 1
-            - 2
-            - 3
-            - 4
-            - 5
-            - 6
-            - 7
-            - 8
-            - 9
-          pattern: 0-9
         progress_display_text:
           type: string
           nullable: true
-          description: "Describes the inprogress voucher's progress"
+          description: "Describes the progress of loyalty accrual towards a reward."
           minLength: 0
           maxLength: 250
           pattern: "[\\u0000-\\u2FFF]+"   
           example: '2/7 stamps'
         prefix:
           type: string
-          description: Pre-qualifier for earned and target values - usually a currency symbol
+          example: '£'
+          description: "Pre-qualifier for earned and target values - usually a currency symbol."
           minLength: 0
           maxLength: 50
           pattern: "[\\u0000-\\u2FFF]+"
         suffix:
           type: string
-          description: Post-qualifier for earned and target values such as stamps or visits
+          example: 'stamps'
+          description: "Post-qualifier for earned and target values such as stamps or visits."
           minLength: 0
           maxLength: 50
           pattern: "[\\u0000-\\u2FFF]+"
         target_value:
           type: number
-          description: Target spend value
+          example: 7
+          description: "Target spend value before gaining a reward."
           minimum: 0
           maximum: 9999999
         current_value:
           type: number
-          description: Spent so far against target
+          example: 2
+          description: "Spent so far that can be measured against the target."
           minimum: 0
           maximum: 9999999
         body_text: 
           type: string
           nullable: true
-          description: Additional explanatory text
+          description: "Additional explanatory text if required."
           minLength: 0
           maxLength: 250
           pattern: "[\\u0000-\\u2FFF]+"   
         terms_and_conditions:
           type: string
           nullable: true
-          description: URL of terms and conditions for a voucher, if applicable
+          description: "URL of terms and conditions for a voucher, if applicable."
           minLength: 0
           maxLength: 250
           pattern: "[\\u0000-\\u2FFF]+"  
           example: "http://baseurl/terms/terms.html%22"
         issued_date:
-          description: date voucher was issued
+          description: "Date Voucher was issued."
           type: integer
           nullable: true
           pattern: '[0-9]+'
@@ -2940,13 +4039,13 @@ components:
         expiry_date:
           type: integer
           nullable: true
-          description: Date voucher will expire
+          description: "Date Voucher will expire."
           pattern: '[0-9]+'
           minimum: 0
           maximum: 99999999999
           example: 1617549941
         redeemed_date:
-          description: date of voucher redemption
+          description: "Date of Voucher was redeemed."
           type: integer
           nullable: true
           pattern: '[0-9]+'
