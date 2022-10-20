@@ -129,6 +129,12 @@ paths:
                         state: "pending"
                         slug:
                         description: 
+                      card:
+                        barcode: null
+                        barcode_type: 0
+                        card_number: null
+                        colour: '#FFFFFF'
+                        text_colour: '#FFFFFF'  
                       images:
                         id: 290
                         type: 0
@@ -306,6 +312,7 @@ paths:
                 <li>Balance details.</li>
                 <li>Transactions.</li>
                 <li>Vouchers.</li>
+                <li>Card features.</li>
                 <li>PLL Links.</li>
               </ul>
             </li>
@@ -466,6 +473,12 @@ paths:
                         state: "pending"
                         slug:
                         description:
+                      card:
+                        barcode: null
+                        barcode_type: 0
+                        card_number: null
+                        colour: '#FFFFFF'
+                        text_colour: '#FFFFFF'  
                       images:
                         id: 290
                         type: 0
@@ -1211,6 +1224,91 @@ paths:
                     - consent_slug: EmailOptin
                       value: 'false'
         description: 'Loyalty Card Join Request'
+  /loyalty_cards/{loyalty_card_id}join:
+    put:
+      security: 
+        - bearerAuth: []
+      tags:
+        - Loyalty Cards
+      summary: Update a failed Join request
+      operationId: POST /loyalty_cards/{loyalty_card_id}/join
+      description: "
+        Update a failed **Join** request and reprocess new user details. The **Join** request will then follow the same process as a new **Join** intent where Bink passes the intent to the relevant merchant and waits for them to process the request. 
+        A successful response from the merchant will see the **Join** resource become an **Engage** or **PLL** type **Loyalty Card**, failure leaves the resource in a failed state with an explanation. The user can delete the failure and try again. New **Join** requests to the same **Loyalty Plan** are independent.
+
+          <html>
+            <body>
+              <h3>Journey Fields</h3>
+              Use the <code>journey_fields.join_fields</code> returned from either of the following endpoints:
+              <ul>
+                <li> <code>GET /loyalty plans</code> </li>
+                <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+              </ul>
+              Or from <code>join_fields</code> in the endpoint:
+              <ul>
+                <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+              </ul>
+            </body>
+          </html>
+
+
+        <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
+      responses:
+        '202':
+          description: '**Accepted**, join in progress'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Join202Response'
+        '400':
+          description: Client needs to modify the request before it can be retried
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse400'
+        '401':
+          description: Client does not have valid token
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '422':
+          description: One or more fields in the request did not pass the required validation
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse422'
+              example:
+                error_message: "Could not validate fields"
+                error_slug: "FIELD_VALIDATION_ERROR"
+                fields:
+                  - "expected str for dictionary value @ data['email']"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoyaltyCardJoinRequest'
+            example: 
+              loyalty_plan_id: 242
+              account: 
+                join_fields:
+                  credentials:
+                    - credential_slug: first_name
+                      value: 'Joe'
+                    - credential_slug: last_name
+                      value: 'Blogs'
+                    - credential_slug: date_of_birth
+                      value: '10 January 1990'
+                    - credential_slug: email
+                      value: 'joe_blogs@bink.com'
+                  consents:
+                    - consent_slug: EmailOptin
+                      value: 'false'
+        description: 'Loyalty Card Join Request'        
   /loyalty_cards/{loyalty_card_id}/join:
     delete:
       security:
@@ -2182,6 +2280,8 @@ components:
               nullable: true
               example: null
               description: "Descrioption of the state of the Join."
+        card:
+          $ref: '#/components/schemas/LoyaltyCardProperties'
         images: 
           $ref: '#/components/schemas/Images'
 
@@ -2199,7 +2299,9 @@ components:
         properties:
           token:
             type: string
-            description: "Unique identifier for this account. Supplied by the tokenisation service."
+            description: 
+              "Unique identifier for this account. Supplied by the tokenisation service. <br>
+              NOTE: This will be the <code>payment_method</code> token from the Spreedly tokenisation response."
             example: "H7FdKWKPOPhepzxS4MfUuvTDHxr"
             minLength: 1
             maxLength: 255
@@ -2348,14 +2450,15 @@ components:
         barcode_type:
           description: "Used to render the barcode in the UI.  
             <ul>
-              <li> 0 = Code128(B or C)        </li>
-              <li> 1 = QRCode                 </li>
+              <li> 0 = Code128 (B or C)        </li>
+              <li> 1 = QR Code                 </li>
               <li> 2 = AztecCode              </li>
               <li> 3 = Pdf417                 </li>
               <li> 4 = EAN(13)                </li>
               <li> 5  =Datamatrix             </li>
               <li> 6 = ITF(Interleaved 2 of 5)</li>
               <li> 7 = Code39                 </li>
+              <li> 9 = Barcode Not Supported  </li>
             </ul>"
           example: 0
           pattern: 0-7
@@ -2464,6 +2567,10 @@ components:
           type: string
           description: "The brand name of the Loyalty Plan."
           example: "Wasabi Club"
+        reward_available:
+          type: boolean
+          description: "Indicates whether there is an issued reward ready to use."
+          example: false          
         status:
           type: object
           nullable: true
@@ -2566,6 +2673,10 @@ components:
           type: string
           description: "The brand name of the Loyalty Plan."
           example: "Wasabi Club"
+        reward_available:
+          type: boolean
+          description: "Indicates whether there is an issued reward ready to use."
+          example: false          
         status:
           type: object
           nullable: true
@@ -2604,6 +2715,10 @@ components:
           type: string
           description: "The brand name of the Loyalty Plan."
           example: "Wasabi Club"
+        reward_available:
+          type: boolean
+          description: "Indicates whether there is an issued reward ready to use."
+          example: false
         is_fully_pll_linked:
           type: boolean
           description: "Indicates whether or not the given Loyalty Card is PLL linked to all Payment Accounts in the user's wallet."
@@ -3047,6 +3162,16 @@ components:
           minLength: 0
           maxLength: 200
           pattern: "[\\u0000-\\u2FFF]+"
+        colour:
+          description: "Brand approved background colour - hex format."
+          example: '#FFFFFF'
+          pattern: '^[#A-Fa-f0-9]{4,7}$'
+          type: string
+        text_colour:
+          description: "Brand approved text colour - hex format."
+          example: '#FFFFFF'
+          pattern: '^[#A-Fa-f0-9]{4,7}$'
+          type: string          
         tiers:
           description: "This is used for plans that have multiple membership levels. For example: Tier 1 for members up to 10000 points, Tier 2 for members between 10001 and 20000 points, and Tier 3 for members between 30001 and above. Each Tier may provide additional benefits to the previous."
           type: array
@@ -3119,14 +3244,15 @@ components:
               type: integer
               description: "Used to render the barcode in the UI.  
                 <ul>
-                  <li> 0 = Code128(B or C)        </li>
-                  <li> 1 = QRCode                 </li>
+                  <li> 0 = Code128 (B or C)        </li>
+                  <li> 1 = QR Code                 </li>
                   <li> 2 = AztecCode              </li>
                   <li> 3 = Pdf417                 </li>
                   <li> 4 = EAN(13)                </li>
                   <li> 5  =Datamatrix             </li>
                   <li> 6 = ITF(Interleaved 2 of 5)</li>
                   <li> 7 = Code39                 </li>
+                  <li> 9 = Barcode Not Supported  </li>
                 </ul>"
               example: 0
               pattern: 0-7
@@ -3840,14 +3966,15 @@ components:
         barcode_type:
           description: "Used to render the barcode in the UI.  
             <ul>
-              <li> 0 = Code128(B or C)        </li>
-              <li> 1 = QRCode                 </li>
+              <li> 0 = Code128 (B or C)        </li>
+              <li> 1 = QR Code                 </li>
               <li> 2 = AztecCode              </li>
               <li> 3 = Pdf417                 </li>
               <li> 4 = EAN(13)                </li>
               <li> 5  =Datamatrix             </li>
               <li> 6 = ITF(Interleaved 2 of 5)</li>
               <li> 7 = Code39                 </li>
+              <li> 9 = Barcode Not Supported  </li>
             </ul>"
           example: 0
           pattern: 0-7
