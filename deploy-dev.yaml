@@ -188,7 +188,8 @@ paths:
                         terms_and_conditions: "http://baseurl/terms/terms.html%22"
                         issued_date: null
                         expiry_date: null
-                        redeemed_date:
+                        redeemed_date: null
+                        conversion_date: null
                       - state: "issued"
                         earn_type: "stamps"
                         reward_text: "Meal Voucher"
@@ -200,11 +201,28 @@ paths:
                         suffix:
                         current_value: 
                         target_value: 
-                        body_text: null
+                        body_text: "Congratulations, you have earned a reward. Please present at point of sale to claim."
                         terms_and_conditions: "http://baseurl/terms/terms.html%22"
                         issued_date: 1517549941
                         expiry_date: 1617549941
-                        redeemed_date:
+                        redeemed_date: null
+                        conversion_date: null
+                      - earn_type: "stamps"
+                        reward_text: "Meal Voucher"
+                        headline: "Pending"
+                        voucher_code: "Pending"
+                        barcode_type: 1
+                        progress_display_text:
+                        prefix:
+                        suffix:
+                        current_value: 
+                        target_value: 
+                        body_text: "You have earned a reward which will be availbale to redeem after 10 days."
+                        terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                        issued_date: 1517549941
+                        expiry_date: null
+                        redeemed_date: null
+                        conversion_date: 1617569981
                     card:
                       barcode: "633174911234567898"
                       barcode_type: 0
@@ -380,7 +398,8 @@ paths:
                         terms_and_conditions: "http://baseurl/terms/terms.html%22"
                         issued_date: null
                         expiry_date: null
-                        redeemed_date:
+                        redeemed_date: null
+                        conversion_date: null
                       - state: "issued"
                         earn_type: "stamps"
                         reward_text: "Meal Voucher"
@@ -392,11 +411,28 @@ paths:
                         suffix:
                         current_value: 
                         target_value: 
-                        body_text: null
+                        body_text: "Congratulations, you have earned a reward. Please present at point of sale to claim."
                         terms_and_conditions: "http://baseurl/terms/terms.html%22"
                         issued_date: 1517549941
                         expiry_date: 1617549941
+                        redeemed_date: null
+                        conversion_date: null
+                      - earn_type: "stamps"
+                        reward_text: "Meal Voucher"
+                        headline: "Pending"
+                        voucher_code: "Pending"
+                        barcode_type: 1
+                        progress_display_text:
+                        prefix:
+                        suffix:
+                        current_value: 
+                        target_value: 
+                        body_text: "You have earned a reward which will be availbale to redeem after 10 days."
+                        terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                        issued_date: 1517549941
+                        expiry_date: null
                         redeemed_date:
+                        conversion_date: 1617569981
                     card:
                       barcode: "633174911234567898"
                       barcode_type: 0
@@ -1656,7 +1692,8 @@ paths:
                       terms_and_conditions: "http://baseurl/terms/terms.html%22"
                       issued_date: null
                       expiry_date: null
-                      redeemed_date:
+                      redeemed_date: null
+                      conversion_date: null
                     - state: "issued"
                       earn_type: "stamps"
                       reward_text: "Meal Voucher"
@@ -1668,11 +1705,28 @@ paths:
                       suffix:
                       current_value: 
                       target_value: 
-                      body_text: null
+                      body_text: "Congratulations, you have earned a reward. Please present at point of sale to claim."
                       terms_and_conditions: "http://baseurl/terms/terms.html%22"
                       issued_date: 1517549941
                       expiry_date: 1617549941
+                      redeemed_date: null
+                      conversion_date: null
+                    - earn_type: "stamps"
+                      reward_text: "Meal Voucher"
+                      headline: "Pending"
+                      voucher_code: "Pending"
+                      barcode_type: 1
+                      progress_display_text:
+                      prefix:
+                      suffix:
+                      current_value: 
+                      target_value: 
+                      body_text: "You have earned a reward which will be availbale to redeem after 10 days."
+                      terms_and_conditions: "http://baseurl/terms/terms.html%22"
+                      issued_date: 1517549941
+                      expiry_date: null
                       redeemed_date:
+                      conversion_date: 1617569981
         '401':
           description: Not authorised, request does not have a valid token
           content:
@@ -2461,7 +2515,7 @@ components:
               <li> 9 = Barcode Not Supported  </li>
             </ul>"
           example: 0
-          pattern: 0-7
+          pattern: 0-9
           type: integer
         card_number:
           description: "Loyalty membership number."
@@ -3255,7 +3309,7 @@ components:
                   <li> 9 = Barcode Not Supported  </li>
                 </ul>"
               example: 0
-              pattern: 0-7
+              pattern: 0-9
             colour:
               type: string
               description: Brand approved background colour - hex format.
@@ -3927,11 +3981,12 @@ components:
           example: inprogress
           description: "The Voucher's current state, one of:
             <ul>
-              <li>In Progress.</li>
-              <li>Issued.</li>
-              <li>Redeemed.</li>
-              <li>Expired.</li>
-              <li>Cancelled.</li>
+              <li><code>inprogress</code></li>
+              <li><code>pending</code></li>
+              <li><code>issued</code></li>
+              <li><code>redeemed</code></li>
+              <li><code>expired</code></li>
+              <li><code>cancelled</code></li>
             </ul>"
           minLength: 0
           maxLength: 50
@@ -3959,7 +4014,8 @@ components:
         voucher_code: 
           type: string
           nullable: true
-          description: "Unique identifier for the voucher as supplied by the merchant. When combined with <code>barcode_type</code> it allows the client to render a barcode for use at point of sale."
+          description: "Unique identifier for the voucher as supplied by the merchant. When combined with <code>barcode_type</code> it allows the client to render a barcode for use at point of sale.
+                        <br> NOTE: If the voucher is <code>pending</code> this field will return 'Pending'."
           minLength: 0
           maxLength: 50
           example: '5544332211'
@@ -3977,7 +4033,7 @@ components:
               <li> 9 = Barcode Not Supported  </li>
             </ul>"
           example: 0
-          pattern: 0-7
+          pattern: 0-9
           type: integer
         progress_display_text:
           type: string
@@ -4018,7 +4074,7 @@ components:
           nullable: true
           description: "Additional explanatory text if required."
           minLength: 0
-          maxLength: 250
+          maxLength: 500
           pattern: "[\\u0000-\\u2FFF]+"   
         terms_and_conditions:
           type: string
@@ -4039,7 +4095,7 @@ components:
         expiry_date:
           type: integer
           nullable: true
-          description: "Date Voucher will expire."
+          description: "Date Voucher will expire. This will be <code>null</code> if the voucher is <code>pending</code> "
           pattern: '[0-9]+'
           minimum: 0
           maximum: 99999999999
@@ -4052,6 +4108,15 @@ components:
           minimum: 0
           maximum: 99999999999
           example: 1617549941
+        conversion_date:
+          description: "Date the pending reward converts to an issued, redeemable reward. <br>
+                        The value will be <code>null</code> unless state is <code>pending</code>"
+          type: integer
+          nullable: true
+          pattern: '[0-9]+'
+          minimum: 0
+          maximum: 99999999999
+          example: 1617549941          
 tags:
   - name: Token
   - name: Users
