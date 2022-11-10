@@ -1652,7 +1652,8 @@ paths:
       operationId: GET /loyalty_cards/{loyalty_card_id}/vouchers
       description: "Provides a list of the vouchers attached to the user's **Loyalty Card**. <br>The different voucher statuses that can be returned are:
         <ul>
-          <li><code>in_progress</code></li>
+          <li><code>inprogress</code></li>
+          <li><code>pending</code></li>
           <li><code>issued</code></li>
           <li><code>redeemed</code></li>
           <li><code>expired</code></li>
@@ -4110,7 +4111,7 @@ components:
           example: 1617549941
         conversion_date:
           description: "Date the pending reward converts to an issued, redeemable reward. <br>
-                        The value will be <code>null</code> unless state is <code>pending</code>"
+                        The value will be <code>null</code> unless the state is <code>pending</code>."
           type: integer
           nullable: true
           pattern: '[0-9]+'
