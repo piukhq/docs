@@ -988,6 +988,92 @@ paths:
                 error_message: "Could not validate fields"
                 error_slug: "FIELD_VALIDATION_ERROR"
                 fields:
+                  - "expected str for dictionary value @ data['card_number']" 
+  /loyalty_cards/add_trusted:
+    post:
+      security:
+        - bearerAuth: []
+      tags:
+        - Loyalty Cards
+      summary: Update a Loyalty Card from a Trusted Channel
+      operationId: POST /loyalty_cards/add_trusted
+      description: "This will add a **PLL** type **Loyalty Card** into a user's wallet. Adding from a Trusted Channel requires only a unique identifier for the loyalty membership to enable **PLL** for those **Loyalty Plans** that support it. <br><br>Calling this endpoint on an existing **Loyalty Card** will return details of the **Loyalty Card** and add it to the user's wallet. <br><br> A Trusted Channel is a client or application that authenticates its own end users before using with the Bink API.
+
+          <html>
+            <body>
+              <h3>Journey Fields</h3>
+              You will need the <code>journey_fields.add_fields</code> or <code>journey_fields.authorise_fields</code>, or a combination of both returned from either of the following endpoints:
+              <ul>
+                <li> <code>GET /loyalty plans</code> </li>
+                <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+              </ul>
+              Or from <code>add_fields</code> and <code>authorise_fields</code> in the endpoint:
+              <ul>
+                <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+              </ul>
+
+              <h3>Merchant Fields</h3>
+              Provide a unique, immutable identifer for the loyalty membership. We will use this identifier for **PLL**.
+
+            <br><br><b>NOTE</b>: <br>
+            <ul>
+              <li>If the card is a <b>PLL</b> type, success will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>. </li>
+              <li>Some <b>Loyalty Plans</b> might not have any ADD fields, only AUTH fields. You may still use this endpoint to add and authorise <b>Loyalty Cards</b> of this type.</li>
+            </ul>
+            </body>
+          </html>"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/LoyaltyCardAddRequest'
+                - $ref: '#/components/schemas/TrustedMerchantFields'
+      responses:
+        '200':
+          description: "**OK** Everything worked as expected. Response contains resource Id."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoyaltyCardProcessResponse'
+        '201':
+          description: "**Created** Response contains the resource Id."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoyaltyCardProcessResponse'
+        '400':
+          description: '**Bad request** Client needs to modify the request before it can be retried'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse400'
+        '401':
+          description: '**Unauthorized** Client does not have valid token'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '409':
+          description: '**Conflict** You may encounter a conflict if a loyalty membership already exists in our system but the add or authorise fields do not match the account_id.'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse409'
+        '422':
+          description: "**Unprocessable entity** One or more fields in the request did not pass the required validation"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse422'
+              example:
+                error_message: "Could not validate fields"
+                error_slug: "FIELD_VALIDATION_ERROR"
+                fields:
                   - "expected str for dictionary value @ data['card_number']"
   /loyalty_cards/add_and_authorise:
     post:
@@ -1074,12 +1160,98 @@ paths:
             schema:
               $ref: '#/components/schemas/LoyaltyCardAddAndAuthoriseRequest'
         description: "Loyalty Card Registration Request."
+  /loyalty_cards/{loyalty_card_id}/add_trusted:
+    put:
+      security:
+        - bearerAuth: []
+      tags:
+        - Loyalty Cards
+      summary: Add a Loyalty Card from a Trusted Channel
+      operationId: PUT /loyalty_cards/add_trusted
+      description: "Use this operation from a Trusted Channel to correct a loyalty card that is in an error state.
+          <html>
+            <body>
+              <h3>Journey Fields</h3>
+              You will need the <code>journey_fields.add_fields</code> or <code>journey_fields.authorise_fields</code>, or a combination of both returned from either of the following endpoints:
+              <ul>
+                <li> <code>GET /loyalty plans</code> </li>
+                <li> <code> GET /loyalty_plans/{loyalty_plan_id}</code> </li>
+              </ul>
+              Or from <code>add_fields</code> and <code>authorise_fields</code> in the endpoint:
+              <ul>
+                <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
+              </ul>
+
+              <h3>Merchant Fields</h3>
+              Provide a unique, immutable identifer for the loyalty membership. We will use this identifier for **PLL**.
+
+            <br><br><b>NOTE</b>: <br>
+            <ul>
+              <li>If the card is a <b>PLL</b> type, success will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>. </li>
+              <li>Some <b>Loyalty Plans</b> might not have any ADD fields, only AUTH fields. You may still use this endpoint to add and authorise <b>Loyalty Cards</b> of this type.</li>
+            </ul>
+            </body>
+          </html>"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/LoyaltyCardAddTrustedUpdateRequest'
+                - $ref: '#/components/schemas/TrustedMerchantFields'
+      responses:
+        '200':
+          description: "**OK** Everything worked as expected. Response contains resource Id."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoyaltyCardProcessResponse'
+        '201':
+          description: "**Created** Response contains the resource Id."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoyaltyCardProcessResponse'
+        '400':
+          description: '**Bad request** Client needs to modify the request before it can be retried'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse400'
+        '401':
+          description: '**Unauthorized** Client does not have valid token'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse401'
+        '409':
+          description: '**Conflict** You may encounter a conflict if a loyalty membership already exists in our system but the add or authorise fields do not match the account_id.'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse409'
+        '422':
+          description: "**Unprocessable entity** One or more fields in the request did not pass the required validation"
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse422'
+              example:
+                error_message: "Could not validate fields"
+                error_slug: "FIELD_VALIDATION_ERROR"
+                fields:
+                  - "expected str for dictionary value @ data['card_number']"
+
   /loyalty_cards/{loyalty_card_id}/authorise:
     put:
       tags:
         - Loyalty Cards
       summary: Authorise a Loyalty Card
-      operationId: PUT loyalty_cards/authorise
+      operationId: PUT /loyalty_cards/authorise
       description: "This is used to:<br>
         <html><body>
         <ol>
@@ -1186,7 +1358,6 @@ paths:
       summary: Join a Loyalty Plan
       operationId: POST /loyalty_cards/join
       description: "This resource reflects the user's intent to **Join** a **Loyalty Plan**. Bink passes the intent to the relevant merchant and waits for them to process the request. A successful response from the merchant will see the **Join** resource become an **Engage** or **PLL** type **Loyalty Card**, failure leaves the resource in a failed state with an explanation. The user can delete the failure and try again. New **Join** requests to the same **Loyalty Plan** are independent.
-
           <html>
             <body>
               <h3>Journey Fields</h3>
@@ -1201,8 +1372,6 @@ paths:
               </ul>
             </body>
           </html>
-
-
         <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
       responses:
         '202':
@@ -2137,6 +2306,31 @@ components:
                   description: "Personal information required to complete the selected journey."
                   items:
                     $ref: '#/components/schemas/CredentialRequest'
+    LoyaltyCardAddTrustedUpdateRequest:
+      type: object
+      properties:
+        account:
+          type: object
+          description: "Container for required journey fields."
+          properties:
+            add_fields: 
+              type: object
+              description: "The fields that need to be presented to the user in order to Add an existing Loyalty Card as Store type to the user's wallet."
+              properties: 
+                credentials:
+                  type: array
+                  description: "Personal information required to complete the selected journey."
+                  items:
+                    $ref: '#/components/schemas/CredentialRequest'
+    TrustedMerchantFields:
+      type: object
+      properties:
+        merchant_fields:
+          type: object
+          properties:  
+            account_id: 
+              type: string
+              example: "Z99783494A"
     LoyaltyCardAddAndAuthoriseRequest:
       type: object
       properties:
