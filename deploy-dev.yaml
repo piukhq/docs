@@ -1057,12 +1057,15 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
         '409':
-          description: '**Conflict** You may encounter this conflict when a provided add, authorise, or account ID field does not match that of a loyalty card already in our system.'
+          description: '**Conflict** Could not process the request due to a conflict.'
           content:
             application/json:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse409'
+              example: 
+                error_message: "You may encounter this conflict when a provided add, authorise, or account ID field does not match that of a loyalty card already in our system."  
+                error_slug: "CONFLICT"
         '422':
           description: "**Unprocessable entity** One or more fields in the request did not pass the required validation"
           content:
@@ -1227,12 +1230,15 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
         '409':
-          description: '**Conflict** You may encounter this conflict when a provided add, authorise, or account ID field does not match that of a loyalty card already in our system.'
+          description: '**Conflict** Could not process request due to a conflict.'
           content:
             application/json:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse409'
+              example: 
+                error_message: "You may encounter this conflict when a provided add, authorise, or account ID field does not match that of a loyalty card already in our system."  
+                error_slug: "CONFLICT"
         '422':
           description: "**Unprocessable entity** One or more fields in the request did not pass the required validation"
           content:
