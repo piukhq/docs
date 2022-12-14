@@ -1057,7 +1057,7 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
         '409':
-          description: '**Conflict** You may encounter a conflict if a loyalty membership already exists in our system but the add or authorise fields do not match the account_id.'
+          description: '**Conflict** You may encounter this conflict when a provided add, authorise, or account ID field does not match that of a loyalty card already in our system.'
           content:
             application/json:
               schema:
@@ -1227,7 +1227,7 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
         '409':
-          description: '**Conflict** You may encounter a conflict if a loyalty membership already exists in our system but the add or authorise fields do not match the account_id.'
+          description: '**Conflict** You may encounter this conflict when a provided add, authorise, or account ID field does not match that of a loyalty card already in our system.'
           content:
             application/json:
               schema:
@@ -1429,7 +1429,7 @@ paths:
                     - consent_slug: EmailOptin
                       value: 'false'
         description: 'Loyalty Card Join Request'
-  /loyalty_cards/{loyalty_card_id}join:
+  /loyalty_cards/{loyalty_card_id}/join:
     put:
       security: 
         - bearerAuth: []
@@ -1514,7 +1514,6 @@ paths:
                     - consent_slug: EmailOptin
                       value: 'false'
         description: 'Loyalty Card Join Request'        
-  /loyalty_cards/{loyalty_card_id}/join:
     delete:
       security:
         - bearerAuth: []
