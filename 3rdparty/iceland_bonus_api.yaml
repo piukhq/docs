@@ -1,0 +1,746 @@
+openapi: 3.0.1
+info:
+  title: loyalty-online-for-apps
+  description: An API for using Iceland Bonus Cards in conjunction with another system.  Works by registering the customer using an external key and then nominating a card for them to use via the external key (a unique identifier for the customer in the other system).  If successful, this external key can be used to perform actions against the nominated card.  The api knows the external system via OAuth 2.0 authentication.
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@iceland.co.uk
+  version: Production
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+# Added by API Auto Mocking Plugin
+- description: SwaggerHub API Auto Mocking
+  url: https://virtserver.swaggerhub.com/Bink_API/Iceland_Bonus_API/Production
+- url: http://loyalty.iceland.co.uk
+tags:
+- name: Registration
+  description: Register customer with Iceland using an external key.
+- name: NominatedCard
+  description: Manage Iceland Bonus Cards nominated for use by the Customer using an external key
+- name: Preferences
+  description: Manage customer marketing preferences using an external key
+paths:
+  /registration/{externalKey}:
+    put:
+      tags:
+      - Registration
+      summary: Update a customer registration with Iceland using an external key
+      operationId: putRegistration
+      parameters:
+      - name: externalKey
+        in: path
+        description: unique identifer of customer in external system
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/customerRegistration'
+      responses:
+        "200":
+          description: No registration exists for external key passed
+        "204":
+          description: Registration update successful
+        "400":
+          description: Bad Request
+        "429":
+          description: Too Many Requests
+        "500":
+          description: Server Error
+    post:
+      tags:
+      - Registration
+      summary: Register a customer with Iceland using an external key
+      operationId: postRegistration
+      parameters:
+      - name: externalKey
+        in: path
+        description: unique identifer of customer in external system
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/customerRegistrationRequest'
+            examples:
+              RegisterWithPhysicalCard:
+                value:
+                  customerRegistration:
+                    personalDetails:
+                      title: Mr
+                      firstName: Alan
+                      lastName: Smith
+                      dateOfBirth: 1982-02-05
+                    address:
+                      address1: "14"
+                      address2: Hawthorn Avenue
+                      address3: Woodburn
+                      town: Carrickfergus
+                      county: Antrim
+                      postCode: BT38 7UJ
+                    contactDetails:
+                      email: alan.smith@email.com
+                      homeTelephone: "02893351112"
+                      mobileTelephone: "07402244248"
+                    preferences:
+                      termsAndConditions:
+                        accepted: true
+                        acceptedOn: 2020-05-05T06:28:47.263Z
+                      marketing:
+                        accepted: true
+                        acceptedOn: 2020-05-05T06:28:47.263Z
+                      contactBy3rdParties:
+                        accepted: true
+                        acceptedOn: 2020-05-05T06:28:47.263Z
+                  nominationRequest:
+                    digitalCard: false
+                    issuedCard:
+                      cardNumber: "6332040000000000001"
+                      ownerAuth:
+                        surname: Smith
+                        postcode: BT38 8NE
+              RegisterWithDigitalCard:
+                value:
+                  customerRegistration:
+                    personalDetails:
+                      title: Mr
+                      firstName: Alan
+                      lastName: Smith
+                      dateOfBirth: 1982-02-05
+                    address:
+                      address1: "14"
+                      address2: Hawthorn Avenue
+                      address3: Woodburn
+                      town: Carrickfergus
+                      county: Antrim
+                      postCode: BT38 7UJ
+                    contactDetails:
+                      email: alan.smith@email.com
+                      homeTelephone: "02893351112"
+                      mobileTelephone: "07402244248"
+                    preferences:
+                      termsAndConditions:
+                        accepted: true
+                        acceptedOn: 2020-05-05T06:28:47.263Z
+                      marketing:
+                        accepted: true
+                        acceptedOn: 2020-05-05T06:28:47.263Z
+                      contactBy3rdParties:
+                        accepted: true
+                        acceptedOn: 2020-05-05T06:28:47.263Z
+                  nominationRequest:
+                    digitalCard: true
+              RegisterWithNoCard:
+                value:
+                  customerRegistration:
+                    personalDetails:
+                      title: Mr
+                      firstName: Alan
+                      lastName: Smith
+                      dateOfBirth: 1982-02-05
+                    address:
+                      address1: "14"
+                      address2: Hawthorn Avenue
+                      address3: Woodburn
+                      town: Carrickfergus
+                      county: Antrim
+                      postCode: BT38 7UJ
+                    contactDetails:
+                      email: alan.smith@email.com
+                      homeTelephone: "02893351112"
+                      mobileTelephone: "07402244248"
+                    preferences:
+                      termsAndConditions:
+                        accepted: true
+                        acceptedOn: 2020-05-05T06:28:47.263Z
+                      marketing:
+                        accepted: true
+                        acceptedOn: 2020-05-05T06:28:47.263Z
+                      contactBy3rdParties:
+                        accepted: true
+                        acceptedOn: 2020-05-05T06:28:47.263Z
+      responses:
+        "200":
+          description: Registration already received
+        "204":
+          description: Registration successful
+        "400":
+          description: Bad Request
+        "429":
+          description: Too Many Requests
+        "500":
+          description: Server Error
+  /registration/{externalKey}/preferences:
+    get:
+      tags:
+      - Preferences
+      summary: 'Retrieve a customers current marketing preferences '
+      operationId: getPreferences
+      parameters:
+      - name: externalKey
+        in: path
+        description: unique identifer of customer in external system
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/preferences'
+        "400":
+          description: Bad request
+        "429":
+          description: Too Many Requests
+        "500":
+          description: Server Error
+    put:
+      tags:
+      - Preferences
+      summary: Update a customers marketing preferences with Iceland
+      operationId: putPreferences
+      parameters:
+      - name: externalKey
+        in: path
+        description: unique identifer of customer in external system
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/preferences'
+      responses:
+        "200":
+          description: Preferences were update successfully
+        "400":
+          description: Bad Request
+        "429":
+          description: Too Many Requests
+        "500":
+          description: Server Error
+  /nominatedcard/{externalKey}:
+    get:
+      tags:
+      - NominatedCard
+      summary: Retrieve nominated card details
+      operationId: getNominatedCard
+      parameters:
+      - name: externalKey
+        in: path
+        description: unique identifer of customer in external system
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NominatedCard'
+        "204":
+          description: No nominated card for external key
+        "429":
+          description: Too Many Requests
+        "500":
+          description: Server Error
+    post:
+      tags:
+      - NominatedCard
+      summary: Nominate an issued card or a reserved card to a customer (if no body is posted it is presumed to be a reserved card)
+      operationId: postNominatedCard
+      parameters:
+      - name: externalKey
+        in: path
+        description: unique identifer of customer in external system
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NominationRequest'
+      responses:
+        "200":
+          description: Nominated card request already received
+        "202":
+          description: Nominated card request received successfully
+        "400":
+          description: Bad Request
+        "429":
+          description: Too Many Requests
+        "500":
+          description: Server Error
+    delete:
+      tags:
+      - NominatedCard
+      summary: Remove nominated card
+      parameters:
+      - name: externalKey
+        in: path
+        description: unique identifer of customer in external system
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Nominated card cannot be removed
+        "201":
+          description: Successful operation, nominated card has been removed
+        "204":
+          description: No nominated card for external key
+        "429":
+          description: Too Many Requests
+        "500":
+          description: Server Error
+  /nominatedcard/{externalKey}/transaction:
+    get:
+      tags:
+      - NominatedCard
+      summary: Retrieve nominated card transaction
+      operationId: getNominatedCardTransaction
+      parameters:
+      - name: externalKey
+        in: path
+        description: unique identifer of customer in external system
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: pageNumber
+        in: query
+        description: The start page of the result set
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: number
+      - name: pageLength
+        in: query
+        description: The length of the result set
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: number
+      responses:
+        "200":
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/arrayOfTransaction'
+        "204":
+          description: No transaction for search parameters
+        "400":
+          description: Bad Request
+        "429":
+          description: Too Many Requests
+        "500":
+          description: Server Error
+    post:
+      tags:
+      - NominatedCard
+      summary: Post nominated card transaction
+      operationId: postNominatedCardTransaction
+      parameters:
+      - name: externalKey
+        in: path
+        description: unique identifer of customer in external system
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/newTransaction'
+      responses:
+        "200":
+          description: Reason for failure
+        "201":
+          description: Transaction recorded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/arrayOfTransaction'
+        "400":
+          description: Bad Request
+        "429":
+          description: Too Many Requests
+        "500":
+          description: Server Error
+components:
+  schemas:
+    preference:
+      type: object
+      properties:
+        accepted:
+          type: boolean
+          description: positive or negative indication of the preference
+        acceptedOn:
+          type: string
+          description: date time of lastest update to status
+          format: date-time
+    preferences:
+      required:
+      - contactBy3rdParty
+      - marketing
+      - termsAndConditions
+      type: object
+      properties:
+        termsAndConditions:
+          $ref: '#/components/schemas/preference'
+        marketing:
+          $ref: '#/components/schemas/preference'
+        contactBy3rdParties:
+          $ref: '#/components/schemas/preference'
+    contactDetails:
+      type: object
+      properties:
+        email:
+          type: string
+          description: email address
+        homeTelephone:
+          type: string
+          description: home telephone number
+        mobileTelephone:
+          type: string
+          description: mobile telephone number
+    address:
+      type: object
+      properties:
+        address1:
+          type: string
+          description: first line of the address
+        address2:
+          type: string
+          description: second line of the address
+        address3:
+          type: string
+          description: third line of the address
+        town:
+          type: string
+          description: town
+        county:
+          type: string
+          description: county
+        country:
+          type: string
+          description: country
+        postCode:
+          type: string
+          description: post code
+    person:
+      type: object
+      properties:
+        title:
+          type: string
+          description: title
+        firstName:
+          type: string
+          description: first name
+        lastName:
+          type: string
+          description: last name
+        dateOfBirth:
+          type: string
+          description: date of birth
+          format: date
+    customerRegistrationRequest:
+      required:
+      - customerRegistration
+      type: object
+      properties:
+        customerRegistration:
+          $ref: '#/components/schemas/customerRegistration'
+        nominationRequest:
+          $ref: '#/components/schemas/NominationRequest'
+    customerRegistration:
+      type: object
+      properties:
+        personalDetails:
+          $ref: '#/components/schemas/person'
+        address:
+          $ref: '#/components/schemas/address'
+        contactDetails:
+          $ref: '#/components/schemas/contactDetails'
+        preferences:
+          $ref: '#/components/schemas/preferences'
+    NominationRequest:
+      required:
+      - digitalCard
+      type: object
+      properties:
+        digitalCard:
+          type: boolean
+          description: Indicates whether or not a digital card is required
+        issuedCard:
+          $ref: '#/components/schemas/issuedCard'
+      example:
+        digitalCard: false
+        issuedCard:
+          cardNumber: "6332040000000000001"
+          ownerAuth:
+            surname: Smith
+            postcode: BT38 8NE
+    issuedCard:
+      required:
+      - cardNumber
+      - ownerAuth
+      type: object
+      properties:
+        cardNumber:
+          type: string
+          description: issued card number
+        ownerAuth:
+          $ref: '#/components/schemas/ownerAuth'
+    NominatedCard:
+      required:
+      - balanceAdjust
+      - externalKey
+      - scanInStore
+      type: object
+      properties:
+        externalKey:
+          type: string
+          description: unique identifier of customer in external system
+        cardNumber:
+          type: string
+          description: the string represenation of the card number
+        style:
+          type: string
+          description: the style of the card for UI presentation
+        barcode:
+          type: string
+          description: identifier for the card at store POS
+        scanInStore:
+          type: boolean
+          description: indicates whether the card can be scanned in store
+        balanceAdjust:
+          type: boolean
+          description: indicates whether the balance can be adjusted
+        balance:
+          type: number
+          description: the last retrieved balance of the card
+        onboardingStatus:
+          $ref: '#/components/schemas/NominationStatus'
+      example:
+        externalKey: 428cefbb-4af5-4b01-8976-b057897e1f91
+        cardNumber: "6332040000000000001"
+        style: FOOD_WAREHOUSE
+        barcode: "6332040000000000001008"
+        scanInStore: false
+        balanceAdjust: true
+        balance: 43.96
+        onboardingStatus:
+          nominationError: false
+          successful: true
+          status: ONBOARDED
+          description: Card successfully onboarded
+          timestamp: 2019-01-01 15:00:00
+    NominationStatus:
+      required:
+      - details
+      - nominateError
+      - status
+      - successful
+      - timestamp
+      type: object
+      properties:
+        nominationError:
+          type: boolean
+          description: true if Nominate operation has failed, otherwise false
+        successful:
+          type: boolean
+          description: true if onboarding process has completed successfully otherwise false
+        status:
+          type: string
+          description: |
+            Status:
+              * `REQUESTED` - Onboarding requested and is in progress
+              * `JOIN_IN_PROGRESS` - Join in progress
+              * `CARD_NOT_AVAILABLE` - Card not available (nominateError = true)
+              * `ACCOUNT_NOT_AVAILABLE` - The account associated to the card number is not available for Nominateing (nominateError = true)
+              * `DETAILS_NOT_MATCHED` - The details provided for Nominateing the card do not match those held with Iceland (nominateError = true)
+              * `VALIDATION` - One or more properties in the request body did not match the required format (nominateError = true)
+              * `NOT_ALLOWED` - The requested action is not allowed (nominateError = true)
+              * `ONBOARDED` - Onboarding process has completed successfully
+          enum:
+          - REQUESTED
+          - JOIN_IN_PROGRESS
+          - CARD_NOT_AVAILABLE
+          - ACCOUNT_NOT_AVAILABLE
+          - DETAILS_NOT_MATCHED
+          - VALIDATION
+          - NOT_ALLOWED
+          - ONBOARDED
+        details:
+          type: string
+          description: Additional details of the onboarding status
+        timestamp:
+          type: string
+          description: date time of lastest update to status
+          format: date-time
+    arrayOfTransaction:
+      type: array
+      items:
+        $ref: '#/components/schemas/transaction'
+    transaction:
+      required:
+      - adjustmentAmount
+      - closingBalance
+      - openingBalance
+      - reason
+      - source
+      - timestamp
+      - transactionReference
+      type: object
+      properties:
+        transactionReference:
+          type: string
+          description: The transaction reference provided in the balance adjustment request
+        timestamp:
+          type: string
+          format: date-time
+        walletName:
+          type: string
+        subWalletName:
+          type: string
+        subWalletExpiry:
+          type: string
+        openingBalance:
+          type: number
+        adjustmentAmount:
+          type: number
+        closingBalance:
+          type: number
+        source:
+          type: string
+        reason:
+          type: string
+          enum:
+          - Topup
+          - Redeem
+          - Cashout
+          - Refund
+      example:
+        transactionReference: "4367346829"
+        timestamp: 2019-01-01 15:00:00
+        walletName: Savings
+        subWalletName: ""
+        openingBalance: 25
+        adjustmentAmount: -3.5
+        closingBalance: 21.5
+        source: Store
+        reason: Redeem
+    newTransaction:
+      required:
+      - amount
+      - reason
+      - transactionId
+      type: object
+      properties:
+        transactionId:
+          type: string
+          description: A unique reference value to uniquely identify this transaction maintained by the external system
+        amount:
+          type: number
+        reason:
+          type: string
+          enum:
+          - Topup
+          - Redeem
+          - Refund
+        memo:
+          type: string
+      example:
+        transactionId: "4367346829"
+        amount: 3.52
+        reason: Topup
+        memo: Customer topup from site
+    ownerAuth:
+      required:
+      - postcode
+      - surname
+      type: object
+      properties:
+        surname:
+          type: string
+          description: surname of the customer
+        postcode:
+          type: string
+          description: Post Code of the customer
+  parameters:
+    externalKey:
+      name: externalKey
+      in: query
+      description: The primary key of the user in the client application
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    NominateId:
+      name: NominateId
+      in: query
+      description: The Id generated when the user Nominated their online account
+      required: false
+      style: form
+      explode: true
+      schema:
+        type: string
+    pageNumber:
+      name: pageNumber
+      in: query
+      description: The start page of the result set
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: number
+    pageLength:
+      name: pageLength
+      in: query
+      description: The length of the result set
+      required: true
+      style: form
+      explode: true
+      schema:
+        type: number
+  securitySchemes:
+    oAuthSample:
+      type: oauth2
+      description: This API uses OAuth2 with the client credentials flow
+      flows:
+        clientCredentials:
+          tokenUrl: TBD
+          scopes: {}

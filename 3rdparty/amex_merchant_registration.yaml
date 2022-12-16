@@ -1,0 +1,577 @@
+swagger: '2.0'
+info:
+  description: >-
+    This API allows external partners to enroll , update and delete the merchants to their program.
+  version: 1.0.0
+  title: Amex Merchant Registration
+# host: apigateway2s.americanexpress.com
+# basePath: /marketing/v4/smartoffers
+tags:
+  - name: offers
+schemes:
+  - https
+paths:
+  /offers/merchants:
+    post:
+      tags:
+        - offers
+      summary: Enroll Merchant
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Content-Type
+          type: string
+          description: Application Json format for each request
+          required: true
+        - in: header
+          name: Authorization
+          type: string
+          description: api key
+          required: true
+        - in: header
+          name: X-AMEX-API-KEY
+          type: string
+          description: Hmac code as per specification
+          required: true
+        - in: body
+          name: body
+          description: Merchant object
+          schema:
+            $ref: '#/definitions/MerchantRequest'
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/Api200Response'
+        '400':
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/Api400Response'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Api401Response'
+        '404':
+          description: Unknown Resource
+          schema:
+            $ref: '#/definitions/Api404Response'
+        '500':
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/Api500Response'
+        '503':
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/Api503Response'
+        '504':
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/Api504Response'
+  /offers/merchants/{merchantId}:
+    put:
+      tags:
+        - offers
+      summary: Update Merchant
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Content-Type
+          type: string
+          description: Application Json format for each request
+          required: true
+        - in: header
+          name: Authorization
+          type: string
+          description: api key
+          required: true
+        - in: header
+          name: X-AMEX-API-KEY
+          type: string
+          description: Hmac code as per specs
+          required: true
+        - in: "path"
+          name: merchantId
+          description: Update Merchant
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: Merchant object
+          schema:
+            $ref: '#/definitions/MerchantRequest'
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/Api200Response'
+        '400':
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/Api400Response'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Api401Response'
+        '404':
+          description: Unknown Resource
+          schema:
+            $ref: '#/definitions/Api404Response'
+        '500':
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/Api500Response'
+        '503':
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/Api503Response'
+        '504':
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/Api504Response'
+    delete:
+      tags:
+        - offers
+      summary: Delete Merchant
+      description: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Content-Type
+          type: string
+          description: Application Json format for each request
+          required: true
+        - in: header
+          name: Authorization
+          type: string
+          description: api key
+          required: true
+        - in: header
+          name: X-AMEX-API-KEY
+          type: string
+          description: Hmac code as per specs
+          required: true
+        - in: "path"
+          name: merchantId
+          description: Delete Merchant
+          type: string
+          required: true
+        - in: body
+          name: body
+          description: Merchant object
+          schema:
+            $ref: '#/definitions/DeleteMerchantRequest'
+      responses:
+        '200':
+          description: success
+          schema:
+            $ref: '#/definitions/Api200DeleteResponse'
+        '400':
+          description: Invalid request
+          schema:
+            $ref: '#/definitions/Api400Response'
+        '401':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Api401Response'
+        '404':
+          description: Unknown Resource
+          schema:
+            $ref: '#/definitions/Api404Response'
+        '500':
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/Api500Response'
+        '503':
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/Api503Response'
+        '504':
+          description: Internal Error
+          schema:
+            $ref: '#/definitions/Api504Response'
+definitions:
+  MerchantRequest:
+    type: object
+    properties:
+      apiVersion:
+        type: string
+        description: >-
+          Version of the API. This field is a static value that will be populated
+          with 5.0.
+        example: '5.0'
+      merchantType:
+        type: string
+        description: >-
+          Indicates whether the merchant is associated to a specific offer.
+          Should be populated with 'offer' or 'nonoffer'
+        example: offer
+      msgId:
+        type: string
+        description: A unique value for the individual API request.
+        example: '123456789067892345'
+      partnerId:
+        type: string
+        description: The partner ID associated with the Amex Data Partnership Team.
+        example: AADP0061
+      actionCode:
+        type: string
+        description: >-
+          A single letter indicating the action to be performed. "A" for adding
+          new data and "U" for updating existing data.
+        example: A
+      merchantId:
+        type: string
+        description: >-
+          The 10 digit Service Establishment (SE) number for the specific merchant
+          location.
+        example: '9795687367'
+      partnerMerchantRefId:
+        type: string
+        description: >-
+          The unique merchant ID generated by the partner used to support a single
+          merchant location containing multiple SE numbers. Not required if the
+          actionCode has a value of "D" or "U".
+        example: '12345ASD678uisd9067892345'
+      sellerId:
+        type: string
+        description: >-
+          Will be used in the future for merchants with unique payment processing
+          relationships, generally payment aggregators. For now it should be left
+          empty.
+        example: ''
+      submittingSe:
+        type: string
+        description: >-
+          Will be used in the future for merchants with unique payment processing
+          relationships, generally payment aggregators. For now it should be left
+          empty.
+        example: ''
+      merchantStartDt:
+        type: string
+        description: >-
+          The start date for merchant registration. Date when partners begin to
+          receive transaction data for card members spending at the merchant. Must
+          be current or future date.
+        example: 05/15/2019
+      merchantEndDt:
+        type: string
+        description: >-
+          The end date for the merchant registration. Date when transaction data
+          for spend at the merchant will no longer be sent to partners. If there
+          is not a specific end date partners should enter "12/31/2099". Must be
+          current or future date.
+        example: 12/31/2020
+      offerId:
+        type: string
+        description: >-
+          The unique ID generated by the partner for a specific offer attached to
+          the merchant included with this payload.
+        example: '90600001'
+    required:
+      - apiVersion
+      - merchantType
+      - msgId
+      - partnerId
+      - actionCode
+      - merchantId
+      - merchantStartDt
+      - merchantEndDt
+      - offerId
+  DeleteMerchantRequest:
+    type: object
+    properties:
+      apiVersion:
+        type: string
+        description: >-
+          Version of the API. This field is a static value that will be populated
+          with 5.0.
+        example: '5.0'
+      merchantType:
+        type: string
+        description: >-
+          Indicates whether the merchant is associated to a specific offer.
+          Should be populated with 'offer' or 'nonoffer'
+        example: offer
+      msgId:
+        type: string
+        description: A unique value for the individual API request.
+        example: '123456789067892345'
+      partnerId:
+        type: string
+        description: The partner ID associated with the Amex Data Partnership Team.
+        example: AADP0061
+      actionCode:
+        type: string
+        description: >-
+          A single letter indicating the action to be performed."D" for deleting data.
+        example: A
+      merchantId:
+        type: string
+        description: >-
+          The 10 digit Service Establishment (SE) number for the specific merchant
+          location. This field is required only if updating the merchant.
+        example: '9795687367'
+      partnerMerchantRefId:
+        type: string
+        description: >-
+          Not required if the actionCode has a value of "D".
+        example: '12345ASD678uisd9067892345'
+      sellerId:
+        type: string
+        description: >-
+          Will be used in the future for merchants with unique payment processing
+          relationships, generally payment aggregators. For now it should be left
+          empty.
+        example: ''
+      submittingSe:
+        type: string
+        description: >-
+          Will be used in the future for merchants with unique payment processing
+          relationships, generally payment aggregators. For now it should be left
+          empty.
+        example: ''
+      merchantStartDt:
+        type: string
+        description: >-
+          The start date for merchant registration. Date when partners begin to
+          receive transaction data for card members spending at the merchant. Must
+          be current or future date.
+        example: 05/15/2019
+      merchantEndDt:
+        type: string
+        description: >-
+          The end date for the merchant registration. Date when transaction data
+          for spend at the merchant will no longer be sent to partners. If there
+          is not a specific end date partners should enter "12/31/2099". Must be
+          current or future date.
+        example: 12/31/2020
+      offerId:
+        type: string
+        description: >-
+          The unique ID generated by the partner for a specific offer attached to
+          the merchant included with this payload.
+        example: '90600001'
+    required:
+      - apiVersion
+      - merchantType
+      - msgId
+      - partnerId
+      - actionCode
+      - merchantId
+      - offerId
+  Api200Response:
+    type: object
+    properties:
+      correlationId:
+        type: string
+        description: The same msg ID provided by partners in the request payload.
+        example: 1234567890
+      merchantId:
+        type: string
+        description: >-
+          MerchantID or merchant number assigned while during the merchant on
+          boarding process. Internal to Amex
+        example: '8939055694'
+      merchantName:
+        type: string
+        description: Consumer Relevant Merchant Name
+        example: pret a manager 
+      merchantSubmTypeCd:
+        type: string
+        description: Used to identify OptBlue/Aggregator Merchants.
+        example: T OptBlue   B OptBlue PSP  A Aggregator PSP  C Custom Contract Aggregator
+          PSPs  N Legacy NAB Accounts  Y Legacy test accounts
+      merchantAdline1:
+        type: string
+        description: Consumer Relevant Merchant Address Line 1
+        example: 1583 PHANTOM AVE
+      merchantAdLine2:
+        type: string
+        description: Consumer Relevant Merchant Address Line 2
+        example: ""
+      merchantAdLine3:
+        type: string
+        description: Consumer Relevant Merchant Address Line 3
+        example: ""
+      merchantAdLine4:
+        type: string
+        description: Consumer Relevant Merchant Address Line 4
+        example: ""
+      merchantAdLine5:
+        type: string
+        description: Consumer Relevant Merchant Address Line 5
+        example: ""
+      merchantAdRgnAreaCd:
+        type: string
+        description: Consumer Relevant Merchant Region/State Code
+        example: CA
+      merchantAdRgnAreaNm:
+        type: string
+        description: Consumer Relevant Merchant Region/State Name
+        example: CALIFORNIA
+      merchantAdPostTownNm:
+        type: string
+        description: Consumer Relevant Merchant City
+        example: SAN JOSE
+      merchantAdPstlCd:
+        type: string
+        description: Consumer Relevant Merchant Postal Code
+        example: 95125-5326
+      merchantAdCtryNm:
+        type: string
+        description: Consumer Relevant Merchant Country Name
+        example: US
+      merchantPhoneNo:
+        type: string
+        description: Consumer Relevant Merchant Phone Number
+        example: '4089793320'
+  Api200DeleteResponse:
+    type: object
+    properties:
+      correlationId:
+        type: string
+        description: The same msg ID provided by partners in the request payload.
+        example: 1234567890
+      merchantId:
+        type: string
+        description: >-
+          MerchantID or merchant number assigned while during the merchant on
+          boarding process. Internal to Amex
+        example: '8939055694'
+  Api400Response:
+    type: object
+    properties:
+      correlationId:
+        type: string
+        description: The same msg ID provided by partners in the request payload.
+        example: 239849599
+      error_code:
+        type: string
+        enum:
+          - 104000
+          - 104001
+          - 104002
+          - 104003
+          - 104004
+          - 104005
+          - 104006
+          - 104007
+          - 1040012
+          - 1040013
+        example: '104000'
+      error_description:
+        type: string
+        example: 'Mandatory parameters not provided like Merchant ID , Partner ID , Offer ID'
+      error_type:
+        type: string
+        example: 'Invalid Request'
+  Api401Response:
+    type: object
+    properties:
+      correlationId:
+        type: string
+        description: The same msg ID provided by partners in the request payload.
+        example: 239849599
+      error_code:
+        type: string
+        enum:
+          - 104010
+          - 104011
+          - 104012
+          - 104013
+          - 104014
+        example: '104013'
+      error_description:
+        type: string
+        example: Invalid API key
+      error_type:
+        type: string
+        example: 'Unauthorized'
+  Api404Response:
+    type: object
+    properties:
+      correlationId:
+        type: string
+        description: The same msg ID provided by partners in the request payload.
+        example: 239849599
+      error_code:
+        type: string
+        enum:
+          - 104017
+        example: '104017'
+      error_description:
+        type: string
+        example: Requested resource not found
+      error_type:
+        type: string
+        example: ''
+  Api500Response:
+    type: object
+    properties:
+      correlationId:
+        type: string
+        description: The same msg ID provided by partners in the request payload.
+        example: 239849597
+      error_code:
+        type: string
+        enum:
+          - 105000
+        example: '105000'
+      error_description:
+        type: string
+        example: >-
+          The server is currently unavailable, or a severe error has occurred.
+          Please try again
+      error_type:
+        type: string
+        example: ''
+  Api503Response:
+    type: object
+    properties:
+      correlationId:
+        type: string
+        description: The same msg ID provided by partners in the request payload.
+        example: 239849599
+      error_code:
+        type: string
+        enum:
+          - 105030
+        example: '105030'
+      error_description:
+        type: string
+        example: The API is currently unavailable. Please try again
+      error_type:
+        type: string
+        example: ''
+  Api504Response:
+    type: object
+    properties:
+      correlationId:
+        type: string
+        description: The same msg ID provided by partners in the request payload.
+        example: 239849599
+      error_code:
+        type: string
+        enum:
+          - 105040
+        example: '105040'
+      error_description:
+        type: string
+        example: The API gateway has experienced a connection timeout
+      error_type:
+        type: string
+        example: ''
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /Bink_API/Amex_Merchant_Registration/1.0.0

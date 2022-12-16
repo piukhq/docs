@@ -1,0 +1,425 @@
+openapi: 3.0.0
+# Added by API Auto Mocking Plugin
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Bink_API/Spreedly_API/1.0.0
+info:
+  description: These are the API docs for version 1 of the Spreedly API 
+  version: "1.0.0"
+  title: Spreedly API
+  contact:
+    email: mmorar@bink.com
+paths:
+  /payment_methods:
+    post:
+      tags:
+        - developers
+      summary: Add a credit card to the authenticated environment’s vault.
+      operationId: POST payment_methods
+      description: "Add a credit card to the authenticated environment’s vault."
+      parameters:
+        - in: header
+          name: environment_key
+          description: environment_key
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/payment_method_cc_response'
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/payment_method_cc_request'
+        description: Payment Method                     
+components:
+  schemas:
+    payment_method_cc_request:
+      type: object
+      properties:
+        payment_method: 
+          type: object
+          properties:
+            credit_card:
+              $ref: '#/components/schemas/credit_card_request'
+            email:
+              type: string
+              description: "The email address of the customer associated with this credit card"
+              format: email
+              minLength: 0
+              maxLength: 64
+              pattern: (?:[a-z0-9!$%&*+/=?^_`{|}~-]+(?:\.[a-z0-9!$%&'*+/=?^_`{|}~-]+)*|(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])
+            retained: 
+              type: boolean
+              example: true
+              pattern: ^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$
+              description: "true if this payment method should be automatically retained on creation"
+            allow_bank_name:
+              type: boolean
+              example: true
+              pattern: ^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$
+              description: "true if this payment method should skip the name validation requirement"
+            allow_expired_date:
+              type: boolean
+              example: true
+              pattern: ^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$
+              description: "true if this payment method should skip the expired date validation requirement"
+            allow_blank_date:
+              type: boolean
+              description: "true if this payment method should skip the expiration date validation requirement"
+              example: true
+              pattern: ^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$
+            eligible_for_card_updater: 
+              type: boolean
+              description: "true if this payment method should be included in Account Updater"
+              example: true
+              pattern: ^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$
+    credit_card_request:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - number
+        - month
+        - year
+      properties:
+        first_name:
+          type: string 
+          description: "Card holder first name"
+          example: "Joe"
+          pattern: '[A-Za-z]+'
+          minLength: 2
+          maxLength: 40
+        last_name:
+          type: string
+          description: "Card holder last name"
+          example: "Jones"
+          pattern: '[A-Za-z]+'
+          minLength: 2
+          maxLength: 40
+        number: 
+          type: number
+          description: "Primary Account Number / PAN"
+          example: '5555666677778888'
+          pattern: "^(?:(?<visa>4[0-9]{12}(?:[0-9]{3})?) | (?<mastercard>5[1-5][0-9]{14}) |(?<discover>6(?:011|5[0-9]{2})[0-9]{12}) | (?<amex>3[47][0-9]{13}))$"
+        verification_value:
+          type: string 
+          description: "card verification value (CVV), e.g., 123 or 1234"
+          example: "123"
+          pattern: "([0-9]{3,4})"
+          minLength: 3
+          maxLength: 4
+        month: 
+          type: number
+          description: "The expiration month of the card"
+          example: 12
+          pattern: ^(1[0-2]|0[1-9])$
+        year: 
+          type: number
+          description: "The expiration year of the card"
+          example: 2032
+          pattern: ^(20[2-9][0-9])$
+    payment_method_cc_response:
+      type: object
+      properties:
+        transaction: 
+          type: object
+          properties:
+            token: 
+              type: string
+              example: "5KHqUNCugwil94o8fjW2KMckpdn"
+              pattern: ([A-Za-z0-9]+)
+              minLength: 1
+              maxLength: 250
+            created_at:
+              type: string
+              pattern: ^((19|20)[0-9][0-9])[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])T([0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z)
+              minLength: 20
+              maxLength: 20
+              example: "2018-11-06T14:34:41Z"
+            updated_at:
+              type: string
+              pattern: ^((19|20)[0-9][0-9])[-](0[1-9]|1[012])[-](0[1-9]|[12][0-9]|3[01])T([0-2][0-9]:[0-5][0-9]:[0-5][0-9]Z)
+              minLength: 20
+              maxLength: 20
+              example: "2018-11-06T14:34:41Z"              
+            succceeded: 
+              type: boolean
+              example: true
+              pattern: ^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$
+              description: "true if the transaction request was successfully executed, false otherwise"
+            transaction_type:
+              type: string
+              example: "AddPaymentMethod"
+              pattern: ^[0-9A-Za-z]+
+              minLength: 0
+              maxLength: 50   
+            retained: 
+              type: boolean
+              example: true
+              pattern: ^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$
+              description: "true if this payment method should be automatically retained on creation"
+            state:
+              type: string
+              example: "succeeded"
+              pattern: ^[0-9A-Za-z]+
+              minLength: 0
+              maxLength: 50  
+            message_key:
+              type: string 
+              example: "messages.transaction_succeeded"
+              pattern: ^[0-9A-Za-z]+
+              minLength: 0
+              maxLength: 150
+            message: 
+              type: string 
+              example: "Succeeded!"
+              pattern: ^[0-9A-Za-z!]+
+              minLength: 0
+              maxLength: 50                
+            payment_method: 
+              $ref: '#/components/schemas/payment_method'
+    payment_method: 
+      type: object
+      properties: 
+        token:
+          type: string
+          example: "5KHqUNCugwil94o8fjW2KMckpdn"
+          pattern: ([A-Za-z0-9]+)
+          minLength: 1
+          maxLength: 999          
+        created_at: 
+          example: "2018-11-06T14:34:41Z"
+          description: "Date and time in ISO 8601 UTC"
+          type: string
+          pattern: "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z)?$"
+          minLength: 20
+          maxLength: 20        
+        updated_at:
+          type: string
+          description: "Date and time in ISO 8601 UTC"
+          example: "2018-11-06T14:34:41Z"
+          pattern: "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(\\.[0-9]+)?(Z)?$"
+          minLength: 20
+          maxLength: 20          
+        email: 
+          type: string
+          example: "joejones@joemail.com"
+          minLength: 0
+          maxLength: 64
+          pattern: (?:[a-z0-9!$%&*+/=?^_`{|}~-]+(?:\.[a-z0-9!$%&'*+/=?^_`{|}~-]+)*|(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])
+        data:  
+          type: string
+          example: "Example"
+          pattern: ([A-Za-z0-9])+
+          minLength: 0
+          maxLength: 9999
+        storage_state: 
+          type: string
+          example: "cached"
+          pattern: ([A-Za-z0-9])+
+          minLength: 0
+          maxLength: 99
+        test: 
+          type: boolean
+          description: "true if this payment method is a test payment method and cannot be used against real gateways or receivers"
+          example: true
+          pattern: ^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$    
+        metadata:    
+          $ref: '#/components/schemas/Value'  
+        last_four_digits: 
+          type: string
+          description: "Last four digits of the PAN"
+          example: "1234"
+          minLength: 1
+          maxLength: 4
+        first_six_digits: 
+          type: string
+          description: "First six digits of the PAN"
+          pattern: ^[0-9]+
+          example: "556677"
+          minLength: 1
+          maxLength: 6
+        card_type: 
+          type: string
+          description: :"Type of card or card scheme"
+          example: "master"
+          pattern: ^[A-Za-z0-9]+
+          minLength: 1
+          maxLength: 99
+        first_name:
+          type: string 
+          description: "Card holder first name"
+          example: "Joe"
+          pattern: '[A-Za-z]+'
+          minLength: 2
+          maxLength: 40
+        last_name:
+          type: string
+          description: "Card holder last name"
+          example: "Jones"
+          pattern: '[A-Za-z]+'
+          minLength: 2
+          maxLength: 40          
+        month: 
+          type: number
+          description: "The expiration month of the card"
+          example: 12
+          pattern: ^(1[0-2]|0[1-9])$     
+          minimum: 1
+          maximum: 12
+        year: 
+          type: number
+          description: "The expiration year of the card"
+          example: 2032
+          minimum: 2020
+          maximum: 2200
+          pattern: ^(20[2-9][0-9])$
+        address1:
+          type: string
+          example: "2 Queens Square (2nd Floor)"
+          pattern: ^[0-9A-Za-z\s\.()]+
+          minLength: 0
+          maxLength: 50
+        address2:
+          type: string
+          example: "Lyndhurst Road"
+          pattern: ^[0-9A-Za-z\s\.]+
+          minLength: 0
+          maxLength: 50
+        city:
+          type: string
+          example: "Ascot"
+          pattern: ^[0-9A-Za-z\s\.]+
+          minLength: 0
+          maxLength: 50          
+        state:
+          type: string
+          example: "Berkshire"
+          pattern: ^[0-9A-Za-z\s\.]+
+          minLength: 0
+          maxLength: 50          
+        zip:
+          type: string
+          description: "Post or ZIP code"
+          example: "SL5 9FE"
+          pattern: "\b((?:(?:gir)|(?:[a-pr-uwyz])(?:(?:[0-9](?:[a-hjkpstuw]|[0-9])?)|(?:[a-hk-y][0-9](?:[0-9]|[abehmnprv-y])?)))) ?([0-9][abd-hjlnp-uw-z]{2})\b"
+          minLength: 0
+          maxLength: 8          
+        country:
+          type: string
+          example: "United Kingdom"
+          pattern: ^[0-9A-Za-z\s\.]+
+          minLength: 0
+          maxLength: 50          
+        phone_number: 
+          type: string 
+          example: "07989898789"
+          pattern: ^[0-9A-Za-z+()\s\.]+
+          minLength: 0
+          maxLength: 50          
+        company:
+          type: string 
+          example: "Bink"
+          pattern: ^[0-9A-Za-z\s\.]+
+          minLength: 0
+          maxLength: 50          
+        full_name:
+          type: string 
+          example: "Joe Jones"
+          pattern: ^[0-9A-Za-z\s\.]+
+          minLength: 0
+          maxLength: 100   
+        eligible_for_card_updater: 
+          type: boolean
+          example: true
+          pattern: ^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$
+          description: "true if this payment method should be included in Account Updater"    
+        shipping_address1:
+          type: string 
+          example: "2 Queens Square (2nd Floor)"
+          pattern: ^[0-9A-Za-z\s\.()]+
+          minLength: 0
+          maxLength: 50
+        shipping_address2:
+          type: string
+          example: "Lyndhurst Road"
+          pattern: ^[0-9A-Za-z\s\.]+
+          minLength: 0
+          maxLength: 50        
+        shipping_city:
+          type: string
+          example: "Ascot"
+          pattern: ^[0-9A-Za-z\s\.]+
+          minLength: 0
+          maxLength: 50            
+        shipping_state:
+          type: string
+          example: "Berkshire"
+          pattern: ^[0-9A-Za-z\s\.]+
+          minLength: 0
+          maxLength: 50          
+        shipping_zip:
+          type: string
+          description: "Post or ZIP code"
+          example: "SL5 9FE"
+          pattern: "\b((?:(?:gir)|(?:[a-pr-uwyz])(?:(?:[0-9](?:[a-hjkpstuw]|[0-9])?)|(?:[a-hk-y][0-9](?:[0-9]|[abehmnprv-y])?)))) ?([0-9][abd-hjlnp-uw-z]{2})\b"
+          minLength: 0
+          maxLength: 40
+        shipping_country: 
+          type: string
+          example: "United Kingdom"
+          pattern: ^[0-9A-Za-z\s\.]+
+          minLength: 0
+          maxLength: 50   
+        shipping_phone_number: 
+          type: string
+          example: "07989898789"
+          pattern: ^[0-9A-Za-z\s\.]+
+          minLength: 0
+          maxLength: 50          
+        payment_method_type: 
+          type: string
+          example: "credit_card" 
+          pattern: ^[0-9A-Za-z+()\s\.]+
+          minLength: 0
+          maxLength: 80          
+        errors: 
+          $ref: '#/components/schemas/Error'
+        fingerprint:
+          type: string
+          example: "b5fe350d5135ab64a8f3c1097fadefd9effb"
+          pattern: ([A-Za-z0-9]+)
+          minLength: 1
+          maxLength: 250          
+        verification_value: 
+          type: string
+          description: "The obscured verification value (CVV), e.g., XXX or XXXX"
+          example: "XXX"
+          pattern: ^[XXX]+    
+        number: 
+          type: string
+          description: "The obscured credit card number, e.g., XXXX-XXXX-XXXX-4444"
+          example: 'XXXX-XXXX-XXXX-5675'
+          pattern: (X{4}-){3}(\d{4})
+    Error: 
+      type: array
+      items: 
+        type: string 
+    Value: 
+      type: object
+      properties:
+        key: 
+          description: "metadata key-value pairs (limit 25). Keys are limited to 50 characters. Values are limited to 500 characters and cannot contain compounding data types"
+          type: string
+          example: "string value example"
+          minLength: 0
+          maxLength: 50
+          pattern: "[A-Za-z0-9]"

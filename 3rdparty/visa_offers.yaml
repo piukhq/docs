@@ -1,0 +1,79 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Visa Offers Platform API
+  description: Visa Offers Platform API specification
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Bink_API/VISA_Offers/1.0.0
+paths:    
+  '/visa/activate/':
+    post: 
+      tags: 
+        - visa_activate
+      summary: 'API call from Bink to Visa Offers to activate transaction feed for a merchant'
+      operationId: 'POST visa activate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VOPActivateRequest'
+        description: Activate VISA card for a merchant
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VOPActivateResponse'  
+components:
+  schemas:
+    VOPActivateRequest:
+      type: object
+      properties:
+        communityCode: 
+          type: string
+          example: "BINKCTE01CL"
+        userKey: 
+          type: string
+          example: "a74hd93d9812wir0174mk093dkie1"
+        offerId: 
+          type: string
+          example: "48016"
+        recurrenceLimit: 
+          type: integer
+          example: -1
+        activations: 
+          type: array
+          items:
+            type: object
+            properties: 
+              name: 
+                type: string
+                example: "MerchantGroupName"
+              value: 
+                type: string
+                example: "BIN_CAID_MRCH_GRP"
+    VOPActivateResponse:
+      type: object
+      properties: 
+        activationId:
+          type: string 
+          example: "88395654-0b8a-4f2d-9046-2b8669f76bd2"
+        correlationId: 
+          type: string
+          example: "96e38ed5-91d5-4567-82e9-6c441f4ca300"
+        responseDateTime: 
+          type: string
+          example: "2020-01-30T11:13:43.5765614Z"
+        responseStatus: 
+          type: object
+          properties: 
+            code: 
+              type: string
+              example: "SUCCESS"
+            message: 
+              type: string
+              example: "Request proceed successfully without error."

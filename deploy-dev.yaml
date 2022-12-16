@@ -1,4 +1,3 @@
----
 openapi: "3.0.0"
 info:
   version: '2.0'
@@ -989,14 +988,14 @@ paths:
                 error_slug: "FIELD_VALIDATION_ERROR"
                 fields:
                   - "expected str for dictionary value @ data['card_number']" 
-  /loyalty_cards/trusted_add:
+  /loyalty_cards/add_trusted:
     post:
       security:
         - bearerAuth: []
       tags:
         - Loyalty Cards
       summary: Add a Loyalty Card from a Trusted Channel
-      operationId: POST /loyalty_cards/trusted_add
+      operationId: POST /loyalty_cards/add_trusted
       description: "This will add a **PLL** type **Loyalty Card** into a user's wallet. Adding from a Trusted Channel requires only a unique identifier for the loyalty membership to enable **PLL** for those **Loyalty Plans** that support it. <br><br>Calling this endpoint on an existing **Loyalty Card** will return details of the **Loyalty Card** and add it to the user's wallet. <br><br> A Trusted Channel is a client or application that authenticates its own end users before using with the Bink API.
 
           <html>
@@ -1163,14 +1162,14 @@ paths:
             schema:
               $ref: '#/components/schemas/LoyaltyCardAddAndAuthoriseRequest'
         description: "Loyalty Card Registration Request."
-  /loyalty_cards/{loyalty_card_id}/trusted_add:
+  /loyalty_cards/{loyalty_card_id}/add_trusted:
     put:
       security:
         - bearerAuth: []
       tags:
         - Loyalty Cards
       summary: Update a Loyalty Card from a Trusted Channel
-      operationId: PUT /loyalty_cards/trusted_add
+      operationId: PUT /loyalty_cards/add_trusted
       description: "Use this operation from a Trusted Channel to correct a loyalty card that is in an error state.
           <html>
             <body>
@@ -1195,6 +1194,13 @@ paths:
             </ul>
             </body>
           </html>"
+      parameters:
+        - in: path
+          name: loyalty_card_id
+          description: "The unique resource identifier for the Loyalty Card."
+          required: true
+          schema:
+            type: integer          
       requestBody:
         content:
           application/json:
@@ -1207,7 +1213,7 @@ paths:
           description: "**OK** Everything worked as expected. Response contains resource Id."
           content:
             application/json:
-              schema:
+              schema: 
                 $ref: '#/components/schemas/LoyaltyCardProcessResponse'
         '201':
           description: "**Created** Response contains the resource Id."
@@ -1461,9 +1467,14 @@ paths:
               </ul>
             </body>
           </html>
-
-
         <br><br>**NOTE**: If the card is a **PLL** type, success will automatically create **PLL** links to available **Payment Accounts**."
+      parameters:
+        - in: path
+          name: loyalty_card_id
+          description: "The unique resource identifier for the Loyalty Card."
+          required: true
+          schema:
+            type: integer
       responses:
         '202':
           description: '**Accepted**, join in progress'
