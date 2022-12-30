@@ -1,0 +1,480 @@
+openapi: 3.0.0
+servers:
+# Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Bink_API/Bink_User_API/1.0.0
+# Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://api.staging.gb.bink.com/
+info:
+  description: Bink User API 
+  version: "1.0.0"
+  title: Bink User API 
+  contact:
+    email: mmorar@bink.com
+tags:
+  - name: login 
+    description: Bink External User Service
+paths:
+  /user/forgotten_password:
+    post:
+      security: 
+        - tokenAuth: []
+      tags: 
+        - forgot_password
+      summary: Request an e-mail to reset password
+      operationId: forgotten_password
+      description: Request a password reset e-mail for a given user 
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              example: "stm@rmmem.com"
+      responses: 
+        '200':
+          description: Successful
+          content: 
+            application/json: 
+              schema:
+                type: string
+                example: "An email has been sent with details of how to reset your password."
+  /users/authenticate: 
+    get:
+      tags:
+        - authenticate
+      summary: Authenticate the user based on the Authorization header parameter
+      operationId: authenticate
+      description: Authenticate the user based on the Authorization header parameter
+      responses: 
+        '200':
+          description: Successful 
+          content:
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/AuthenticateResponse'
+        '400':
+          description: bad input parameter
+  /users/auth/verify_token:
+    get:
+      tags: 
+        - verify_token
+      summary: Basic view to check that a token is valid
+      operationId: verify_token
+      description: Check if a token is valid
+      responses: 
+        '200':
+          description: Successful 
+        '400':
+          description: bad input parameter
+  /users/magic_links:
+    post:
+      tags:
+        - magic_links
+      summary: Create a link allowing a user to register or sign in from their e-mail address
+      operationId: magic_links
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostMagicLinkRequest'
+      responses:
+        '200':
+          description: Successful
+        '400':
+          description: bad input parameter
+  /users/magic_links/access_tokens:
+    post:
+      tags:
+        - magic_links_access_tokens
+      summary: Provides an access token for a given temporary token
+      operationId: magic_links_access_tokens
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostMagicLinkAccessTokenRequest'
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/PostMagicLinkAccessTokenResponse'
+        '400':
+          description: bad input parameter
+        '401':
+          description: unauthorised - token has expired
+        '409':
+          description: conflict
+  /users/login:
+    post: 
+      tags:
+        - login
+      summary: Log in to Bink with email and password
+      operationId: login
+      description: Login with email address and password. If successful, this service will provide a unique token that must be presented in subsequent resource requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUserRequest'
+        description: Register User
+      responses:
+        '200':
+          description: Successful 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUserResponse'
+        '400':
+          description: bad input parameter
+        '409':
+          description: an existing item already exists
+  /users/auth/facebook:
+    post:
+      tags:
+        - facebook_login
+      summary: Log in with Facebook 
+      operationId: facebook_login 
+      description: Log in with Facebook. If successful, this service will provide a unique token that must be presented in subsequent resource requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialUserRequest'
+        description: Log in with Facebook account 
+      responses: 
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostUserResponse'
+        '400':
+          description: bad input parameter
+        '403': 
+          description: cannot validate user_id & access_token
+  /users/me/logout:
+    post:
+      security: 
+        - tokenAuth: []
+      tags:
+      - logout
+      summary: Log a user out of Bink 
+      operationId: logout
+      description: This operation will invalidate the presented authorisation token, logging the user out
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Logout'
+  /users/me:
+    get:
+      security: 
+        - tokenAuth: []
+      tags: 
+        - userprofile 
+      summary: Obtain user profile information. 
+      operationId: get-profile
+      description: Every field in the response is nullable except for email, referral_code, and uid.
+      responses: 
+        '200': 
+          description: OK
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetUserResponse'
+        '401':
+          description: 'Not authorised'
+        '403':
+          description: 'Forbidden'
+        '404':
+          description: 'Not found'
+        '405':
+          description: 'Method not allowed'
+        '451':
+          description: 'Unavailable for legal reaasons'
+        '503':
+          description: 'Service unavailable'  
+  /users/me/settings: 
+    get: 
+      security: 
+        - tokenAuth: []
+      tags: 
+      - settings
+      summary: Get User Marketing Preferences
+      operationId: get-settings
+      description: Retrieve all marketing preferences for a given user 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settings'
+        '401':
+          description: 'Not authorised'
+        '403':
+          description: 'Forbidden'
+        '404':
+          description: 'Not found'
+        '405':
+          description: 'Method not allowed'
+        '451':
+          description: 'Unavailable for legal reaasons'
+        '503':
+          description: 'Service unavailable'  
+    put:
+      security: 
+        - tokenAuth: []
+      tags:
+      - settings 
+      summary: Update User Marketing Preferences
+      operationId: put-settings
+      description: Update marketing preferences for a given user 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settings'
+        '401':
+          description: 'Not authorised'
+        '403':
+          description: 'Forbidden'
+        '404':
+          description: 'Not found'
+        '405':
+          description: 'Method not allowed'
+        '451':
+          description: 'Unavailable for legal reaasons'
+        '503':
+          description: 'Service unavailable'  
+  /users/register:
+    post:
+      tags:
+        - register
+      summary: Register a new user with user name and password
+      operationId: register
+      description: Create a new user by providing an email address and password. If successful, this service will provide a unique token that must be presented in subsequent resource requests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUserRequest'
+        description: Register User
+      responses:
+        '201':
+          description: Created 
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PostUserResponse'
+        '400':
+          description: bad input parameter
+        '409':
+          description: an existing item already exists
+  /users/renew_token:
+    post:
+      security: 
+        - tokenAuth: []
+      tags: 
+        - renew
+      summary: Renew an API token
+      operationId: renew
+      description: Present an API token and receive a renewed token value. No input payload required, only a token value in the Authorization header
+      responses:
+        '200': 
+          description: Ok
+          content:
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/TokenResponse' 
+        '400':
+          description: "Invalid token"
+components:
+  securitySchemes:
+    tokenAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT          
+  schemas:
+    Logout:
+      type: object
+      properties:
+        logged_out: 
+          type: boolean
+    GetUserResponse: 
+      type: object
+      properties: 
+        uid: 
+          type: string
+          example: "d3399dca-f248-4ab6-ac7a-18c612895dbe"
+        email: 
+          type: string
+          example: "testbink2mex4@bink.com"
+        first_name:
+          type: string 
+          example: "Jane"
+        last_name:
+          type: string
+          example: "Bloggs"
+        date_of_birth: 
+          type: string
+          example: "1991-01-09"
+        phone: 
+          type: string
+          example: "07777777777"
+        address_line_1:
+          type: string
+          example: "15 Test Row"
+        address_line_2: 
+          type: string
+          example: "Test Valley"
+        city: 
+          type: string
+          example: "Ascot"
+        region: 
+          type: string
+          example: "Berkshire"
+        postcode: 
+          type: string
+          example: "SL15 9FE"
+        country: 
+          type: string
+          example: "UK"
+        notifications: 
+          type: boolean
+          example: true
+        pass_code: 
+          type: string
+          example: "NOT USED"
+        currency: 
+          type: string 
+          maxLength: 3
+          example: "GBP"
+    AuthenticateResponse: 
+      type: object
+      properties:
+        uid: 
+          type: string
+        id: 
+          type: string
+    Settings: 
+      type: array
+      items: 
+        type: object
+        properties: 
+          is_user_defined: 
+            type: boolean
+            example: false
+          user: 
+            type: number
+            example: 13
+          value: 
+            type: string
+            example: "0"
+          slug: 
+            type: string
+            example: "marketing-bink"
+          default_value:
+            type: string
+            example: "0"
+          value_type: 
+            type: string
+            example: "boolean"
+          scheme: 
+            type: number
+            example: 1
+          label: 
+            type: string
+            example: "I love Bink so much"
+          category: 
+            type: string
+            example: "General"
+    PostUserRequest:
+      type: object
+      required:
+        - email
+        - password
+        - client_id
+        - bundle_id
+      properties:
+        email:
+          type: string
+          example: testbink@bink.com
+        password:
+          type: string
+          example: cGFzc3dvcmQx
+        client_id:
+          type: string
+          example: 'MKd3FfDGBi1CIUQwtahmPap64lneCa2R6GvVWKg6dNg4w9Jnpd'
+        bundle_id:
+          type: string
+          example: "com.bink.wallet"
+    PostUserResponse:
+      type: object
+      properties:
+        email:
+          type: string
+          example: testbink@bink.com
+        api_key:
+          type: string
+          example: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJidW5kbGVfaWQiOiJjb20uYmluay53YWxsZXQiLCJ1c2VyX2lkIjoidGVzdGJpbmsybWU0QGJpbmsuY29tIiwic3ViIjoxOTg4LCJpYXQiOjE1NzE0MDg2MDZ9.R48BvwUFndjaTUBXQY7J19RA8OvIFQO5OSkSR5nSaJY"
+        uid:
+          type: string
+          example: '5dd6cb6b-9c92-4def-ba53-c3af3253de33'
+    SocialUserRequest:
+      type: object
+      required:
+        - access_token
+      properties: 
+        access_token: 
+          type: string
+          example: 'edf346v'
+        user_id:
+          type: string
+          example: 'auto_1571707898976@testbink.com'
+        email:
+          type: string
+          example: 'auto_1571707898976@testbink.com'
+    PostMagicLinkRequest:
+      type: object
+      properties: 
+        email:
+          type: string
+          example: 'auto_1571707898976@testbink.com'
+        slug: 
+          type: string
+          example: "lidl"
+        locale:
+          type: string
+          example: "en_GB"
+        bundle_id:
+          type: string
+          example: 'com.bink.web'
+    TokenResponse: 
+      type: string 
+      example: '1234567890abcdef'
+    PostMagicLinkAccessTokenRequest:
+      type: object
+      properties:
+        token: 
+          type: string
+          example: 'a1111'
+    PostMagicLinkAccessTokenResponse:
+      type: object
+      properties:
+        access_token: 
+          type: string
+          example: 'z9999'

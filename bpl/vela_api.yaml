@@ -1,0 +1,363 @@
+openapi: 3.0.0
+info:
+  description: This is the API that will be used to integrate with the Rewards Rule Management system of BPL
+  version: 1.0.0
+  title: BPL RRM External API
+  contact:
+    email: ajones@bink.com
+servers:
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Bink_API/Vela_API/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Bink_API/BPL_RRM_External_API/1.1.0
+tags:
+  - name: transactions
+    description: Getting transactions into BPL
+  - name: campaigns
+    description: managing, getting campaign details
+  - name: BPL
+    description: BPL operations
+paths:
+  /{retailer_slug}/transaction:
+    post:
+      tags:
+        - transaction
+      operationId: 'POST /{retailer_slug}/transaction'
+      description: used to send transaction details to BPL
+      parameters: 
+        - in: path
+          name: retailer_slug
+          description: 'Part of the URI that identifies the retailer in a readable form'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponse'
+        '400':
+          description: 'bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401': 
+          description: 'Unauthorized request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: requester does not have access to the retailer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Transaction'
+  /{retailer_slug}/active-campaign-slugs:
+    get:
+      tags: 
+        - BPL
+      operationId: GET /{retailer_slug}/active-campaign-slugs
+      description: used to get all the active campaign slugs for a retailer
+      parameters: 
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+      responses:
+        '200': 
+          description: 'OK'
+          content:
+            application/json:
+              schema:
+                type: array
+                example: [ active_campaign_1, active_campaign_2]
+                items:
+                  type: string
+                  description: 'slug of an active campaign'
+        '401': 
+          description: 'Unauthorized request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: 'requester does not have access to the retailer, retailer does not exist'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: 'no active campaigns found for retailer'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /{retailer_slug}/campaigns/status_change:
+    post:
+      tags: 
+        - BPL
+      operationId: POST /{retailer_slug}/campaigns/status_change
+      description: used to update the status of campaign(s) and trigger the necessary calls to update rewards & balances
+      parameters:
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: campaign(s) not found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ErrorResponse'
+                example:
+                  - display_message: Campaign not found for provided slug
+                    code: NO_CAMPAIGN_FOUND
+                    campaigns:
+                      - test-campaign-1
+                      - test-campaign-2
+        '409':
+          description: invalid status request
+          content:
+              application/json:
+                schema: 
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ErrorResponse'
+                  example: 
+                    - display_message: Campaign not found for provided slug
+                      code: NO_CAMPAIGN_FOUND
+                      campaigns:
+                        - test-campaign-1
+                        - test-campaign-2
+                    - display_message: The requested status change could not be performed.
+                      code: INVALID_STATUS_REQUESTED
+                      campaigns:
+                        - test-campaign-a
+                        - test-campaign-b
+                    - display_message: the provided campaign(s) could not be made active
+                      code: MISSING_CAMPAIGN_COMPONENTS
+                      campaigns:
+                        - test-campaign-x
+                        - test-campaign-y
+        '422':
+          description: issue with fields
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                display_message: Submitted fields are missing or invalid.
+                code: FIELD_VALIDATION_ERROR
+                fields:
+                  - requested_status
+                  - campaign_slugs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: 
+                - requested_status
+                - campaign_slugs
+                - activity_metadata
+              properties:
+                requested_status:
+                  type: string
+                  description: the status that all included campaigns should be moved to
+                  enum: [ cancelled, ended, active ]
+                campaign_slugs:
+                  type: array
+                  description: list of campaign slugs to apply the new status to
+                  items:
+                    type: string
+                    pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+                pending_rewards_action:
+                  type: string
+                  enum: [ convert, remove ]
+                  description: what should be done to the pending rewards on ending campaign(s)
+                activity_metadata:
+                  type: object
+                  required:
+                    - sso_username
+                  properties:
+                    sso_username:
+                      type: string
+                      description: the username of who made the change request in the Admin Panel
+  /{retailer_slug}/campaigns/{campaign_slug}:
+    delete:
+      tags:
+        - BPL
+      operationId: DELETE /{retailer_slug}/campaigns/{campaign_slug}
+      description: deleting a campaign - only valid for draft campaigns
+      parameters:
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: campaign_slug
+          description: Part of the URI that identifies the campaign in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+      responses:
+        '204': 
+          description: no content 
+        
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: campaign(s) not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                - display_message: Campaign not found for provided slug
+                  code: NO_CAMPAIGN_FOUND
+                  campaigns:
+                    - test-campaign-1
+                    - test-campaign-2
+        '409':
+          description: invalid status request
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                - display_message: The requested status change could not be performed.
+                  code: INVALID_STATUS_REQUESTED
+components:
+  schemas:
+    Transaction:
+      type: object
+      required:
+        - id
+        - transaction_total
+        - datetime
+        - location
+      properties:
+        id:
+          type: string 
+          description: the transaction id, that can be used to refer to the transaction; must be unique
+          example: 'BPL1234567890'
+        transaction_total:
+          type: integer
+          description: the total amount paid for the the transaction 
+          example: 1750
+        datetime:
+          type: string
+          description: the date & time the transaction took place
+          example: 1615890143
+        MID:
+          type: string
+          description: this is the MID the transaction occured at
+        loyalty_id:
+          type: string
+          description: the BPL UUID of the customer
+          example: 'BPL1234567890'
+    TransactionResponse:
+      type: object
+      properties:
+        transaction_id:
+          type: string
+          description: the transaction id as received on the list of transactions
+          example: 'BPL1234567890'
+        transaction_status:
+          type: string
+          description: code signifying what happend to the transaction
+          example: ''
+    ErrorResponse:
+      type: object
+      required: 
+        - display_message
+        - error
+      properties:
+        display_message:
+          type: string
+          description: 'error message that could be displayed to a user'
+          example: 'An account for this email address already exists'
+        error:
+          type: string
+          description: 'an identifier that is easy to code against'
+          example: 'ACCOUNT_EXISTS'
+        fields:
+          type: array
+          description: 'to be used for field specific errors'
+          items:
+            type: string

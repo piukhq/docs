@@ -1,0 +1,223 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Bink_API/Carina_API/1.0.0
+info:
+  version: 1.0.0
+  title: BPL Carina (Rewards Management) API
+  description: This is the API that will be used to integrate with the Rewards Management
+    system of BPL
+  contact:
+    email: ajones@bink.com
+tags:
+  - name: BPL
+    description: BPL operations
+paths: 
+  /rewards/{retailer_slug}/rewards/{reward_slug}/allocation:
+    post:
+      tags: 
+        - BPL
+      operationId: POST /{retailer_slug}/rewards/{reward_slug}/allocation
+      description: tells the rewards management system to allocate a specific type of reward to an account
+      parameters: 
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])+\s*)$
+        - in: path
+          name: reward_slug
+          description: Part of the URI that identifies the type of reward that should be allocated
+          example: retailerstamp2021_£5off
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9_\-£@#$%^&+!=])*)$
+        - in: header
+          name: Idempotency-key
+          description: guid to ensure idempotency of request, meaning the same adjustment is not applied more than once
+          required: false
+          schema:
+            type: string
+            format: guid
+      responses:
+        '202':
+          description: accepted
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: reward type slug does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Reward Type Slug does not exist.
+                code: UNKNOWN_REWARD_TYPE
+        '422':
+          description: field validation error, inc missing required field, inc bad status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Submitted fields are missing or invalid.
+                code: FIELD_VALIDATION_ERROR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - account_url
+              properties:
+                account_url:
+                  type: string
+                  description: the url for the account where the reward should be sent
+                count:
+                  type: integer
+                  minimum: 0
+                  description: the number of rewards to allocate 
+                  example: 2
+                pending_reward_id:
+                  type: string
+                  format: uuid
+                  description: if the /allocation request is for a previously pending reward, this will be populated with id from the pending reward
+  /rewards/{retailer_slug}/rewards/{reward_slug}/status:
+    patch:
+      tags: 
+        - BPL
+      operationId: PATCH /{retailer_slug}/rewards/{reward_slug}/status
+      description: tells the reward management system make an update to all rewards, for reward_slug, to the passed status (ended/cancelled)
+      parameters:  
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])+\s*)$
+        - in: path
+          name: reward_slug
+          description: Part of the URI that identifies the type of reward that should be allocated
+          example: retailerstamp2021_£5off
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9_\-£@#$%^&+!=])*)$
+      responses:
+        '200':
+          description: success
+        '400':
+          description: malformed request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: reward type slug does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Reward Type Slug does not exist.
+                code: UNKNOWN_REWARD_SLUG
+        '409':
+          description: invalid status request
+          content:
+              application/json:
+                schema: 
+                  $ref: '#/components/schemas/BasicResponse'
+                example:
+                  display_message: Status could not be updated as requested.
+                  code: STATUS_UPDATE_FAILED
+        '422':
+          description: field validation error, inc missing required field, inc bad status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Submitted fields are missing or invalid.
+                code: FIELD_VALIDATION_ERROR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: 
+                - status
+              properties:
+                status:
+                  type: string
+                  description: this should either be cancelled or ended
+components:
+  schemas:
+    BasicResponse:
+      type: object
+      required: 
+        - display_message
+        - code
+      properties:
+        display_message:
+          type: string
+          description: error message that could be displayed to an account holder
+          example: Reward Type Slug does not exist.
+        code:
+          type: string
+          description: an identifier that is easy to code against
+        fields:
+          type: array
+          description: to be used for field specific errors
+          items:
+            type: string

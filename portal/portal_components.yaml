@@ -1,0 +1,360 @@
+# OpenAPI version identifier - required for OpenAPI 3.0 domains
+openapi: 3.0.0
+
+#######################
+# Optional info section
+#######################
+info:
+  title: Portal Components
+  description: Common components for the Portal REST APIs
+  version: '1.0'
+
+components:
+
+  ####################
+  # Common data models
+  ####################
+  schemas:
+    ErrorModel:
+      type: object
+      required: 
+        - detail
+      properties:
+        detail:
+          type: array
+          items:
+            type: object
+            required:
+              - loc
+              - msg
+              - type
+            properties:
+              loc:
+                type: array
+                items:
+                  type: string
+                  description: path to the field with an error
+              msg: 
+                type: string
+                description: readable error message
+              type: 
+                type: string
+                description: representation of the error that occured
+    PaymentSchemeSlug:
+      type: string
+      description: the slug associated with the payment scheme
+      enum: [visa, amex, mastercard]
+    PaymentEnrolmentStatus:
+      type: string
+      description: the payment scheme enrolment status
+      enum: [unknown, enrolled, enrolling, not_enrolled, unenrolled, failed]
+    TxmStatus:
+      type: string
+      description: the Harmonia onboarding status 
+      enum: [onboarded, offboarded, not_onboarded, onboarding, offboarding]
+    DeletionStatus:
+      type: string
+      description: the deletion status 
+      enum: [pending_deletion, deleted, active]
+    DateAdded:
+      type: string
+      format: date-time
+      example: "2017-07-21T17:32:28Z"
+    RefModel:
+      type: string
+      format: uuid
+      description: the internal system uuid
+  ####################
+  # Common parameters
+  ####################
+  parameters:
+    versionParam:
+      in: path
+      name: version
+      required: true
+      schema:
+        type: string
+        example: v1.0
+    pageSizeParam:
+      in: query
+      name: n
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 10
+      description: The number of objects to return for a \"page"
+    pageNumParam:
+      in: query
+      name: p
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: The page number of objects to return
+    planRefParam:
+      in: path
+      name: plan_ref
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: PK, the uuid of the Plan
+    merchantRefParam:
+      in: path
+      name: merchant_ref
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: PK, the uuid of the Merchant 
+    midRefParam:
+      in: path
+      name: mid_ref
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: PK, the uuid of the MID
+    secondaryMIDRefParam:
+      in: path
+      name: secondary_mid_ref
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: PK, the uuid of the Secondary MID 
+    locationRefParam:
+      in: path
+      name: location_ref
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: PK, the uuid of the Location
+    subLocationRefParam:
+      in: path
+      name: sub_location_ref
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: PK, the uuid of the Sub-Location
+    psimiRefParam:
+      in: path
+      name: psimi_ref
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: PK, the uuid of the PSIMI
+    linkRef:
+      in: path
+      name: link_ref
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: PK, the uuid of a Link
+    commentRef:
+      in: path
+      name: comment_ref
+      required: true
+      schema:
+        type: string
+        format: uuid
+      description: PK, the uuid of a comment
+    refFilterParam:
+      in: query
+      name: ref
+      required: false
+      schema:
+        type: string
+        format: uuid
+      description: PK, applies a filter so that only the desired entity is returned 
+
+  #######################
+  # Common request bodies
+  #######################
+  
+  ####################
+  # Common responses
+  ####################
+  responses:
+    Error404Multi:
+      description: Not found, path & body
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+          examples:
+            errorExample1:
+              $ref: '#/components/examples/Error404Example'
+            errorExample2:
+              $ref: '#/components/examples/Error404BodyExample'
+    Error404:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+          examples:
+            errorExample:
+              $ref: '#/components/examples/Error404Example'
+    Error404Body:
+      description: Ref from body not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+          examples:
+            errorExample:
+              $ref: '#/components/examples/Error404BodyExample'
+    Error409:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+          examples:
+            errorExample:
+              $ref: '#/components/examples/Error409Example'
+    Error409DuplicateValue:
+      description: Duplicate value
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+          examples:
+            errorExample:
+              $ref: '#/components/examples/Error409ValueExample'
+    Errror422:
+      description: validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+          examples:
+            errorExample:
+              $ref: '#/components/examples/Error422Example'
+    Errror422MissingRefs:
+      description: validation error - missing refs
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+          examples:
+            errorExample:
+              $ref: '#/components/examples/Error422RefExample'
+    Errror422Value:
+      description: validation error - missing values
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
+          examples:
+            errorExample:
+              $ref: '#/components/examples/Error422ValueExample'
+  #########################
+  # Common headers
+  # (except request headers - they are defined as parameters)
+  #########################
+ 
+
+  #######################
+  # Common path items
+  #######################
+  
+
+  ######################################
+  # Common examples of input/output data
+  ######################################
+  examples:
+    Error404Example:
+      summary: Example 404 error
+      value:
+        detail:
+          - 
+            loc:
+              - path
+              - <ref>
+            msg: <ref> not found
+            type: ref_error
+    Error404BodyExample:
+      summary: Example 404 error, from the body
+      value:
+        detail:
+          - 
+            loc:
+              - body
+              - <refs>
+            msg: <ref> not found
+            type: ref_error
+    Error409Example:
+      summary: Example 409 error
+      value:
+        detail:
+          -
+            loc:
+              - body
+              - name
+            msg: "Field must be unique: body.name"
+            type: unique_error
+    Error409ValueExample:
+      summary: Example 409 error, duplicate value - ?the value must be unique for payment scheme code, would this message look different?
+      value:
+        detail:
+          - 
+            loc:
+              - body
+              - value
+            msg: "Field must be unique: body.value."
+            type: unique_error
+    Error422Example:
+      summary: Example 422 error
+      value:
+        detail:
+          - 
+            loc:
+              - body
+              - name
+            msg: field required
+            type: value_error.missing
+    Error422RefExample:
+      summary: Example 422 error, ref in the body
+      value:
+        detail:
+          - 
+            loc:
+              - body
+              - <refs>
+            msg: field required
+            type: value_error.missing
+    Error422ValueExample:
+      summary: Example 422 error, value missing
+      value:
+        detail:
+          - 
+            loc:
+              - body
+              - value
+            msg: field required
+            type: value_error.missing
+          - 
+            loc:
+              - body
+              - payment_scheme_code
+            msg: field required
+            type: value_error.missing
+  #########################
+  # Common link definitions
+  # See: https://swagger.io/docs/specification/links/
+  #########################
+  links: {}
+
+  #########################
+  # Common callback definitions
+  # See: https://swagger.io/docs/specification/callbacks/
+  #########################
+  callbacks: {}

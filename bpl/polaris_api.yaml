@@ -1,0 +1,1754 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Bink_API/Polaris_API/1.0.0
+info:
+  description: This is the API that will be used to integrate with the Customer Management system of BPL
+  version: "1.0.0"
+  title: BPL Polaris (Customer Management) API
+  contact:
+    email: ajones@bink.com
+tags:
+  - name: accounts
+    description: Operations available consumers for account based operations
+  - name: BPL
+    description: BPL operations
+  - name: public
+    description: public exposed api
+paths:  
+  /loyalty/{retailer_slug}/accounts/enrolment:
+    post:
+      tags:
+        - accounts
+      operationId: POST /loyalty/{retailer_slug}/accounts/enrolment
+      description: starts the process of creating a new BPL account
+      parameters: 
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+        - in: header
+          name: bpl-user-channel
+          description: text field to capture where an account holder is interacting with their BPL account
+          required: true
+          schema:
+            type: string
+      responses:
+        '202':
+          description: accepted
+        '400':
+          description: malformed request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '409':
+          description: account already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: It appears this account already exists.
+                code: ACCOUNT_EXISTS
+        '422':
+          description: field validation error, inc missing required field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Submitted fields are missing or invalid.
+                code: FIELD_VALIDATION_ERROR
+                fields:
+                  - email
+                  - first_name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnrolRequest'
+        description: Inventory item to add
+  /loyalty/{retailer_slug}/accounts/getbycredentials:
+    post:
+      tags: 
+        - accounts
+      operationId: POST /loyalty/{retailer_slug}/accounts/getbycredentials
+      description: validates account ownership and returns account if applicable
+      parameters: 
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+        - in: header
+          name: bpl-user-channel
+          description: text field to capture where an account holder is interacting with their BPL account
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: tx_qty
+          description: an optional query parameter that determines the maximum number of transactions to return in transaction history
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+      responses:
+        '200':
+          description: account found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: malformed request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401':
+          description: unauthorised
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: account not found for provided credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Account not found for provided credentials.
+                code: NO_ACCOUNT_FOUND
+        '422':
+          description: missing field(s)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Submitted fields are missing or invalid.
+                code: FIELD_VALIDATION_ERROR
+                fields:
+                  - email
+                  - account_number
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetByCredentials'
+  /loyalty/{retailer_slug}/accounts/{account_uuid}:
+    get:
+      tags:
+        - accounts
+      operationId: GET /loyalty/{retailer_slug}/accounts/{account_uuid}
+      description: Returns the account details for the provided account UUID
+      parameters:
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+        - in: path
+          name: account_uuid
+          description: Part of the URI that identifies the account to return
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: bpl-user-channel
+          description: text field to capture where an account holder is interacting with their BPL account
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: tx_qty
+          description: an optional query parameter that determines the maximum number of transactions to return in transaction history
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+      responses:
+        '200':
+          description: account found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
+        '400':
+          description: malformed request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Account not found for provided credentials.
+                code: NO_ACCOUNT_FOUND
+    delete:
+      tags:
+        - accounts
+      operationId: DELETE /loyalty/{retailer_slug}/accounts/{account_uuid}
+      description: Deletes the account details for the provided account UUID
+      parameters:
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+        - in: path
+          name: account_uuid
+          description: Part of the URI that identifies the account to return
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: bpl-user-channel
+          description: text field to capture where an account holder is interacting with their BPL account
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: account deleted
+        '400':
+          description: malformed request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Account not found for provided credentials.
+                code: NO_ACCOUNT_FOUND
+  /loyalty/{retailer_slug}/accounts/{account_uuid}/profile:
+    get:
+      tags:
+        - accounts
+      operationId: GET /loyalty/{retailer_slug}/accounts/{account_uuid}/profile
+      description: returns the account holder's profile 
+      parameters:
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+        - in: path
+          name: account_uuid
+          description: Part of the URI that identifies the account profile to return
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: bpl-user-channel
+          description: text field to capture where an account holder is interacting with their BPL account
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: profile found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: malform request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Account not found for provided credentials.
+                code: NO_ACCOUNT_FOUND
+    patch:
+      tags:
+        - accounts
+      operationId: PATCH /loyalty/{retailer_slug}/accounts/{account_uuid}/profile
+      description: updates the account holder's profile
+      parameters:
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+        - in: path
+          name: account_uuid
+          description: Part of the URI that identifies the account profile to update
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: bpl-user-channel
+          description: text field to capture where an account holder is interacting with their BPL account
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+        '400':
+          description: malform request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Account not found for provided credentials.
+                code: NO_ACCOUNT_FOUND
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Submitted fields are missing or invalid.
+                code: FIELD_VALIDATION_ERROR
+                fields:
+                  - email
+                  - first_name
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+  /loyalty/{retailer_slug}/accounts/{account_uuid}/status:
+    get:
+      tags:
+        - BPL
+      operationId: GET /loyalty/{retailer_slug}/accounts/{account_uuid}/status
+      description: returns the current status of an account
+      parameters:
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+        - in: path
+          name: account_uuid
+          description: Part of the URI that identifies the account to adjust
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    description: the current status of the account
+        '400':
+          description: malformed request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: 'Unauthorized request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Account not found for provided credentials.
+                code: NO_ACCOUNT_FOUND
+    patch:
+      tags:
+        - BPL
+      operationId: PATCH /loyalty/{retailer_slug}/accounts/{account_uuid}/status
+      description: updates the current status of an account
+      parameters:
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+        - in: path
+          name: account_uuid
+          description: Part of the URI that identifies the account to change the status
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: status updated
+        '400':
+          description: malformed request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: account does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Reward Type Slug does not exist.
+                code: UNKNOWN_REWARD_TYPE
+        '409':
+          description: invalid status request
+          content:
+              application/json:
+                schema: 
+                  $ref: '#/components/schemas/BasicResponse'
+                example:
+                  display_message: Status could not be updated as requested.
+                  code: STATUS_UPDATE_FAILED
+        '422':
+          description: field validation error, inc missing required field, inc bad status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Submitted fields are missing or invalid.
+                code: FIELD_VALIDATION_ERROR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: 
+                - status
+              properties:
+                status:
+                  type: string
+                  description: the new status of the account holder
+  /loyalty/{retailer_slug}/accounts/{account_uuid}/adjustments:
+    post:
+      tags:
+        - BPL
+      operationId: POST /loyalty/{retailer_slug}/accounts/{account_uuid}/adjustments
+      description: performs an adjustment to the balances on an account
+      parameters:
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+        - in: path
+          name: account_uuid
+          description: Part of the URI that identifies the account to adjust
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: header
+          name: idempotency-token
+          description: guid to ensure idempotency of request, meaning the same adjustment is not applied more than once
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: balance updated
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/AdjustmentResponse'
+        '400':
+          description: malformed request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Account not found for provided credentials.
+                code: NO_ACCOUNT_FOUND
+        '409':
+          description: there is no balance row on the account holder for the camapaign slug
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example: 
+                display_message: No balance for provided campaign slug.
+                code: NO_CAMPAIGN_BALANCE
+        '422':
+          description: field validation error, inc missing required field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Submitted fields are missing or invalid.
+                code: FIELD_VALIDATION_ERROR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdjustmentRequest'
+  /loyalty/{retailer_slug}/accounts/{account_uuid}/rewards:
+    post:
+      tags: 
+        - BPL
+      operationId: POST /loyalty/{retailer_slug}/accounts/{account_uuid}/rewards
+      description: adds a reward to an account holder
+      parameters:
+          - in: path
+            name: retailer_slug
+            description: Part of the URI that identifies the retailer in a readable form
+            required: true
+            schema:
+              type: string
+              pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          - in: path
+            name: account_uuid
+            description: Part of the URI that identifies the account profile to add the reward to
+            required: true
+            schema:
+              type: string
+              format: uuid
+      responses:
+        '202':
+          description: accepted
+        '400':
+          description: malformed request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Account not found for provided credentials.
+                code: NO_ACCOUNT_FOUND
+        '409':
+          description: nonunique voucher cannot be added 
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: IntegrityError on Account Holder Voucher.
+                code: VOUCHER_CODE_RETAILER_UNQ_CONSTRAINT_NAME
+        '422':
+          description: validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Submitted fields are missing or invalid.
+                code: FIELD_VALIDATION_ERROR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reward'
+  /loyalty/{retailer_slug}/accounts/{account_uuid}/pendingrewardallocation:
+    post:
+      tags:
+        - BPL
+      operationId: POST /loyalty/{retailer_slug}/accounts/{account_uuid}/pendingrewardallocation
+      description: adds a pending reward allocation to an account holder
+      parameters: 
+          - in: path
+            name: retailer_slug
+            description: Part of the URI that identifies the retailer in a readable form
+            required: true
+            schema:
+              type: string
+              pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          - in: path
+            name: account_uuid
+            description: Part of the URI that identifies the account profile to add the reward to
+            required: true
+            schema:
+              type: string
+              format: uuid
+      responses:
+        '202':
+          description: accepted
+        '400':
+          description: malformed request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: 'account not found'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Account not found for provided credentials.
+                code: NO_ACCOUNT_FOUND
+        '422':
+          description: field validation error, inc missing required field
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Submitted fields are missing or invalid.
+                code: FIELD_VALIDATION_ERROR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PendingRewardAllocation'
+  /loyalty/{retailer_slug}/accounts/{campaign_slug}/pendingrewards/issue:
+    post:
+      tags:
+        - BPL
+      operationId: POST /loyalty/{retailer_slug}/accounts/{campaign_slug}/pendingrewards/issue
+      description: Triggers grabbing all of the pending rewards for a given campaign and queuing them for allocation with Carina
+      parameters:
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+        - in: path
+          name: campaign_slug
+          required: true
+          description: Part of the URI that identifies the camapign slug for desired pending rewards
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+      responses:
+        '202':
+          description: accepted
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+  /loyalty/{retailer_slug}/accounts/{campaign_slug}/balances:
+    delete:
+      tags:
+        - BPL
+      operationId: DELETE /loyalty/{retailer_slug}/accounts/{campaign_slug}/balances
+      description: Deletes all account holder balances for a retailer and campaign slug
+      parameters:
+          - in: path
+            name: retailer_slug
+            description: Part of the URI that identifies the retailer in a readable form
+            required: true
+            schema:
+              type: string
+              pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          - in: path
+            name: campaign_slug
+            description: Part of the URI that identifies the camapign slug for to delete balances for
+            required: true
+            schema:
+              type: string
+              pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+      responses:
+        '202':
+          description: accepted
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404': 
+          description: not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Campaign Slug does not exist.
+                code: UNKNOWN_CAMPAIGN
+    post:
+      tags:
+        - BPL
+      operationId: POST /loyalty/{retailer_slug}/accounts/{campaign_slug}/balances
+      description: Creates a balance for a retailer and campaign slug for all of a retailer's account holders
+      parameters:
+          - in: path
+            name: retailer_slug
+            description: Part of the URI that identifies the retailer in a readable form
+            required: true
+            schema:
+              type: string
+              pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)
+          - in: path
+            name: campaign_slug
+            description: Part of the URI that identifies the camapign slug for to delete balances for
+            required: true
+            schema:
+              type: string 
+              pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+      responses:
+        '202':
+          description: accepted
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+  /loyalty/{retailer_slug}/accounts/{campaign_slug}/pendingrewards:
+    delete:
+      tags:
+        - BPL
+      operationId: DELETE /loyalty/{retailer_slug}/accounts/{campaign_slug}/pendingrewards
+      description: Deletes all account holder pending rewards for a retailer and campaign slug
+      parameters:
+          - in: path
+            name: retailer_slug
+            description: Part of the URI that identifies the retailer in a readable form
+            required: true
+            schema:
+              type: string
+              pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          - in: path
+            name: campaign_slug
+            description: Part of the URI that identifies the camapign slug for to delete pending rewards for
+            required: true
+            schema:
+              type: string
+              pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          - in: header
+            name: sso_username
+            description: the sso_username from EH based on who triggered the action, used in activty 
+            required: true
+            schema:
+              type: string
+              example: Jess Jones
+      responses:
+        '202':
+          description: accepted
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+  /loyalty/{retailer_slug}/rewards/{campaign_slug}/cancel:
+    post:
+      tags: 
+        - BPL
+      operationId: POST /loyalty/{retailer_slug}/rewards/{reward_slug}/cancel
+      description: Bulk operation that cancels all issued (non-expired) rewards for a retailer/campaign
+      parameters:
+          - in: path
+            name: retailer_slug
+            description: Part of the URI that identifies the retailer in a readable form
+            required: true
+            schema:
+              type: string
+              pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          - in: path
+            name: campaign_slug
+            description: Part of the URI that identifies the campaign for performing the reward cancellation
+            required: true
+            schema:
+              type: string
+              pattern: ^(((?=.{1,100}$)[A-Za-z0-9_\-£@#$%^&+!=])*)$
+      responses:
+        '202':
+          description: accepted
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: object
+              properties:
+                activity_metadata:
+                  type: object
+                  properties:
+                    cancel_datetime:
+                      type: number
+                      format: float
+                      description: when the campaign was cancelled, used for activity
+                      example: 528756281
+  /loyalty/{retailer_slug}/rewards/{reward_uuid}/status:
+    patch:
+      tags:
+        - BPL
+      operationId: PATCH /loyalty/{retailer_slug}/rewards/{reward_uuid}/status
+      description: updates a provided reward's status
+      parameters:
+          - in: path
+            name: retailer_slug
+            description: Part of the URI that identifies the retailer in a readable form
+            required: true
+            schema:
+              type: string
+              pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          - in: path
+            name: reward_uuid
+            description: Part of the URI that identifies the reward to update
+            required: true
+            schema:
+              type: string
+              format: uuid
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              examples:
+                Accepted:
+                  value:
+                    display_message: Accepted
+                    code: ACCEPTED
+        '202':
+          description: accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              examples:
+                NotChanged:
+                  value:
+                    display_message: Reward status incorrect.
+                    code: STATUS_NOT_CHANGED
+        '400':
+          description: malformed request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Malformed request.
+                code: MALFORMED_REQUEST
+        '401': 
+          description: Unauthorized request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Supplied token is invalid.
+                code: INVALID_TOKEN
+        '403':
+          description: requester does not have access to the retailer, includes retailer does not exist
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Requested retailer is invalid.
+                code: INVALID_RETAILER
+        '404':
+          description: reward not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Reward not found.
+                code: NO_REWARD_FOUND
+        '422':
+          description: field validation error, inc missing required field, inc status rejected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              example:
+                display_message: Submitted fields are missing or invalid.
+                code: FIELD_VALIDATION_ERROR
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  description: The new status of the reward
+                date: 
+                  type: integer
+                  format: unix
+                  description: the unix datetime that the status of the reward changed, optional - relevant for redeemed status updates
+            examples:
+              redeemed:
+                value:
+                  status: redeemed
+                  date: 1615895295
+              cancelled:
+                value:
+                  status: cancelled
+                  date: 1615895395
+  /loyalty/{retailer_slug}/marketing/unsubscribe:
+    get:
+      tags: 
+        - public
+      operationId: GET /loyalty/{retailer_slug}/marketing/unsubscribe?u=<account_holder_token>
+      description: simple operation that updates an account's marketing opt-in to false if not already, whilst there are required parameters - we do not surface any errors to the caller and these errors are only raised internally
+      parameters: 
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+        - in: query
+          name: u
+          description: A query parameter that is used to identify the account unscubscribing in an encrypted form, this is a uuid
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: 2f1f6499-52f5-4fa1-8bbd-962a9a1736fa
+      responses:
+        '202':
+          description: accepted
+          content:
+            text/html:
+              schema:
+                type: string
+  /loyalty/{retailer_slug}/reward/{reward_id}:
+    get:
+      tags: 
+        - public
+      operationId: /loyalty/{retailer_slug}/reward/{reward_id}
+      description:  grabs some basic reward information based on the reward's uuid which should be pulled from the account holder rewards table, given the retailer slugs match
+      parameters: 
+        - in: path
+          name: retailer_slug
+          description: Part of the URI that identifies the retailer in a readable form
+          required: true
+          schema:
+            type: string
+            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+        - in: path
+          name: reward_id
+          description: Part of the URI that identifies the specific reward by its UUID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RewardData'
+        '404':
+          description: Not Found
+components:
+  schemas:
+    EnrolRequest:
+      type: object
+      required: 
+        - credentials
+        - marketing_preferences
+        - callback_url
+        - third_party_identifier
+      properties:
+        credentials:
+          $ref: '#/components/schemas/Credentials'
+        marketing_preferences:
+          type: array
+          items:
+            type: object
+            properties:
+              key: 
+                type: string
+                description: 'marketing preference name'
+                example: 'email_marketing'
+              value:
+                type: boolean
+                description: flag value 
+                example: false
+        callback_url:
+          type: string
+          description: request location for after the BPL is created successfully
+          example: https://api.gb.bink.com:443/join/merchant/bpl/{merchant_slug}
+        third_party_identifier:
+          type: string
+          description: a third party identifier that will be included when a callback is sent
+    GetByCredentials:
+      type: object
+      required: 
+        - email
+        - account_number
+      properties:
+        email:
+          type: string
+          format: email
+          pattern: ^(?=[^@]{1,64}@)(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$
+          description: email address associated with the account
+          example: user@domain.com
+        account_number:
+          type: string
+          pattern: ^[a-zA-Z]{2,4}[0-9]{10}$
+          description: the human readable id for the account, mutable
+    BasicResponse:
+      type: object
+      required: 
+        - display_message
+        - code
+      properties:
+        display_message:
+          type: string
+          description: 'error message that could be displayed to a user'
+          example: 'No campoagn found.'
+        code:
+          type: string
+          description: 'an identifier that is easy to code against'
+          example: 'CAMPAIGN_NOT_FOUND'
+        fields:
+          type: array
+          description: 'to be used for field specific errors'
+          items:
+            type: string
+        campaigns:
+          type: array
+          description: 'to be used for campaign specific errors'
+          items:
+            type: string 
+    AccountResponse:
+      type: object
+      required:
+        - UUID
+        - account_number
+        - current_balances
+        - email
+        - status
+      properties:
+        UUID:
+          type: string
+          format: uuid
+          description: unique identifier for the account, immutable
+        account_number:
+          type: string
+          description: human readable account identifier, mutable 
+        current_balances:
+          type: array
+          description: an account can only have one balance value per campaign_slug
+          items:
+            type: object
+            properties:
+              value:
+                type: number
+                format: float
+                description: the current accrued value
+                example: 5.0
+              campaign_slug:
+                type: string
+                pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+                description: a campaign identifier that the balance belongs to
+                example: retailerstamp2021
+        email:
+          type: string
+          format: email
+          description: email from account holder's profile
+          example: user@domain.com
+        status:
+          type: string
+          description: current state of the account
+          example: pending
+        transaction_history:
+          type: array
+          description: list of a account holder's transaction history
+          items:
+            type: object
+            properties:
+              datetime:
+                type: string
+                format: unix
+                example: 1615895395
+              amount:
+                type: string
+                example: 10.25
+              amount_currency:
+                type: string
+                example: GBP
+              location: 
+                type: string
+                description: the store name
+              loyalty_earned_value:
+                type: string
+                description: The value of loyalty credit earned as part of the transaction in numerical format
+                example: 2
+              loyalty_earned_type:  
+                type: string
+                example: stamps
+        pending_rewards:
+          type: array
+          description: list of account holder's pending rewards
+          items:
+            $ref: '#/components/schemas/PendingRewardDisplay'
+        rewards:
+          type: array
+          description: list of account holder's rewards
+          items:
+            $ref: '#/components/schemas/RewardDisplay'
+    Profile:
+      type: object
+      properties:
+        credentials:
+          $ref: '#/components/schemas/Credentials'
+        marketing_preferences:
+          $ref: '#/components/schemas/MarketingPreferences'
+    Credentials:
+      type: object
+      required: 
+        - email
+        - first_name
+        - last_name
+      properties:
+        email:
+          type: string
+          format: email
+          pattern: ^(?=[^@]{1,64}@)(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$
+          description: account holder provided value 
+          example: user@domain.com
+        first_name:
+          type: string
+          pattern: ^(((?=.{1,100}$)[A-Za-z\-\u00C0-\u00FF'])+\s*){1,4}$
+          description: account holder provided value
+          example: Charlie
+        last_name:
+          type: string
+          pattern: ^(((?=.{1,100}$)[A-Za-z\-\u00C0-\u00FF'])+\s*){1,4}$
+          description: account holder provided value
+          example: Smith
+        date_of_birth:
+          type: string
+          format: date
+          description: account holder provided value
+          example: yyyy-mm-dd
+        phone:
+          type: string
+          pattern: ^(?:0|\+?44)(?:\d-?\s?){9,15}$
+          description: account holder provided value
+        address_line1:
+          type: string
+          pattern: ^(?=.*[a-zA-Z])([a-zA-Z0-9#.,;:+\-&' ]){1,100}$
+          description: account holder provided value 
+        address_line2:
+          type: string
+          pattern: ^(?=.*[a-zA-Z])([a-zA-Z0-9#.,;:+\-&' ]){1,100}$
+          description: account holder provided value
+        postcode:
+          type: string
+          pattern: ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})$
+          description: account holder provided value 
+        city:
+          type: string
+          pattern: ^(?=.*[a-zA-Z])([a-zA-Z0-9#.,;:+\-&' ]){1,100}$
+          description: account holder provided value
+    MarketingPreferences:
+      type: array
+      items:
+        type: object
+        properties:
+          key: 
+            type: string
+            description: marketing preference name
+            example: email_marketing
+          value:
+            type: boolean
+            description: flag value 
+            example: false
+    AdjustmentRequest:
+      type: object
+      required:
+        - balance_change
+        - campaign_slug
+        - is_transaction
+        - activity_metadata
+      properties:
+        balance_change:
+          type: integer
+          description: how the balance needs to change, both positive & negative values expected
+        campaign_slug:
+          type: string
+          pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          description: a balance is directly linked to a campaign
+          example: retailerstamp2021
+        is_transaction:
+          type: boolean
+          description: a flag to signal that a balance adjustment is being made post transaction
+        activity_metadata:
+          type: object
+          required:
+            - reason
+            - loyalty_type
+          properties:
+            reason:
+              type: string
+              description: why is the adjustment made
+            loyalty_type:
+              type: string
+              enum: [accumulator, stamps]
+              description: the type of balance change being made, for formatting reasons
+            transaction_datetime:
+              type: integer
+              format: unix
+              description: date the transaction (if balance adjustment is due to a transaction) - required if is_transaction = true
+              example: 1615895295
+            transaction_id:
+              type: string
+              description: when an adjustment was made as a result of a transaction, the transaction's id - required if is_transaction = true
+    AdjustmentResponse:
+      type: object
+      required:
+        - new_balance
+        - campaign_slug
+      properties:
+        new_balance:
+          type: number
+          description: the updated balance on the account
+        campaign_slug:
+          type: string
+          pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          description: returns the campaign slug so that it can confirm the balance to update & run any required followup rules
+          example: retailerstamp2021
+    PendingRewardDisplay:
+      type: object
+      required: 
+        - created_date
+        - conversion_date
+        - campaign_slug
+      properties:
+        created_date: 
+          type: integer
+          format: unix
+          description: date the reward was earned by the account holder
+          example: 1615895295
+        conversion_date: 
+          type: integer
+          format: unix
+          description: date the reward will be issued to the account holder
+          example: 1615895295
+        campaign_slug:
+          type: string
+          pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          description: a campaign identifier that the balance belongs to
+          example: retailerstamp2021
+    PendingRewardAllocation:
+      type: object
+      required:
+       - created_date
+       - conversion_date
+       - value
+       - campaign_slug
+       - reward_slug
+      properties:
+        created_date: 
+          type: integer
+          format: unix
+          description: date the reward was earned by the account holder
+          example: 1615895295
+        conversion_date: 
+          type: integer
+          format: unix
+          description: date the reward will be issued to the account holder
+          example: 1615895295
+        count:
+          type: integer
+          minimum: 0
+          description: the number of pending rewards
+          example: 2
+        value:
+          type: integer
+          description: the reward goal that triggered the "pending reward"
+          example: 100
+        total_cost_to_user:
+          type: integer
+          description: represents the transaction value that triggered the creation of the "pending reward", which can be greater than the total_value of the "pending reward" implemented as part of TRC
+          example: 200
+        campaign_slug:
+          type: string
+          pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          description: a pending reward allocation is directly linked to a campaign
+          example: retailerstamp2021
+        reward_slug:
+          type: string
+          pattern: ^(((?=.{1,100}$)[A-Za-z0-9_\-£@#$%^&+!=])*)$
+          description: a pending reward allocation is directly linked to a reward
+    RewardData:
+      type: object
+      required: 
+        - code
+        - expiry_date
+        - template_slug
+        - status
+      properties:
+        code:
+          type: string
+          description: the unique code for a reward
+          example: KJLE94K092GLJ
+        expiry_date: 
+          type: string
+          format: date
+          description: date the reward has/will expire - format ISO-8601 YYYY-MM-DD
+          example: 2022-05-30
+        redeemed_date:  
+          type: string
+          format: date
+          description: date the reward has/will expire - format ISO-8601 YYYY-MM-DD
+          example: 2022-06-30
+        pin:
+          type: string
+          pattern: ^(((?=.{1,8}$)[0-9])*)$
+          description: single-use pin required to use the reward
+          example: 4675
+        template_slug:
+          type: string
+          description: the slug that identifies what template should be used for the display of this reward
+          example: voucher4
+        status:
+          type: string
+          description: the status of the reward
+          enum: ["issued", "expired", "redeemed"]
+    RewardDisplay:
+      type: object
+      required: 
+        - code
+        - issued_date
+        - expiry_date
+        - status
+        - campaign_slug
+      properties:
+        code:
+          type: string
+          description: the unique code for a reward
+        issued_date:  
+          type: integer
+          format: unix
+          description: date the reward was issued to the account holder
+          example: 1615895295
+        expiry_date: 
+          type: integer
+          format: unix
+          description: date the reward has/will expire
+          example: 1621160539
+        status:
+          type: string
+          description: the status of the reward
+          example: cancelled
+        redeemed_date:  
+          type: integer
+          format: unix
+          description: date the reward was redeemed
+          example: 1621160539
+        campaign_slug:
+          type: string
+          pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          description: a campaign identifier that the balance belongs to
+          example: retailerstamp2021
+    Reward:
+      type: object
+      required: 
+        - code
+        - issued_date
+        - expiry_date
+        - campaign_slug
+        - reward_slug
+        - reward_uuid
+      properties:
+        code:
+          type: string
+          description: the unique code for a reward
+        issued_date:  
+          type: integer
+          format: unix
+          description: date the reward was issued to the account holder
+          example: 1615895295
+        expiry_date:  
+          type: integer
+          format: unix
+          description: date the reward has/will expire
+          example: 1621160539
+        status:
+          type: string
+          description: the status of the reward
+          example: cancelled
+        redeemed_date:  
+          type: integer
+          format: unix
+          description: date the reward was redeemed
+          example: 1621160539
+        campaign_slug:
+          type: string
+          pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
+          description: a campaign identifier that the balance belongs to
+          example: retailerstamp2021
+        reward_slug:
+          type: string
+          pattern: ^(((?=.{1,100}$)[A-Za-z0-9_\-£@#$%^&+!=])*)$
+          description: reference to the reward scheme
+          example: retailerstamp2021_£5off
+        reward_uuid:
+          type: string
+          format: uuid
+          description: the db id for the reward that can be used to look up the reward in the reward table in VM, and will be used to update the reward
+        associated_url:
+          type: string
+          format: uri
+          description: a url that can be included in a customer email with their reward

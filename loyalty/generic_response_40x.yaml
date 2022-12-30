@@ -1,0 +1,30 @@
+# OpenAPI version identifier - required for OpenAPI 3.0 domains
+openapi: 3.0.0
+
+#######################
+# Optional info section
+#######################
+info:
+  title: Generic Error Responses
+  description: Generic Error Responses for External API
+  version: '1'
+
+components:
+  ####################
+  # Common data models
+  ####################
+  schemas:
+    genericresponse40x:
+      type: object
+      required:
+        - error_message
+        - error_slug
+      properties:
+        error_message:
+          type: string
+          description: 'Error message that could be displayed to a user.'
+          example: 'Supplied token is invalid'
+        error_slug:
+          type: string
+          description: 'Human-readable identifier that is easy to code against.'
+          example: 'INVALID_TOKEN'
