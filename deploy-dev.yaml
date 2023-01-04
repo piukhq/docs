@@ -1170,7 +1170,7 @@ paths:
         - Loyalty Cards
       summary: Update a Loyalty Card from a Trusted Channel
       operationId: PUT /loyalty_cards/add_trusted
-      description: "Use this operation from a Trusted Channel to correct a loyalty card that is in an error state.
+      description: "Use this operation from a Trusted Channel to correct a loyalty card that is in an error state. This is test change for Alanna.
           <html>
             <body>
               <h3>Journey Fields</h3>
