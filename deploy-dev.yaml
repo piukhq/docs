@@ -996,7 +996,7 @@ paths:
         - Loyalty Cards
       summary: Add a Loyalty Card from a Trusted Channel
       operationId: POST /loyalty_cards/add_trusted
-      description: "This will add a **PLL** type **Loyalty Card** into a user's wallet. Adding from a Trusted Channel requires only a unique identifier for the loyalty membership to enable **PLL** for those **Loyalty Plans** that support it. <br><br>Calling this endpoint on an existing **Loyalty Card** will return details of the **Loyalty Card** and add it to the user's wallet. <br><br> A Trusted Channel is a client or application that authenticates its own end users before using with the Bink API.
+      description: "When a **PLL** type **Loyalty Card** is added to the Bink service, we typically require the user to provide Add and Authorisation credentials so we can verify ownership with the relevant **Loyalty Plan** provider. Trusted Channel allows an integrated partner to Add a **PLL** type **Loyalty Card** with a single credential, having already validated the user through their own client application. <br><br>This endpoint trusts that the partner has completed full verification of the user and no additional validation is required from Bink.
 
           <html>
             <body>
@@ -1170,7 +1170,7 @@ paths:
         - Loyalty Cards
       summary: Update a Loyalty Card from a Trusted Channel
       operationId: PUT /loyalty_cards/add_trusted
-      description: "Use this operation from a Trusted Channel to correct a loyalty card that is in an error state. This is test change for Alanna.
+      description: "Use this operation from a Trusted Channel to correct a loyalty card that is in an error state.
           <html>
             <body>
               <h3>Journey Fields</h3>
