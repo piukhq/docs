@@ -1,0 +1,2385 @@
+openapi: 3.0.0
+info:
+  version: '1.2'
+  title: Bink External API
+  description: 'This document defines the Bink API URLs, parameters, request bodies, responses. Each operation offers a mock end point.'
+  contact:
+    email: mmorar@bink.com
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: 'https://virtserver.swaggerhub.com/Bink_API/Bink_External_API/1.2'
+  - description: Bink Staging Environment
+    url: 'https://api.staging.gb.bink.com/ubiquity'    
+paths:
+  /membership_transactions:
+    get:
+      tags:
+        - membership_transactions
+      summary: Retrieve matched transactions membership cards in this service
+      operationId: GET /membership_transactions
+      description: This information includes all transactions that have affected the current balance
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipTransactions'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+  '/payment_card/hash-{payment_card_hash}':
+    delete:
+      tags:
+        - payment_card
+      summary: Remove a payment card by its hash 
+      operationId: DELETE /payment_card/hash
+      description: "Disenrol a payment card from the Bink service. Payment Card will be identified by its hash"
+      parameters:
+        - in: path
+          name: payment_card_hash
+          description: the payment card identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request          
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+  '/payment_card/{payment_card_id}':
+    delete:
+      tags:
+        - payment_card
+      summary: Remove a payment card by ID
+      operationId: DELETE /payment_card
+      description: "Disenrol a payment card from the Bink service by ID"
+      parameters:
+        - in: path
+          name: payment_card_id
+          description: the payment card identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request          
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+    get:
+      tags:
+        - payment_card
+      summary: Retrieve a payment card
+      operationId: GET /payment_card
+      description: Retrieve payment card by its payment card id
+      parameters:
+        - in: path
+          name: payment_card_id
+          description: the payment card identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCardResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+  /payment_cards:
+    post:
+      tags:
+        - payment_cards
+      summary: Add a Payment card
+      operationId: POST /payment_card
+      description: "Add a Payment Card to a customer's wallet"
+      parameters:
+        - in: query
+          name: autoLink
+          description: "Valid values are true and false. This flag specifies whether to automatically link membership cards to this payment card. If not set, the default is true."
+          schema:
+            type: string      
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCardResponse'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCardResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCardRequest'
+        description: Payment Card
+    get:
+      tags:
+        - payment_cards
+      summary: Retrieve all payment cards for a given user (identified by bearer token)
+      operationId: GET /payment_cards
+      description: Retrieve a list of all Payment Cards for a user
+      parameters:
+        - in: query
+          name: fields
+          description: comma-delimited list of sub-resources
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCards'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+  '/payment_card/{payment_card_id}/membership_card/{membership_card_id}':
+    patch:
+      tags:
+        - payment_card
+        - membership_card
+      summary: Link a payment card to a membership card
+      operationId: 'PATCH /payment_card/{payment_card_id}/membership_card/{membership_card_id}'
+      description: Link a payment card to a membership card
+      parameters:
+        - in: path
+          name: payment_card_id
+          description: the payment card identifier
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: membership_card_id
+          description: the membership card identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Link created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipCardResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+  /membership_cards:
+    post:
+      tags:
+        - membership_cards
+      summary: Add a membership card to a wallet
+      operationId: POST membership_card
+      description: "Add a new membership card to the user-in-context's wallet"
+      parameters:
+        - in: query
+          name: autoLink
+          description: specifies whether to automatically link payment cards to this membership card
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipCardResponse'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipCardResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MembershipCardRequest'
+        description: Membership Card
+    get:
+      tags:
+        - membership_cards
+      summary: Retrieve all membership cards
+      operationId: GET membership_cards
+      description: 'Retrieve all membership card - e.g., for Hub or wallet view'
+      parameters:
+        - in: query
+          name: fields
+          description: comma-delimited list of sub-resources
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipCards'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+  '/membership_card/{membership_card_id}':
+    delete:
+      tags:
+        - membership_card
+      summary: Remove a membership card from a property - disenroll the card
+      operationId: DELETE membership_card
+      description: Remove a membership card from the wallet.
+      parameters:
+        - in: path
+          name: membership_card_id
+          description: the membership card identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+    get:
+      tags:
+        - membership_card
+      summary: Retrieve a membership card for a loyalty scheme
+      operationId: GET membership_card
+      description: Use fields? query string parameters to select required sub-resources
+      parameters:
+        - in: path
+          name: membership_card_id
+          description: the membership card identifier
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: fields
+          description: comma-delimited list of sub-resources
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipCardResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+    patch:
+      tags:
+        - membership_card
+      summary: Update an existing membership card
+      operationId: PATCH membership_card
+      description: This operations allows the client to update credentials in a membership or link and unlink it from a payment card
+      parameters:
+        - in: path
+          name: membership_card_id
+          description: the membership card identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipCardResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MembershipCardResponse'
+        description: Membership Card
+  '/membership_card/{membership_card_id}/membership_transactions':
+    get:
+      tags:
+        - membership_transactions
+      summary: Retrieve matched transactions membership cards in this service
+      operationId: GET /membership_card/membership_transactions
+      description: This information includes all transactions that have affected the current balance for a given membership card
+      parameters:
+        - in: path
+          name: membership_card_id
+          description: the membership card identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipTransactions'
+        '400':
+          description: Bad request        
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+  '/membership_card/{membership_card_id}/payment_card/{payment_card_id}':
+    patch:
+      tags:
+        - membership_card
+        - payment_card
+      summary: Link a membership card to a payment card
+      operationId: 'PATCH /membership_card/{membership_card_id}/payment_card/{payment_card_id}'
+      description: Link a membership card to a payment card
+      parameters:
+        - in: path
+          name: membership_card_id
+          description: the membership card identifier
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: payment_card_id
+          description: the payment card identifier
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Link created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentCardResponse'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+  '/membership_plan/{membership_plan_id}':
+    get:
+      tags:
+        - membership_plan
+      summary: Retrieve a Membership Plan by ID
+      operationId: GET /membership_plan
+      description: This operation will return a single Membership Plan. The client will provide the Plan ID
+      parameters:
+        - in: path
+          name: membership_plan_id
+          description: the membership plan identifier
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: fields
+          description: comma-delimited list of sub-resources
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipPlan'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+  /service:
+    get:
+      tags:
+        - service
+      summary: Consent from the customer for Bink to manage payment and loyalty cards
+      operationId: GET /service
+      description: Use this operation to determine if the customer is already registered
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '400':
+          description: Bad request
+        '404':
+          description: Not found
+    delete:
+      tags:
+        - service
+      summary: Delete a service - disenrol a customer from the Bink service from the channel in scope.
+      operationId: DELETE /service
+      description: Use this operation to remove a user - opt out of Bink service
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+    post:
+      tags:
+        - service
+      summary: Create a service - add a customer
+      operationId: POST /service
+      description: Use this operation to sign a customer up to the service
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Service'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Service'
+        description: Membership Card
+  /membership_plans:
+    get:
+      tags:
+        - membership_plans
+      summary: Retrieve a list of all Membership Plans
+      operationId: GET /membership_plans
+      description: This operation will return all Membership Plans available to the client
+      parameters:
+        - in: query
+          name: fields
+          description: comma-delimited list of sub-resources
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MembershipPlans'
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found
+        '405':
+          description: Method not allowed
+        '451':
+          description: Unavailable for legal reasons
+        '503':
+          description: Service unavailable
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    MembershipCardRequest:
+      type: object
+      required:
+        - membership_plan
+      properties:
+        membership_plan:
+          type: integer
+          example: 242
+          description: The Membership Plan to which this Membership Card belongs
+          minimum: 1
+          maximum: 18446744073709552000
+        account:
+          type: object
+          properties:
+            add_fields:
+              type: array
+              items:
+                type: object
+                properties:
+                  column:
+                    description: Used to provide the column name for the associated value
+                    example: 'First Name'
+                    maxLength: 250
+                    minLength: 0
+                    pattern: "[A-Za-z0-9_\\ ]+"
+                    type: string
+                  value:
+                    description: 'Value associated with column. If the Membership Plan defines this column sensitive (type=1), this value must be encrypted with a public key.'
+                    example: 'Jeff'
+                    maxLength: 684
+                    minLength: 0
+                    pattern: "[A-Za-z$&+,:;=?@#|<>.\\/\\-^*()%!0-9\\s\\\"_]+"
+                    type: string
+                maxItems: 100
+                minItems: 0
+            authorise_fields:
+              type: array
+              items:
+                type: object
+                properties:
+                  column:
+                    type: string
+                    description: Used to provide the column name for the associated value
+                    example: postcode
+                    pattern: '[A-Za-z0-9_ ]+'
+                    maxLength: 250
+                    minLength: 0
+                  value:
+                    type: string
+                    description: 'Value associated with column. If the Membership Plan defines this column sensitive (type=1), this value must be encrypted with a public key.'
+                    example: SL5 9FE
+                    pattern: "[A-Za-z$&+,:;=?@#|<>.\\/\\-^*()%!0-9\\s\\\"_]+"
+                    maxLength: 684
+                    minLength: 0
+              minItems: 0
+            enrol_fields:
+              minItems: 0
+              type: array
+              items:
+                type: object
+                properties:
+                  column:
+                    type: string
+                    description: Used to provide the column name for the associated value
+                    example: date_of_birth
+                    pattern: "[A-Za-z$&+,:;=?@#|<>.\\-*()%!0-9\\s\\\"_]+"
+                    maxLength: 250
+                    minLength: 0
+                  value:
+                    type: string
+                    description: 'Value associated with column. If the Membership Plan defines this column sensitive (type=1), this value must be encrypted with a public key.'
+                    example: 10 January 1980
+                    pattern: "[A-Za-z$&+,:;=?@#|<>.\\/\\-^*()%!0-9\\s\\\"_]+"
+                    maxLength: 684
+                    minLength: 0
+            register_fields:
+              minItems: 0
+              type: array
+              items:
+                type: object
+                properties:
+                  column:
+                    type: string
+                    description: Used to provide the column name for the associated value
+                    example: address_1
+                    pattern: "[A-Za-z$&+,:;=?@#|<>.\\-^*()%!0-9\\s\\\"_]+"
+                    maxLength: 250
+                    minLength: 0
+                  value:
+                    type: string
+                    description: 'Value associated with column. If the Membership Plan defines this column sensitive (type=1), this value must be encrypted with a public key.'
+                    example: 1 London Road
+                    pattern: "[A-Za-z$&+,:;=?@#|<>.\\/\\-^*()%!0-9\\s\\\"_]+"
+                    maxLength: 684
+                    minLength: 0
+    MembershipCardResponse:
+      type: object
+      required:
+        - membership_plan
+      properties:
+        id:
+          type: integer
+          example: 10683
+          description: Unique ID for this membership card
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+        membership_plan:
+          type: integer
+          example: 246
+          description: The Membership Plan to which this Membership Card belongs
+          minimum: 1
+          maximum: 18446744073709552000
+        payment_cards:
+          description: Array of Payment Cards associated with this Membership Card
+          type: array
+          minItems: 0
+          items:
+            type: object
+            properties:
+              id:
+                description: unique Payment Card ID
+                type: integer
+                example: 1094574
+                minimum: 1
+                maximum: 18446744073709552000
+              link_active:
+                description: This flag indicates whether or not the Payment Card is linked with the Memebership Card
+                type: boolean
+                example: true
+                pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
+        membership_transactions:
+          type: array
+          minItems: 0
+          maxItems: 5
+          items:
+            $ref: '#/components/schemas/MembershipTransactions'
+        status:
+          type: object
+          properties:
+            reason_codes:
+              type: array
+              minItems: 0
+              maxItems: 10
+              items:
+                description: Explains the current state. X000 - New data submitted/modified; X100 - Add fields being validated; X101 - Account does not exist; X102 - Add data rejected by merchant; X103 - No authorisation provided; X104 - Update failed. Delete and re-add card; X105 - Account not registered; X106  - Registration pending; X107 - Registration failed; X200 - Enrolment in progress; X201 - Enrolment data rejected by merchant; X202 - Account already exists; X203 - Enrolment complete; X300 - Authorisation correct; X301 - Authorisation in progress; X302 - No authorisation required; X303 - Authorisation data rejected by merchant; X304 - Authorisation expired
+                example: X105
+                pattern: '^([X][0-9][0-9][0-9])$'
+                type: string
+                minLength: 1
+                maxLength: 4
+                enum:
+                  - X000
+                  - X100
+                  - X101
+                  - X102
+                  - X103
+                  - X104
+                  - X105
+                  - X106
+                  - X107
+                  - X200
+                  - X201
+                  - X202
+                  - X203
+                  - X300
+                  - X301
+                  - X302
+                  - X303
+                  - X304
+            state:
+              description: 'The current validation state within Bink for the card, which dictates what functionality is enabled within the platform for the card'
+              enum:
+                - authorised
+                - failed
+                - pending
+                - suggested
+                - unauthorised
+              example: authorised
+              pattern: '[A-Za-z]+'
+              type: string
+        card:
+          type: object
+          properties:
+            barcode:
+              description: Barcode value for this membership card
+              example: '633174911234567898'
+              minLength: 0
+              maxLength: 50
+              pattern: "[\u0000-\u2FFF]+"
+              type: string
+            barcode_type:
+              description: 0=Code128(B or C); 1=QRCode;2=AztecCode;3=Pdf417;4=EAN(13);5=Datamatrix;6=ITF(Interleaved 2 of 5);7=Code39
+              enum:
+                - 0
+                - 1
+                - 2
+                - 3
+                - 4
+                - 5
+                - 6
+                - 7
+                - 8
+                - 9
+              example: 0
+              pattern: 0-9
+              type: integer
+            membership_id:
+              description: Account number for the retailer/merchant/loyalty scheme
+              example: '633174911234567898'
+              minLength: 1
+              maxLength: 50
+              type: string
+            colour:
+              description: background colour for card image - hex format
+              example: '#FFFFFF'
+              pattern: '^[#A-Fa-f0-9]{4,7}$'
+              type: string
+            text_colour: 
+              description: Text colour - hex format
+              example: '#CCD400'
+              pattern: '^[#A-Fa-f0-9]{4,7}$'
+        images:
+          type: array
+          minItems: 0
+          maxItems: 30
+          items:
+            type: object
+            properties:
+              id:
+                description: A Unique identifier for this image
+                example: 538
+                maximum: 18446744073709552000
+                minimum: 1
+                type: integer
+              url:
+                description: URL for the image
+                example: 'https://ukbanking.bink-sandbox.com/content/barclays-media/hermes/schemes/Co-op-hero.jpg'
+                maxLength: 2048
+                minLength: 1
+                pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
+                type: string
+              type:
+                description: 'Images returned by the api will be marked with the value below. 0=HERO; 1=BANNER; 2=OFFER; 3=ICON; 4=ASSET; 5=REFERENCE; 6=PERSONAL_OFFER; 7=PROMOTIONS; 8=TIER, 9=HUB'
+                example: 0
+                maximum: 9
+                minimum: 0
+                pattern: '[0-9]'
+                type: integer
+              description:
+                description: Descriptor for this image
+                example: My Store Icon
+                maxLength: 300
+                minLength: 1
+                pattern: "[\u0000-\u2FFF]+"
+                type: string
+              encoding:
+                description: 'file encoding - jpg, png and svg supported'
+                enum:
+                  - jpg
+                  - png
+                  - svg
+                example: png
+                pattern: '(?:jpg|svg|png)'
+                type: string
+        account:
+          type: object
+          properties:
+            tier:
+              description: Optional field to allow variable tier of membership
+              example: 0
+              maximum: 9
+              minimum: 0
+              pattern: '[0-9]'
+              type: integer
+        balances:
+          type: array
+          minItems: 0
+          items:
+            type: object
+            properties:
+              value:
+                type: number
+                description: Loyalty balance for this membership card
+                example: 100
+                minimum: 0
+              currency:
+                type: string
+                description: Currency for this balance
+                example: GBP
+                minLength: 0
+                maxLength: 50
+                pattern: '[A-Za-z]+'
+              prefix:
+                type: string
+                description: Pre-qualifier for this balance
+                example: £
+                minLength: 0
+                maxLength: 50
+                pattern: "[\u0000-\u2FFF]+"
+              suffix:
+                type: string
+                description: Post-qualifier for this balance
+                example: points
+                minLength: 0
+                maxLength: 50
+                pattern: "[\u0000-\u2FFF]+"
+              updated_at:
+                type: integer
+                description: Indicates the time the balance information was last verified
+                example: 1515697663
+                pattern: '[0-9]+'
+                minimum: 0
+                maximum: 99999999999
+        vouchers:
+          description: 'An array of objects for earned, issued, etc., vouchers'
+          type: array
+          minItems: 0
+          maxItems: 999
+          items:
+            type: object
+            properties:
+              state:
+                type: string
+                description: "This voucher's current state"
+                enum:
+                  - redeemed
+                  - issued
+                  - inprogress
+                  - expired
+                  - cancelled
+                minLength: 0
+                maxLength: 50
+                pattern: '[A-Za-z0-9]+'
+              earn:
+                type: object
+                properties:
+                  currency:
+                    type: string
+                    description: Currency can be a monetary currency or merchant-specific token such as stamp
+                    minLength: 0
+                    maxLength: 50
+                    pattern: '[A-Za-z]+'
+                  prefix:
+                    type: string
+                    description: Pre-qualifier for earned and target values - usually a currency symbol
+                    minLength: 0
+                    maxLength: 50
+                    pattern: "[\u0000-\u2FFF]+"
+                  suffix:
+                    type: string
+                    description: Post-qualifier for earned and target values such as stamps or visits
+                    minLength: 0
+                    maxLength: 50
+                    pattern: "[\u0000-\u2FFF]+"
+                  type:
+                    type: string
+                    description: How to earn this voucher
+                    minLength: 0
+                    maxLength: 50
+                    pattern: '[A-Za-z0-9]+'
+                  target_value:
+                    type: number
+                    description: Target spend value
+                    minimum: 0
+                    maximum: 9999999
+                  value:
+                    type: number
+                    description: Spent so far against target
+                    minimum: 0
+                    maximum: 9999999
+              burn:
+                type: object
+                properties:
+                  currency:
+                    type: string
+                    description: Currency can be a monetary currency or merchant-specific token such as stamp
+                    minLength: 0
+                    maxLength: 50
+                    pattern: '[A-Za-z]+'
+                  prefix:
+                    type: string
+                    description: Pre-qualifier for voucher value
+                    minLength: 0
+                    maxLength: 50
+                    pattern: "[\u0000-\u2FFF]+"
+                  suffix:
+                    type: string
+                    description: Post-qualifier for voucher value
+                    minLength: 0
+                    maxLength: 50
+                    pattern: "[\u0000-\u2FFF]+"
+                  type:
+                    type: string
+                    description: The form in which rewards are disbursed
+                    enum:
+                      - voucher
+                      - coupon
+                    minLength: 0
+                    maxLength: 50
+                    pattern: '[A-Za-z0-9]'
+                  value:
+                    type: number
+                    description: This is the voucher / reward value
+                    minimum: 0
+              code:
+                type: string
+                description: Voucher code
+                minLength: 0
+                maxLength: 50
+              barcode:
+                type: string
+                description: The barcode number - may differ from voucher code
+                pattern: "[A-Za-z0-9\\s]+"
+              barcode_type:
+                type: integer
+                description: 0=Code128(B or C); 1=QRCode;2=AztecCode;3=Pdf417;4=EAN(13);5=Datamatrix;6=ITF(Interleaved 2 of 5);7=Code39
+                enum:
+                  - 0
+                  - 1
+                  - 2
+                  - 3
+                  - 4
+                  - 5
+                  - 6
+                  - 7
+                  - 8
+                  - 9
+                pattern: 0-9
+              headline:
+                type: string
+                description: "A string that describes this voucher's disposition in a readable way"
+                minLength: 0
+                maxLength: 250
+                pattern: "[\u0000-\u2FFF]+"
+              subtext:
+                type: string
+                description: Additional explanatory text
+                minLength: 0
+                maxLength: 250
+                pattern: "[\u0000-\u2FFF]+"
+              date_redeemed:
+                description: Date the voucher was redeeemd
+                type: integer
+                pattern: '[0-9]+'
+                minimum: 0
+                maximum: 99999999999
+              date_issued:
+                description: date voucher was issued
+                type: integer
+                pattern: '[0-9]+'
+                minimum: 0
+                maximum: 99999999999
+              expiry_date:
+                type: integer
+                description: Date voucher will expire
+                pattern: '[0-9]+'
+                minimum: 0
+                maximum: 99999999999
+          example:
+            - state: inprogress
+              earn:
+                suffix: stamps
+                type: stamp
+                target_value: 5
+                value: 2
+              burn:
+                prefix: Free
+                suffix: Whopper
+                type: voucher
+              headline: '3 stamps to go!'
+    MembershipCards:
+      type: array
+      items:
+        $ref: '#/components/schemas/MembershipCardResponse'
+      example:
+        - status:
+            reason_codes:
+              - X000
+            state: authorised
+          id: 1500000053
+          payment_cards:
+            - link_active: true
+              id: 1500000051
+          account:
+            tier: 1
+          membership_plan: 180
+          balances:
+            - updated_at: 1583413529
+              value: 340
+          card:
+            membership_id: '0000000030000'
+            colour: '#000000'
+            text_colour: '#CCD400'
+            barcode_type: 7
+            barcode: '0000000000000'
+          images:
+            - description: Harvey Nichols Default Hero
+              id: 524
+              url: 'https://ukbanking.bink-sandbox.com/content/barclays-media/hermes/schemes/HarveyNichols_UPPT2Yx.png'
+              type: 0
+              encoding: png
+            - description: Silver Tier
+              id: 605
+              url: 'https://ukbanking.bink-sandbox.com/content/barclays-media/hermes/schemes/Harvey-Nichols_Silver.jpg'
+              type: 8
+              encoding: jpg
+            - description: Harvey Nichols Icon
+              id: 609
+              url: 'https://ukbanking.bink-sandbox.com/content/barclays-media/hermes/schemes/Harvey_Nichols_HdD8vYs.png'
+              type: 3
+              encoding: png
+        - status:
+            reason_codes:
+              - X000
+            state: authorised
+          id: 1500000065
+          payment_cards:
+            - link_active: true
+              id: 1500000051
+          account:
+            tier: 1
+          membership_plan: 105
+          balances:
+            - updated_at: 1583453529
+              value: 20
+          card:
+            membership_id: FR00000040000
+            colour: '#000000'
+            text_colour: '#CCD400'
+            barcode_type: 7
+            barcode: '0000000000000'
+          images:
+            - description: Iceland Hero
+              id: 372
+              url: 'https://ukbanking.bink-sandbox.com/content/barclays-media/hermes/schemes/Iceland_dwPpkoM.jpg'
+              type: 0
+              encoding: png
+            - description: Iceland Icon
+              id: 374
+              url: 'https://ukbanking.bink-sandbox.com/content/barclays-media/hermes/schemes/Iceland-icon4.png'
+              type: 3
+              encoding: png
+            - description: Tier-4-barcode_tile
+              id: 540
+              url: 'https://ukbanking.bink-sandbox.com/content/barclays-media/hermes/schemes/Tier-4-a_copy_B9FdOEH.png'
+              type: 2
+              encoding: png
+        - status:
+            reason_codes:
+              - X000
+            state: authorised
+          id: 1500000078
+          payment_cards:
+            - link_active: true
+              id: 1500000051
+          account:
+            tier: 1
+          membership_plan: 242
+          balances:
+            - updated_at: 1583553529
+              value: 720
+          card:
+            membership_id: "CO0000OP40000"
+            colour: '#000000'
+            text_colour: '#CCD400'
+            barcode_type: 7
+            barcode: '0000000000000'
+          images:
+            - description: Co-op Hero
+              id: 539
+              url: 'https://ukbanking.bink-sandbox.com/content/barclays-media/hermes/schemes/Co-op-hero.jpg'
+              type: 0
+              encoding: png
+            - description: Co-op Icon
+              id: 538
+              url: 'https://ukbanking.bink-sandbox.com/content/barclays-media/hermes/schemes/Co-op_icon.png'
+              type: 3
+              encoding: png
+        - status:
+            reason_codes:
+              - X000
+            state: authorised
+          id: 1500000182
+          payment_cards:
+            - link_active: true
+              id: 1500000051
+          account:
+            tier: 1
+          membership_plan: 281
+          balances:
+            - updated_at: 1583553529
+              value: 90
+          card:
+            membership_id: "FF000ECR111"
+            colour: '#000000'
+            text_colour: '#CCD400'
+            barcode_type: 7
+            barcode: '0000000000000'
+          images:
+            - description: Fat Face Hero
+              id: 604
+              url: 'https://ukbanking.bink-sandbox.com/content/barclays-media/hermes/schemes/ff-hero.png'
+              type: 0
+              encoding: png
+            - description: Fat Face Icon
+              id: 603
+              url: 'https://ukbanking.bink-sandbox.com/content/barclays-media/hermes/schemes/ff-icon.png'
+              type: 3
+              encoding: png
+    MembershipPlan:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique Identifier for this record
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+          example: 242
+        plan_popularity: 
+          type: integer
+          description: Numeric rank for this plan's popularity
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+          example: 2
+        status:
+          type: string
+          enum:
+            - active
+            - suspended
+          description: Member Plan state
+          example: active
+          minLength: 0
+          maxLength: 50
+          pattern: '[A-Za-z0-9]'
+        feature_set:
+          type: object
+          properties:
+            authorisation_required:
+              type: boolean
+              example: true
+              description: Set to true if this plan requires authorisation for its members to qualify for Payment-Linked Loyalty
+              pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
+            transactions_available:
+              type: boolean
+              example: true
+              description: Specifies if this plan supports display of transaction history
+              pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
+            digital_only:
+              type: boolean
+              example: true
+              description: Identifies whether a plan has a physical card
+              pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
+            linking_support:
+              type: array
+              items:
+                type: string
+                minLength: 1
+                maxLength: 50
+                pattern: "[A-Z]+"
+                description: 'Types of Linking allowed by this plan. ADD - Link an existing card. REGISTRATION - of existing ghost cards. ENROL - Sign up for a new loyalty account, card, or membership.'
+                enum:
+                  - ADD
+                  - REGISTRATION
+                  - ENROL
+              example: 
+                - "ADD"
+                - "ENROL"
+            has_points:
+              type: boolean
+              example: true
+              description: Identifies whether there is a balance for this card
+              pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
+            has_vouchers:
+              type: boolean
+              example: true
+              description: Specifies if this plan includes digital vouchers
+              pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
+            card_type:
+              type: integer
+              description: 'Store = 0 | View = 1 | Link = 2'
+              example: 2
+              minimum: 0
+              maximum: 9
+              pattern: '[0-9]'
+            apps:
+              type: array
+              items:
+                minItems: 0
+                type: object
+                properties:
+                  app_id:
+                    type: string
+                    description: Android/iOS application/bundle id
+                    example: com.loyalty.wallet
+                    minLength: 0
+                    maxLength: 255
+                    pattern: '[A-Za-z.]'
+                  app_store_url:
+                    type: string
+                    description: Apple/Google app store URL
+                    maxLength: 2048
+                    minLength: 0
+                    pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
+                  app_type:
+                    type: integer
+                    description: 'iOS = 0 | Android = 1'
+                    example: 1
+                    pattern: '[0-9]'
+                    minimum: 0
+                    maximum: 9
+        card:
+          type: object
+          properties:
+            barcode_type:
+              type: integer
+              description: 0=Code128(B or C); 1=QRCode;2=AztecCode;3=Pdf417;4=EAN(13);5=Datamatrix;6=ITF(Interleaved 2 of 5);7=Code39
+              enum:
+                - 0
+                - 1
+                - 2
+                - 3
+                - 4
+                - 5
+                - 6
+                - 7
+                - 8
+                - 9
+              example: 0
+              pattern: 0-9
+            colour:
+              type: string
+              description: background colour for card image - hex format
+              example: '#FFFFFF'
+              pattern: '^[#A-Fa-f0-9]{4,7}$'
+            text_colour: 
+              type: string
+              description: Text colour - hex format
+              example: '#CCD400'
+              pattern: '^[#A-Fa-f0-9]{4,7}$'
+            scan_message:
+              type: string
+              description: Helper text for scanning card
+              example: Please turn over to scan barcode
+        images:
+          type: array
+          items:
+            minItems: 0
+            type: object
+            properties:
+              id:
+                type: integer
+                minimum: 1
+                maximum: 18446744073709552000
+                pattern: '^[0-9]+$'
+              type:
+                type: integer
+                minimum: 0
+                maximum: 9
+                example: 0
+                pattern: '[0-9]'
+                description: "0=HERO, 1=BANNER, 2=OFFER, 3=ICON, 4=ASSET, 5=REFERENCE, 6=PERSONAL_OFFERS, 7=PROMOTIONS, 8=TIER, 9=ALTERNATIVE"
+              url:
+                type: string
+                description: Full URL for image
+                example: 'https://api.dev.gb.bink.com/content/dev-media/hermes/schemes/Co-op_icon.png'
+                pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
+              description:
+                type: string
+                description: Image Type description
+                example: Join Acme now and start raking in those points
+                minLength: 0
+                maxLength: 500
+                pattern: "[\u0000-\u2FFF]+"
+              encoding:
+                type: string
+                enum:
+                  - png
+                  - jpg
+                  - svg
+                description: Encoding for this file
+                example: png
+        account:
+          type: object
+          properties:
+            fees:
+              type: array
+              minItems: 0
+              maxItems: 99
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    description: Type of fee for this plan
+                    example: enrolment
+                    minLength: 0
+                    maxLength: 50
+                    pattern: '[A-Za-z0-9]'
+                  amount:
+                    type: number
+                    example: 1
+                    description: fee applicable for this plan
+                    minimum: 0
+            plan_name:
+              type: string
+              description: The merchant’s plan name - Brand + scheme name - not to be used in conjunction with plan_name_card
+              example: Boots
+              minLength: 0
+              maxLength: 50
+              pattern: "[\u0000-\u2FFF]+"
+            plan_name_card:
+              type: string
+              description: 'The merchant’s name for the instrument when describing the plan itself. E.g., card or account'
+              example: Membership Card
+              minLength: 0
+              maxLength: 50
+              pattern: "[\u0000-\u2FFF]+"
+            plan_url:
+              type: string
+              description: URL relating to this membership plan
+              example: 'https://getmadbucks.com'
+              maxLength: 2048
+              minLength: 1
+              pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
+            plan_summary:
+              type: string
+              description: Short form description for this plan
+              example: 'Earn 5% cashback as a member of madbucks'
+              minLength: 0
+              maxLength: 250
+              pattern: "[\u0000-\u2FFF]+"
+            plan_description:
+              type: string
+              description: Full description for this membership plan
+              example: 'Shop anywhere using your card and earn cashback whereever you go. Madbucks offers discounts, rewards, and coupons.'
+              minLength: 0
+              maxLength: 500
+              pattern: "[\u0000-\u2FFF]+"
+            plan_documents:
+              type: array
+              minItems: 0
+              maxItems: 99
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: Document name
+                    example: Terms and conditions
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[\u0000-\u2FFF]+"
+                  description:
+                    type: string
+                    description: Describes the document
+                    example: Terms and conditions
+                    minLength: 0
+                    maxLength: 500
+                    pattern: "[\u0000-\u2FFF]+"
+                  url:
+                    type: string
+                    description: Full URL to locate this document
+                    example: 'https://policies.bink.com/TandC.html'
+                    maxLength: 2048
+                    minLength: 1
+                    pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
+                  display: 
+                    type: array
+                    minItems: 0
+                    maxItems: 99
+                    items:
+                      pattern: "[\u0000-\u2FFF]+"
+                      example: "ENROL"
+                      description: "Defines the scenario in which to display this document - e.g., upon plan enrolment, on a voucher etc.,"
+                  checkbox:
+                    type: boolean
+                    example: true
+                    description: Identifies whether or not to show an acceptance checkbox for this document
+                    pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
+            barcode_redeem_instructions:
+              type: string
+              description: How to redeem points using this barcode
+              example: Scan this barcode at the till to earn points
+              minLength: 0
+              maxLength: 500
+              pattern: "[\u0000-\u2FFF]+"
+            plan_register_info:
+              type: string
+              description: Instructions for unregistered loyalty cards
+              example: Register this card to start earning
+              minLength: 0
+              maxLength: 500
+              pattern: "[\u0000-\u2FFF]+"
+            company_name:
+              type: string
+              description: Merchant or loyalty provider name
+              example: Co-op
+              minLength: 0
+              maxLength: 200
+              pattern: "[\u0000-\u2FFF]+"
+            enrol_incentive:
+              type: string
+              description: Describing the incentives for enrolling
+              example: Join now and receive free points
+              minLength: 0
+              maxLength: 200
+              pattern: "[\u0000-\u2FFF]+"
+            category:
+              type: string
+              description: Market sector or retail category
+              example: Household
+              minLength: 0
+              maxLength: 200
+              pattern: "[\u0000-\u2FFF]+"
+            company_url:
+              type: string
+              description: Partner URL
+              example: 'https://www.harveynichols.com'
+              maxLength: 2048
+              minLength: 1
+              pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
+            forgotten_password_url:
+              type: string
+              description: Forgotten password URL
+              example: 'https://www.retailer.com/forgot'
+              maxLength: 2048
+              minLength: 1
+              pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
+            tiers:
+              type: array
+              minItems: 0
+              items:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: Silver
+                    minLength: 0
+                    maxLength: 50
+                    pattern: "[\u0000-\u2FFF]+"
+                  description:
+                    type: string
+                    example: Double points earned
+                    minLength: 0
+                    maxLength: 50
+                    pattern: "[\u0000-\u2FFF]+"
+            add_fields:
+              description: Dynamic columns for adding membership cards
+              type: array
+              items:
+                minItems: 0
+                maxItems: 999
+                type: object
+                properties:
+                  column:
+                    type: string
+                    description: Column name for metadata
+                    example: card_number
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[A-Za-z0-9_\\s]"
+                  validation:
+                    type: string
+                    description: Regular expression to validate input value
+                    example: '^((63317491)|(63317492))[0-9]{10}$'
+                    minLength: 0
+                    maxLength: 250
+                    pattern: ".*"
+                  description:
+                    type: string
+                    description: A description of this field to display to the user
+                    example: Your 18 digit card number
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[\u0000-\u2FFF]+"
+                  common_name:
+                    type: string
+                    description: A common name of the field used for mapping or prepopulating data into this column
+                    example: card_number
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[\u0000-\u2FFF]+"
+                  type:
+                    type: integer
+                    description: 'The field type 0=text, 1=sensitive, 2=choice, 3=boolean'
+                    example: 0
+                    minimum: 0
+                    maximum: 99
+                    pattern: '[0-9]'
+                  choice:
+                    type: array
+                    description: An array of values if this field is a choice type
+                    minItems: 0
+                    maxItems: 99
+                    items:
+                      type: string
+                      example: Option 1
+                      minLength: 0
+                      maxLength: 50
+                      pattern: "[\u0000-\u2FFF]+"
+                  alternatives:
+                    type: array
+                    description: 'A list of columns that are described in the add_fields block that can be used as an alternative to this one. e.g., Barcode can be used as an alternative to card number.'
+                    minItems: 0
+                    maxItems: 99
+                    items:
+                      type: string
+                      example: Barcode
+                      minLength: 0
+                      maxLength: 50
+                      pattern: "[\u0000-\u2FFF]+"
+            authorise_fields:
+              description: Dynamic columns for authorising (signing into) membership cards or accounts
+              type: array
+              minItems: 0
+              maxItems: 999
+              items:
+                type: object
+                properties:
+                  column:
+                    type: string
+                    description: Column name for metadata
+                    example: Date of birth
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[A-Za-z0-9_\\s]"
+                  validation:
+                    type: string
+                    description: Regular expression to validate input value
+                    example: '^(0[1-9]|[12][0-9]|3[01])$'
+                    minLength: 0
+                    maxLength: 250
+                    pattern: ".*"
+                  description:
+                    type: string
+                    description: A description of this field to display to the user
+                    example: Date of birth DD/MM/YYYY
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[\u0000-\u2FFF]+"
+                  common_name:
+                    type: string
+                    description: A common name of the field used for mapping or prepopulating data into this column
+                    example: date_of_birth
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[\u0000-\u2FFF]+"
+                  type:
+                    type: integer
+                    description: 'The field type 0=text, 1=sensitive, 2=choice, 3=boolean'
+                    example: 0
+                    minimum: 0
+                    maximum: 99
+                    pattern: '[0-9]'
+                  choice:
+                    type: array
+                    description: An array of values if this field is a choice type
+                    minItems: 0
+                    items:
+                      type: string
+                      example: Option 1
+                      minLength: 0
+                      maxLength: 50
+                      pattern: "[\u0000-\u2FFF]+"
+                  alternatives:
+                    type: array
+                    description: 'A list of columns that are described in the add_fields block that can be used as an alternative to this one. e.g., Postcode can be used as an alternative to date of birth.'
+                    minItems: 0
+                    items:
+                      type: string
+                      example: Postcode
+                      minLength: 0
+                      maxLength: 50
+                      pattern: "[\u0000-\u2FFF]+"
+            registration_fields:
+              description: Dynamic columns for registering an existing loyalty card
+              type: array
+              minItems: 0
+              items:
+                type: object
+                properties:
+                  column:
+                    type: string
+                    description: Column name for metadata
+                    example: First Name
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[A-Za-z0-9_\\s]"
+                  validation:
+                    type: string
+                    description: Regular expression to validate input value
+                    example: "^(((?=.{1,20}$)[A-Za-z\\-'])+\\s*){1,4}$"
+                    minLength: 0
+                    maxLength: 250
+                    pattern: ".*"
+                  description:
+                    type: string
+                    description: A description of this field to display to the user
+                    example: First name
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[\u0000-\u2FFF]+"
+                  common_name:
+                    type: string
+                    description: A common name of the field used for mapping or prepopulating data into this column
+                    example: first_name
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[\u0000-\u2FFF]+"
+                  type:
+                    type: integer
+                    description: 'The field type 0=text, 1=sensitive, 2=choice, 3=boolean'
+                    example: 0
+                    minimum: 0
+                    maximum: 99
+                    pattern: '[0-9]'
+                  choice:
+                    type: array
+                    description: An array of values if this field is a choice type
+                    minItems: 0
+                    items:
+                      type: string
+                      example: Option 1
+                      minLength: 0
+                      maxLength: 50
+                      pattern: "[\u0000-\u2FFF]+"
+                  alternatives:
+                    type: array
+                    description: 'A list of columns that are described in the add_fields block that can be used as an alternative to this one. e.g., Last Name can be used as an alternative to First Name.'
+                    minItems: 0
+                    items:
+                      type: string
+                      example: Last Name
+                      minLength: 0
+                      maxLength: 50
+                      pattern: "[\u0000-\u2FFF]+"
+            enrol_fields:
+              description: Dynamic columns for enrolling in a loyalty programme
+              type: array
+              items:
+                minItems: 0
+                maxItems: 999
+                type: object
+                properties:
+                  column:
+                    type: string
+                    description: Column name for metadata
+                    example: card_number
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[A-Za-z0-9_\\s]"
+                  validation:
+                    type: string
+                    description: Regular expression to validate input value
+                    example: '^((63317491)|(63317492))[0-9]{10}$'
+                    minLength: 0
+                    maxLength: 250
+                    pattern: ".*"
+                  description:
+                    type: string
+                    description: A description of this field to display to the user
+                    example: Your 18 digit card number
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[\u0000-\u2FFF]+"
+                  common_name:
+                    type: string
+                    description: A common name of the field used for mapping or prepopulating data into this column
+                    example: card_number
+                    minLength: 0
+                    maxLength: 250
+                    pattern: "[\u0000-\u2FFF]+"
+                  type:
+                    type: integer
+                    description: 'The field type 0=text, 1=sensitive, 2=choice, 3=boolean'
+                    example: 0
+                    minimum: 0
+                    maximum: 99
+                    pattern: '[0-9]'
+                  choice:
+                    type: array
+                    description: An array of values if this field is a choice type
+                    minItems: 0
+                    maxItems: 99
+                    items:
+                      type: string
+                      example: Option 1
+                      minLength: 0
+                      maxLength: 50
+                      pattern: "[\u0000-\u2FFF]+"
+                  alternatives:
+                    type: array
+                    description: 'A list of columns that are described in the add_fields block that can be used as an alternative to this one. e.g., Barcode can be used as an alternative to card number.'
+                    minItems: 0
+                    maxItems: 99
+                    items:
+                      type: string
+                      example: Barcode
+                      minLength: 0
+                      maxLength: 50
+                      pattern: "[\u0000-\u2FFF]+"
+        balances:
+          minItems: 0
+          maxItems: 999
+          type: array
+          items:
+            type: object
+            properties:
+              currency:
+                type: string
+                example: points
+                description: The currency for the membership balance
+                minLength: 0
+                maxLength: 50
+                pattern: '[A-Za-z]+'
+              prefix:
+                type: string
+                description: Recommended prefix to use when displaying this balance
+                example: £
+                minLength: 0
+                maxLength: 50
+                pattern: "[\u0000-\u2FFF]+"
+              suffix:
+                type: string
+                description: Recommended suffix to use when displaying this balance
+                example: coffees
+                minLength: 0
+                maxLength: 50
+                pattern: "[\u0000-\u2FFF]+"
+              description:
+                type: string
+                description: Description of this type of balance
+                example: Loyalty points
+                minLength: 0
+                maxLength: 500
+                pattern: "[\u0000-\u2FFF]+"
+        content:
+          type: array
+          minItems: 0
+          maxItems: 9999
+          items:
+            type: object
+            properties:
+              column:
+                type: string
+                minLength: 0
+                maxLength: 250
+                pattern: "[\u0000-\u2FFF]+"
+              value:
+                type: string
+                minLength: 0
+                maxLength: 500
+                pattern: "[\u0000-\u2FFF]+"
+          example:
+            - column: Voucher_Stamps_Inprogress_Detail
+              value: 'Text from merchant - how to earn voucher. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+            - column: Voucher_Stamps_Issued_Detail
+              value: 'Text from merchant - how to use voucher. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+            - column: Voucher_Stamps_Redeemed_Detail
+              value: 'Text from merchant - voucher has been redeemed. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+            - column: Voucher_Stamps_Expired_Detail
+              value: 'Text from merchant - vouhcer has expired. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+    MembershipPlans:
+      type: array
+      items:
+        $ref: '#/components/schemas/MembershipPlan'
+    MembershipTransactions:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for this Payment Card
+          example: 3423429234929342500
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+        status:
+          type: string
+          enum:
+            - pending
+            - active
+            - void
+          pattern: '[A-Za-z]+'
+        timestamp:
+          type: integer
+          example: 1517549941
+          description: date and time consent provided- Time from epoch for transaction. This should be set using network protocol time (NTP)
+          pattern: '[0-9]+'
+          minimum: 0
+          maximum: 99999999999
+        description:
+          type: string
+          description: Transaction Description
+          example: Visit to ACME limited
+          pattern: "[\u0000-\u2FFF]+"
+          minLength: 0
+          maxLength: 50
+        amounts:
+          type: array
+          items:
+            minItems: 0
+            maxItems: 999
+            properties:
+              currency:
+                type: string
+                description: Currency for this balance
+                example: GBP
+                minLength: 0
+                maxLength: 50
+                pattern: '[A-Za-z]+'
+              prefix:
+                type: string
+                description: Recommended prefix to use when displaying this balance
+                example: £
+                minLength: 0
+                maxLength: 50
+                pattern: "[\u0000-\u2FFF]+"
+              suffix:
+                type: string
+                description: Recommended suffix to use when displaying this balance
+                example: points
+                minLength: 0
+                maxLength: 50
+                pattern: "[\u0000-\u2FFF]+"
+              value:
+                type: number
+                description: Transaction value
+                example: 150
+                minimum: -999999
+                maximum: 999999
+                pattern: '[0-9]+'
+    PaymentCardRequest:
+      type: object
+      properties:
+        card:
+          type: object
+          properties:
+            token:
+              type: string
+              description: Unique token for this card
+              example: "H7FdKWKPOPhepzxS4MfUuvTDHxr"
+              minLength: 0
+              maxLength: 255
+            last_four_digits:
+              type: string
+              description: The last four digits of PAN. This field must be encrypted with an RSA public key
+              example: Wpnk4+J9lylp5z1FI3xSygP71xR2trREeLTfPCfZSCbpXdzYqJ2Q66nuaEmFYrRJcRS+lIgKl7WjGiisfepfW2N2Q1aKkYOMrzMtiRPQF7+WYoRKo5PYeAEsh3cR7EbFCRzxSGdkh7JXehqbTnHWXQM+QJ7J2G16FuAJKY6A8GFbs0A/KV8UGYwx6YbMwXuGGro5nFan8p7SWHxdVPRUWK6rbMejYP+RWBjIQSo/a/zfpBQ0+AiyQFO9njeLLuNiWms10Wz+tXnAU0N+hpnUlnFuERIE6D7bv8M2xC1Q0n9UoZXylXk27dJ/FX4U/Vzl4W0BVg9W57xz6WsYNZG3Kj9l7pHEx0Hvg454eHBiUr+Ho0C7rk2askvCLBZsTDfOewLPvluMiIoYVVHqftOUWoovqwr9UKoyGxKGh/RRkrf/yPuycYOWjRKVw2slnyN3mYcUjoKqVVMy9mWTR1pcfrFEjQabMVVPpGm6QkWpjlVj7EkSAN8pi/r2J9OLHGbxsEaCagb9iVJVPrzmC+HpQlcftprapd4aLkK2mJqEb1HBUfWoE7V6v4GIyE1J1ve8iSJLX00V3z8xD9UZu9N5YXYxpNilisxwZfHy7cr9UW2zoF7E5GjMUuDXapCcMqXdwotJogZ1upANznsZjB0oqIg/uyJ44uusBvya7i1Ea0s=
+              minLength: 0
+              maxLength: 684
+              pattern: "[0-9a-zA-Z\\+\\-\\/\\=]+"
+            first_six_digits:
+              type: string
+              description: The leading six digits of PAN - aka BIN. This field must be encrypted with an RSA public key
+              example: Wpne4+J9lylp5z1FI3xSygP71xR2trREeLTfPCfZSCbpXdzYqJ2Q66nuaEmFYrRJcRS+lIgKl7WjGiisfepfW2N2Q1aKkYOMrzMtiRPQF7+WYoRKo5PYeAEsh3cR7EbFCRzxSGdkh7JXehqbTnHWXQM+QJ7J2G16FuAJKY6A8GFbs0A/KV8UGYwx6YbMwXuGGro5nFan8p7SWHxdVPRUWK6rbMejYP+RWBjIQSo/a/zfpBQ0+AiyQFO9njeLLuNiWms10Wz+tXnAU0N+hpnUlnFuERIE6D7bv8M2xC1Q0n9UoZXylXk27dJ/FX4U/Vzl4W0BVg9W57xz6WsYNZG3Kj9l7pHEx0Hvg454eHBiUr+Ho0C7rk2askvCLBZsTDfOewLPvluMiIoYVVHqftOUWoovqwr9UKoyGxKGh/RRkrf/yPuycYOWjRKVw2slnyN3mYcUjoKqVVMy9mWTR1pcfrFEjQabMVVPpGm6QkWpjlVj7EkSAN8pi/r2J9OLHGbxsEaCagb9iVJVPrzmC+HpQlcftprapd4aLkK2mJqEb1HBUfWoE7V6v4GIyE1J1ve8iSJLX00V3z8xD9UZu9N5YXYxpNilisxwZfHy7cr9UW2zoF7E5GjMUuDXapCcMqXdwotJogZ1upANznsZjB0oqIg/uyJ44uusBvya7i1Ea0s=
+              minLength: 0
+              maxLength: 684
+              pattern: "[0-9a-zA-Z\\+\\-\\/\\=]+"
+            month:
+              type: string
+              description: Expiry month for this card. This field must be encrypted with an RSA public key.
+              example: Wpnk4+J9lylp5z1FI3xSygP71xR2trREeLTfPCfZSCbpXdzYqJ2Q66nuaEmFYrRJcRS+lIgKl7WjGiisfepfW2N2Q1aKkYOMrzMtiRPQF7+WYoRKo5PYeAEsh3cR7EbFCRzxSGdkh7JXehqbTnHWXQM+QJ7J2G16FuAJKY6A8GFbs0A/KV8UGYwx6YbMwXuGGro5nFan8p7SWHxdVPRUWK6rbMejYP+RWBjIQSo/a/zfpBQ0+AiyQFO9njeLLuNiWms10Wz+tXnAU0N+hpnUlnFuERIE6D7bv8M2xC1Q0n9UoZXylXk27dJ/FX4U/Vzl4W0BVg9W57xz6WsYNZG3Kj9l7pHEx0Hvg454eHBiUr+Ho0C7rk2askvCLBZsTDfOewLPvluMiIoYVVHqftOUWoovqwr9UKoyGxKGh/RRkrf/yPuycYOWjRKVw2slnyN3mYcUjoKqVVMy9mWTR1pcfrFEjQabMVVPpGm6QkWpjlVj7EkSAN8pi/r2J9OLHGbxsEaCagb9iVJVPrzmC+HpQlcftprapd4aLkK2mJqEb1HBUfWoE7V6v4GIyE1J1ve8iSJLX00V3z8xD9UZu9N5YXYxpNilisxwZfHy7cr9UW2zoF7E5GjMUuDXapCcMqXdwotJogZ1upANznsZjB0oqIg/uyJ44uusBvya7i1Ea0s=
+              minLength: 0
+              maxLength: 684
+              pattern: "[0-9a-zA-Z\\+\\-\\/\\=]+"
+            year:
+              type: string
+              description: Expiry year for this card. This field must be encrypted with an RSA public key.
+              example: Wpnk4+J9lylp5z1FI3xSygP71xR2trREeLTfPCfZSCbpXdzYqJ2Q66nuaEmFYrRJcRS+lIgKl7WjGiisfepfW2N2Q1aKkYOMrzMtiRPQF7+WYoRKo5PYeAEsh3cR7EbFCRzxSGdkh7JXehqbTnHWXQM+QJ7J2G16FuAJKY6A8GFbs0A/KV8UGYwx6YbMwXuGGro5nFan8p7SWHxdVPRUWK6rbMejYP+RWBjIQSo/a/zfpBQ0+AiyQFO9njeLLuNiWms10Wz+tXnAU0N+hpnUlnFuERIE6D7bv8M2xC1Q0n9UoZXylXk27dJ/FX4U/Vzl4W0BVg9W57xz6WsYNZG3Kj9l7pHEx0Hvg454eHBiUr+Ho0C7rk2askvCLBZsTDfOewLPvluMiIoYVVHqftOUWoovqwr9UKoyGxKGh/RRkrf/yPuycYOWjRKVw2slnyN3mYcUjoKqVVMy9mWTR1pcfrFEjQabMVVPpGm6QkWpjlVj7EkSAN8pi/r2J9OLHGbxsEaCagb9iVJVPrzmC+HpQlcftprapd4aLkK2mJqEb1HBUfWoE7V6v4GIyE1J1ve8iSJLX00V3z8xD9UZu9N5YXYxpNilisxwZfHy7cr9UW2zoF7E5GjMUuDXapCcMqXdwotJogZ1upANznsZjB0oqIg/uyJ44uusBvya7i1Ea0s=
+              minLength: 0
+              maxLength: 684
+              pattern: "[0-9a-zA-Z\\+\\-\\/\\=]+"
+            country:
+              type: string
+              example: GB
+              description: The country of origin of the payment card in accordance with ISO 3166-1 Alpha-2
+              pattern: '[A-Za-z]'
+            currency_code:
+              type: string
+              example: GBP
+              description: currency code for this card
+              minLength: 2
+              maxLength: 3
+            name_on_card:
+              type: string
+              example: Jane Bloggs
+              description: Card holder name printed on card
+              minLength: 0
+              maxLength: 150
+              pattern: "[\u0000-\u2FFF]+"
+            provider:
+              type: string
+              example: MasterCard
+              description: 'Card scheme (e.g., VISA, American Express, MasterCard)'
+              minLength: 0
+              maxLength: 40
+              pattern: '[\u0000-\u2FFF]+'
+            issuer_name: 
+              type: string
+              example: 'Monzo'
+              description: 'User-set value that indicates the card issuing institution'
+              minLength: 0
+              maxLength: 40
+              pattern: '[\u0000-\u2FFF]+'              
+            type:
+              type: string
+              example: debit
+              description: 'type of payment card, credit, debit etc.,'
+              minLength: 0
+              maxLength: 40
+              pattern: '[A-Za-z0-9]+'
+            hash:
+              type: string
+              description: Hash digest for this card. This value must be encrypted with an RSA public key
+              example: Wpnk4+J9lylp5z1FI3xSygP71xR2trREeLTfPCfZSCbpXdzYqJ2Q66nuaEmFYrRJcRS+lIgKl7WjGiisfepfW2N2Q1aKkYOMrzMtiRPQF7+WYoRKo5PYeAEsh3cR7EbFCRzxSGdkh7JXehqbTnHWXQM+QJ7J2G16FuAJKY6A8GFbs0A/KV8UGYwx6YbMwXuGGro5nFan8p7SWHxdVPRUWK6rbMejYP+RWBjIQSo/a/zfpBQ0+AiyQFO9njeLLuNiWms10Wz+tXnAU0N+hpnUlnFuERIE6D7bv8M2xC1Q0n9UoZXylXk27dJ/FX4U/Vzl4W0BVg9W57xz6WsYNZG3Kj9l7pHEx0Hvg454eHBiUr+Ho0C7rk2askvCLBZsTDfOewLPvluMiIoYVVHqftOUWoovqwr9UKoyGxKGh/RRkrf/yPuycYOWjRKVw2slnyN3mYcUjoKqVVMy9mWTR1pcfrFEjQabMVVPpGm6QkWpjlVj7EkSAN8pi/r2J9OLHGbxsEaCagb9iVJVPrzmC+HpQlcftprapd4aLkK2mJqEb1HBUfWoE7V6v4GIyE1J1ve8iSJLX00V3z8xD9UZu9N5YXYxpNilisxwZfHy7cr9UW2zoF7E5GjMUuDXapCcMqXdwotJogZ1upANznsZjB0oqIg/uyJ44uusBvya7i1Ea0s=
+              minLength: 0
+              maxLength: 684
+              pattern: "[0-9a-zA-Z\\+\\-\\/\\=]+"
+            fingerprint:
+              type: string
+              example: b5fe350d5135ab64a8f3c1097fadefd9effb
+              description: fingerprint value for this card
+              minLength: 36
+              maxLength: 36
+              pattern: '[A-Za-z0-9]+'
+        account:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 1
+              description: 'Status of account verification 0 = unverified, 1 = verified'
+              minimum: 0
+              maximum: 99
+              pattern: '[0-9]+'
+            verification_in_progress:
+              type: boolean
+              example: false
+              description: Specifies whether card is in the process of being verified
+              pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
+            consents:
+              type: array
+              minItems: 0
+              items:
+                type: object
+                properties:
+                  type: 
+                    type: integer
+                    description: "0 for service agreement, 1 for marketing agreement"
+                    example: 0
+                    minimum: 0
+                    maximum: 999
+                    pattern: '[0-90-90-9]'                
+                  latitude:
+                    type: number
+                    example: 51.405372
+                    description: Latitude component of device co-ordinates
+                    maximum: 90
+                    minimum: -90
+                    pattern: '[0-9.]+'
+                  longitude:
+                    type: number
+                    example: -0.678357
+                    description: Longitude component of device co-ordinates
+                    maximum: 180
+                    minimum: -180
+                    pattern: '[0-9.]+'
+                  timestamp:
+                    type: integer
+                    example: 1517549941
+                    description: date and time consent provided- Time from epoch at the point they consented. This should be set using network protocol time (NTP)
+                    pattern: '[0-9]+'
+                    minimum: 0
+                    maximum: 99999999999
+    PaymentCardResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for this Payment Card
+          example: 3423429234929342500
+          minimum: 1
+          maximum: 18446744073709552000
+          pattern: '^[0-9]+$'
+        membership_cards:
+          type: array
+          minItems: 0
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 23343
+                description: Unique ID for membership card linked to this payment card
+                minimum: 1
+                maximum: 18446744073709552000
+                pattern: '^[0-9]+$'
+              link_active:
+                type: boolean
+                example: true
+                description: Specifies whether the membership card is linked to the payment card
+                pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
+        status:
+          type: string
+          example: active
+          description: The current state of this payment card
+          pattern: '[A-Za-z0-9]+'
+          enum:
+            - active
+            - pending
+            - failed
+            - inactive
+            - retired
+        card:
+          type: object
+          properties:
+            last_four_digits:
+              type: string
+              example: '9871'
+              description: last four digits of PAN
+              pattern: '[0-9]{4,4}'
+            first_six_digits:
+              type: string
+              example: '534512'
+              description: leading six digits of PAN - aka BIN
+              pattern: '[0-9]{6,6}'
+            month:
+              type: integer
+              example: 11
+              description: month of expiry
+              minimum: 1
+              maximum: 12
+              pattern: '[0-9]{1,2}'
+            year:
+              type: integer
+              example: 2020
+              description: Expiry year
+              minimum: 2020
+              maximum: 2299
+              pattern: '[0-9]{4,4}'
+            country:
+              type: string
+              example: GB
+              description: The country of origin of the payment card in accordance with ISO 3166-1 Alpha-2
+              pattern: '[A-Za-z]'
+            currency_code:
+              type: string
+              example: GBP
+              description: currency code for this card
+              minLength: 2
+              maxLength: 3
+              pattern: '[a-zA-Z]'
+            name_on_card:
+              type: string
+              example: Jane Bloggs
+              description: Card holder name printed on card
+              minLength: 0
+              maxLength: 150
+              pattern: "[\u0000-\u2FFF]+"
+            provider:
+              type: string
+              example: Mastercard
+              description: 'Card scheme (e.g., VISA, American Express, MasterCard)'
+              minLength: 0
+              maxLength: 40
+              pattern: '[\u0000-\u2FFF]+'
+            issuer_name: 
+              type: string
+              example: 'Monzo'
+              description: 'User-set value that indicates the card issuing institution'
+              minLength: 0
+              maxLength: 40
+              pattern: '[\u0000-\u2FFF]+'                
+            type:
+              type: string
+              example: debit
+              description: 'type of payment card, credit, debit etc.,'
+              minLength: 0
+              maxLength: 40
+              pattern: '[A-Za-z0-9]+'
+        images:
+          type: array
+          minItems: 0
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 5868
+                description: unique identifier for the image
+                minimum: 1
+                maximum: 18446744073709552000
+                pattern: '^[0-9]+$'
+              url:
+                type: string
+                example: 'https://ukbanking.bink-sandbox.com/content/barclays-media/hermes/schemes/Visa-Payment_DWQzhta.png'
+                maxLength: 2048
+                minLength: 1
+                pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
+              description:
+                type: string
+                example: Card Image for VISA Debit
+                description: Description text for the image (Maximum length = 300).
+                minLength: 0
+                maxLength: 250
+                pattern: "[\u0000-\u2FFF]+"
+              encoding:
+                type: string
+                example: png
+                description: 'The file encoding used e.g., svg, png, jpg. Always lowercase.'
+                enum:
+                  - svg
+                  - png
+                  - jpg
+                pattern: '[a-zA-Z0-9]+'
+        account:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 1
+              description: 'Status of account verification 0 = unverified, 1 = verified'
+              minimum: 0
+              maximum: 99
+            verification_in_progress:
+              type: boolean
+              example: false
+              description: Specifies whether card is in the process of being verified
+              pattern: '^([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])$'
+            consents:
+              type: array
+              minItems: 0
+              items:
+                type: object
+                properties:
+                  type: 
+                    type: integer
+                    description: "0 for service agreement, 1 for marketing agreement"
+                    example: 0
+                    minimum: 0
+                    maximum: 999
+                    pattern: '[0-90-90-9]'
+                  latitude:
+                    type: number
+                    example: 51.405372
+                    description: Latitude component of device co-ordinates
+                    maximum: 90
+                    minimum: -90
+                    pattern: '[0-9.]+'
+                  longitude:
+                    type: number
+                    example: -0.678357
+                    description: Longitude component of device co-ordinates
+                    maximum: 180
+                    minimum: -180
+                    pattern: '[0-9.]+'
+                  timestamp:
+                    type: integer
+                    example: 1517549941
+                    description: date and time consent provided- Time from epoch at the point they consented. This should be set using network protocol time (NTP)
+                    pattern: '[0-9]+'
+                    minimum: 0
+                    maximum: 99999999999
+    PaymentCards:
+      type: array
+      items:
+        $ref: '#/components/schemas/PaymentCardResponse'
+    Service:
+      type: object
+      properties:
+        consent:
+          type: object
+          properties:
+            email:
+              type: string
+              format: email
+              minLength: 0
+              maxLength: 64
+              pattern: "^(?=.{1,256}$)^([a-zA-Z0-9.!#$%&'*+/=?^_`~-]{1,64})@(([a-zA-Z0-9-]{1,180}(.[a-zA-Z0-9-]{1,62}){1,9}))$"
+              description: Email address to which service is registered
+              example: end_user@mymail.com
+            latitude:
+              description: Latitude component of device co-ordinates to eight decimal places.
+              example: 51.405372
+              maximum: 90
+              minimum: -90
+              pattern: '[0-9.]+'
+              type: number
+            longitude:
+              description: Longitude component of device co-ordinates
+              example: -0.678357
+              maximum: 90
+              minimum: -90
+              pattern: '[0-9.]+'
+              type: number
+            timestamp:
+              type: integer
+              example: 1517549941
+              description: date and time consent provided- Time from epoch at the point they consented. This should be set using network protocol time (NTP)
+              pattern: '[0-9]+'
+              minimum: 0
+              maximum: 99999999999
