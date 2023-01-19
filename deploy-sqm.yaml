@@ -610,7 +610,7 @@ paths:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'  
 
-  /payment_account_channel_links:
+  /wallet/payment_account_channel_links:
     get:
       security:
         - bearerAuth: []
@@ -1082,7 +1082,6 @@ paths:
             schema:
               allOf:
                 - $ref: '#/components/schemas/LoyaltyCardAddTrustedRequestAuth'
-                - $ref: '#/components/schemas/TrustedMerchantFields'
     
       responses:
         '200':
@@ -1271,7 +1270,6 @@ paths:
             schema:
               allOf:
                 - $ref: '#/components/schemas/LoyaltyCardAddTrustedUpdateRequest'
-                - $ref: '#/components/schemas/TrustedMerchantFields'
       responses:
         '200':
           description: "**OK** Everything worked as expected. Response contains resource Id."
@@ -2281,8 +2279,8 @@ components:
       properties:
         grant_type:
           type: string
-          example: 'client_credentials'
-          description: "REQUIRED. Value MUST be set to 'client_credentials'."
+          example: 'refresh_token'
+          description: "REQUIRED. Value MUST be set to 'refresh_token'."
         scope:
           type: array
           description: "A list of space-delimited, case-sensitive strings. The strings are defined by the authorization server.  If the value contains multiple space-delimited strings, their order does not matter, and each string adds an additional access range to the requested scope."
@@ -2436,6 +2434,14 @@ components:
                   description: "Personal information required to complete the selected journey."
                   items:
                     $ref: '#/components/schemas/CredentialRequest_TC_Auth'
+            merchant_fields:
+              type: object
+              description: "Retailer specific fields required to identify members during transaction processing."
+              properties:  
+                account_id: 
+                  type: string
+                  description: "Loyalty member identification supplied by the retailer. Often this is an internal identifier and will be used in exporting of matched transactions. "
+                  example: "Z99783494A"
 
     LoyaltyCardAddTrustedUpdateRequest:
       type: object
@@ -2453,7 +2459,15 @@ components:
                   description: "Personal information required to complete the selected journey."
                   items:
                     $ref: '#/components/schemas/CredentialRequest'
-    
+            merchant_fields:
+              type: object
+              description: "Retailer specific fields required to identify members during transaction processing."
+              properties:  
+                account_id: 
+                  type: string
+                  description: "Loyalty member identification supplied by the retailer. Often this is an internal identifier and will be used in exporting of matched transactions. "
+                  example: "Z99783494A"
+
     TrustedMerchantFields:
       type: object
       properties:
