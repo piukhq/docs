@@ -628,7 +628,20 @@ paths:
         
         <h4>Trusted Channel</h4>
         A Bink supported channel that trusts the partner has completed full verification of the user and no additional validation is required from Bink. 
-        The <b>PLL</b> type <b>Loyalty Card</b> will be added using a single credential, instead of full authorisation credentials."
+        The <b>PLL</b> type <b>Loyalty Card</b> will be added using a single credential, instead of full authorisation credentials.
+
+        <br><br><b>Channels</b>: <br>
+            <ul>
+              <li><b>com.bink.wallet</b> = Bink App & Web</li>
+              <li><b>com.barclays.bmb</b> = Barclays App </li>
+              <li><b>com.bos.api2</b> = Bank of Scotland App & Web</li>
+              <li><b>com.halifax.api2</b> = Halifax App & Web</li>
+              <li><b>com.lloyds.api2</b> = Lloyds App & Web</li>
+              <li><b>com.squaremeal.web</b> = SquareMeal Web</li>
+            </ul>
+            </body>
+          </html>"
+        
       responses:
         '200':
           description: "**Successful**"
@@ -1066,9 +1079,13 @@ paths:
               <ul>
                 <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
               </ul>
-            <br>
+
             <b>IMPORTANT:</b>
-            For this endpoint you will use the <b>add_field</b> or the first <b>authorise_field</b> if no <b>add_field</b> exists.
+            For this endpoint you will use the <b>add_field</b> or the first <b>authorise_field</b> if no <b>add_field</b> exists.<br>
+            <br>
+
+            <h3>Merchant Fields</h3>
+            Provide a unique, immutable identifer for the loyalty membership. We will use this identifier for <b>PLL</b>.
 
             <br><br><b>NOTE</b>: <br>
             <ul>
@@ -1233,7 +1250,7 @@ paths:
         - Loyalty Cards
       summary: Update a Loyalty Card from a Trusted Channel
       operationId: PUT /loyalty_cards/add_trusted
-      description: "Use this operation from a Trusted Channel to correct a loyalty card that is in an error state.
+      description: "Use this operation to update membership details and the **merchant field** from a Trusted Channel when user credentials change.
           <html>
             <body>
               <h3>Journey Fields</h3>
