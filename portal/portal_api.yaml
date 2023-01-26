@@ -21,23 +21,23 @@ paths:
     get:
       tags:
         - mid-management
-      summary: Gets all the comments associated to a specific ref
+      summary: List Comments
       operationId: GET /api/{version}/directory_comments?ref=<ref>
-      description: Returns comments where the ref is the owner & where the ref is the subject
+      description: Returns comments where the ref is the owner or the subject
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/pageSizeParam'
         - $ref: 'portal_components.yaml#/components/parameters/pageNumParam'
         - in: query
           name: ref
-          description: the ref to pull comments for
+          description: The ref to pull comments for
           required: true
           schema:
             type: string
             format: uuid
         - in: query
           name: subject_type
-          description: the subject type to pull comments for, if populated only lower_comments will be populated for the specified subject_type
+          description: The subject type to pull comments for, if populated only lower_comments will be populated for the specified subject_type
           required: false
           schema:
             type: string
@@ -90,9 +90,9 @@ paths:
     post:
       tags:
         - mid-management
-      summary: Used to create comments on different entities in MID Management
+      summary: Create Comment
       operationId: POST /api/{version}/directory_comments
-      description: creates a new comment for an entity
+      description: Used to create comments on different entities in MID Management
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
       responses:
@@ -131,9 +131,9 @@ paths:
     post:
       tags:
        - mid-management
-      summary: Used to reply to a comment
+      summary: Create Comment
       operationId: POST /api/{version}/directory_comments/{comment_ref}
-      description: Creates a new comment as a child for a given comment ref
+      description: Creates a new comment as a child for a given comment ref. Used to reply to a comment
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/commentRef'
@@ -173,9 +173,9 @@ paths:
     patch:
       tags:
        - mid-management
-      summary: Used to edit the text of a comment
+      summary: Edit Comment
       operationId: PATCH /api/{version}/directory_comments/{comment_ref}
-      description: Updates the text associated with a comment
+      description: Updates the text associated with a comment.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/commentRef'
@@ -206,9 +206,9 @@ paths:
     delete:
       tags:
        - mid-management
-      summary: Used to delete a comment
+      summary: Delete Comment
       operationId: DELETE /api/{version}/directory_comments/{comment_ref}
-      description: Deletes a comment
+      description: Deletes a comment.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/commentRef'
@@ -225,9 +225,9 @@ paths:
     get:
       tags: 
         - mid-management
-      summary: Used to populate Plan Page
+      summary: List Plans
       operationId: GET /api/{version}/plans
-      description:  Retrieves all the Plans that have been loaded into the Merchant Data directory
+      description:  Retrieves all the Plans that have been loaded into the Merchant Data directory.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/pageSizeParam'
@@ -248,9 +248,9 @@ paths:
     post:
       tags:
         - mid-management
-      summary: On the Plan Page, supports the \"Create a new plan" action 
+      summary: Create Plan
       operationId: POST /api/{version}/plans
-      description: creates a new Plan without any merchants
+      description: Creates a new Plan without any merchants. On the Plan Page, supports the "Create a new plan" action.
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
       responses:
@@ -277,9 +277,9 @@ paths:
     put: 
       tags:
         - mid-management
-      summary: On the Plan Page, supports the \"Edit" of a Plan, from the More Menu
+      summary: Edit Plan
       operationId: PUT /api/{version}/plans/{plan_ref}
-      description: updates the Plan, by plan_ref, with the new values provided
+      description: On the Plan Page, supports the "Edit" of a Plan, from the More Menu.
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -308,9 +308,9 @@ paths:
     delete: 
       tags:
         - mid-management
-      summary: On the Plan Page, supports the \"Delete" of a Plan, from the More Menu
+      summary: Delete Plan
       operationId: DELETE /api/{version}/plans/{plan_ref}
-      description: performs a cascading soft delete of the Plan and it's resources (i.e. merchants, mids, locations, etc). Any corresponding MIDs are also offboarded from Harmonia as part of the delete process.
+      description: Performs a cascading soft delete of the Plan and its resources (i.e. merchants, mids, locations, etc). Any corresponding MIDs are also offboarded from Harmonia as part of the delete process.
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -335,9 +335,9 @@ paths:
     get:
       tags:
         - mid-management
-      summary: Populates the Plan Details Page
+      summary: Get Plan Details
       operationId: GET /api/{version}/plans/{plan_ref}
-      description: get's the details for the selected Plan and the Plan's list of Merchants. Should use default page size and return the 1st page for Merchant list
+      description: Gets the details for the selected Plan and the Plan's list of Merchants. Returns the first page of Merchants with the default page size.
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -358,9 +358,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Plan/Plan Detail page, supports the \"Create New Merchant" action
+      summary: Create Merchant
       operationId: POST /api/{version}/plans/{plan_ref}/merchants
-      description: creates a new Merchant for a Plan
+      description: On the Plan/Plan Detail page, supports the "Create New Merchant" action
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -387,9 +387,9 @@ paths:
     get:
       tags: 
       - mid-management
-      summary: On the Plan Detail page, gets the Merchants for Plan, supports pagination & page size
+      summary: List Merchants
       operationId: GET /api/{version}/plans/{plan_ref}/merchants
-      description: returns the Merchant list for the Plan
+      description: On the Plan Detail page, gets the Merchants for Plan, supports pagination & page size.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -415,9 +415,9 @@ paths:
     put:
       tags: 
       - mid-management
-      summary: On the Plan Detail/Merchant Detail pages, supports the \"Edit Merchant" action
+      summary: Update Merchant
       operationId: PUT /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}
-      description: updates a given Merchant with the supplied fields
+      description: Updates a given Merchant with the supplied fields. On the Plan Detail/Merchant Detail pages, supports the "Edit Merchant" action
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -445,9 +445,9 @@ paths:
     delete:
       tags: 
       - mid-management
-      summary: On the Plan Detail/Merchant Detail pages, supports the \"Delete Merchant" action
+      summary: Delete Merchant
       operationId: DELETE /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}
-      description: performs a cascading soft delete of the Merchant and it's resources (i.e. mids, locations, etc). Any corresponding MIDs are also offboarded from Harmonia as part of the delete process.
+      description: Performs a cascading soft delete of the Merchant and its resources (i.e. mids, locations, etc). Any corresponding MIDs are also offboarded from Harmonia as part of the delete process.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -471,9 +471,9 @@ paths:
     get:
       tags: 
       - mid-management
-      summary: Populates the Merchant Details Page - header
+      summary: Get Merchant Details
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}
-      description: Returns the Metadata for the Merchant (including the Plan level Metadata)
+      description: Returns the Metadata for the Merchant (including the Plan level Metadata). Populates the Merchant Details Page header.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -506,9 +506,9 @@ paths:
     get:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, gets the Merchant's counts, supports supports the delete Merhant modal
+      summary: Get Merchant Resource Counts
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/counts
-      description: returns the counts for the Merchant
+      description: On the Merchant Detail page, gets the Merchant's resource counts, supports the delete Merchant modal.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -535,9 +535,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Create new MID" action
+      summary: Create MID
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids
-      description: creates a MID for the Merchant
+      description: Creates a MID for the Merchant. On the Merchant Detail page, supports the "Create new MID" action
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -576,9 +576,9 @@ paths:
     get:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, gets the MIDs for the Merchant, supports pagination, page size and filtering on mid_ref
+      summary: List MIDs
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids
-      description: returns the MIDs list for the Merchant
+      description: Returns the MIDs list for the Merchant. On the Merchant Detail page, gets the MIDs for the Merchant, supports pagination, page size and filtering on mid_ref
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -605,9 +605,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Delete MID(s)" action
+      summary: Delete MIDs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/deletion
-      description: deletes MIDs by mid_ref for the Merchant
+      description: Deletes MIDs by mid_ref for the Merchant. On the Merchant Detail page, supports the "Delete MID(s)" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -653,9 +653,9 @@ paths:
     post:
       tags:  
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Onboard MID(s)" action
+      summary: Onboard MIDs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/onboarding
-      description: Sends a list of mid_refs to be onboarded with Harmonia
+      description: Sends a list of mid_refs to be onboarded with Harmonia. On the Merchant Detail page, supports the "Onboard MID(s)" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -692,9 +692,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Offboard MID(s)" action
+      summary: Offboard MIDs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/offboarding
-      description: Sends MID data to Harmonia for offboarding
+      description: Sends MID data to Harmonia for offboarding. On the Merchant Detail page, supports the "Offboard MID(s)" action
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -733,9 +733,9 @@ paths:
     patch:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Edit MID" action
+      summary: Edit MID
       operationId: PATCH /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/{mid_ref}
-      description: updates a MID and returns the updated version
+      description: Updates a MID and returns the updated version. On the Merchant Detail page, supports the "Edit MID" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -802,9 +802,9 @@ paths:
     get:
       tags:
       - mid-management
-      summary: On the Merchant Detail page, MIDs tab, this populates the single view of a MID
+      summary: Get MID Details
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/{mid_ref}
-      description: pulls the MID information for a given mid_ref
+      description: Pulls the MID information for a given mid_ref. On the Merchant Detail page, MIDs tab, this populates the single view of a MID.
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -835,9 +835,9 @@ paths:
     put:
       tags:
       - mid-management
-      summary: On the MID single view, supports the \"Add Location" action
+      summary: Link MID with Location
       operationId: PUT /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/{mid_ref}/location_link
-      description: Creates an associoation between a Location and a MID
+      description: Creates an association between a Location and a MID. On the MID single view, supports the "Add Location" action.
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -886,9 +886,9 @@ paths:
     delete:
       tags:
       - mid-management
-      summary: On the MID single view, supports the \"Unlink Location" action; on the Location single view, supports the \"Unlink MID" action
+      summary: Unlink MID from Location
       operationId: DELETE /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/{mid_ref}/location_link
-      description: Deletes the Location link from the MID
+      description: Deletes the Location link from the MID. On the MID single view, supports the "Unlink Location" action; on the Location single view, supports the "Unlink MID" action.
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -907,9 +907,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Create new Secondary MID" action
+      summary: Create Secondary MID
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids
-      description: creates a Secondary MID for the Merchant
+      description: Creates a Secondary MID for the Merchant. On the Merchant Detail page, supports the "Create new Secondary MID" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -948,9 +948,9 @@ paths:
     get:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, gets the Secondary MIDs for the Merchant, supports pagination, page size and filtering by secondary_mid_ref
+      summary: List Secondary MIDs
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids
-      description: returns the Secondary MIDs list for the Merchant
+      description: Returns the Secondary MIDs list for the Merchant. On the Merchant Detail page, gets the Secondary MIDs for the Merchant, supports pagination, page size and filtering by secondary_mid_ref
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -985,9 +985,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Delete Secondary MID(s)" action
+      summary: Delete Secondary MIDs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/deletion
-      description: deletes Secondary MIDs by secondary_mid_ref for the Merchant
+      description: Deletes Secondary MIDs by secondary_mid_ref for the Merchant. On the Merchant Detail page, supports the "Delete Secondary MID(s)" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1030,9 +1030,9 @@ paths:
     post:
       tags:  
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Onboard Secondary MID(s)" action
+      summary: Onboard Secondary MIDs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/onboarding
-      description: Sends a list of secondary_mid_refs to be onboarded with Harmonia
+      description: Sends a list of secondary_mid_refs to be onboarded with Harmonia. On the Merchant Detail page, supports the "Onboard Secondary MID(s)" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1069,9 +1069,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Offboard MID(s)" action
+      summary: Offboard Secondary MIDs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/offboarding
-      description: Sends Secondary MID data to Harmonia for offboarding
+      description: Sends Secondary MID data to Harmonia for offboarding. On the Merchant Detail page, supports the "Offboard MID(s)" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1108,9 +1108,9 @@ paths:
     patch:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Edit Secondary MID" action
+      summary: Edit Secondary MID
       operationId: PATCH /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/{secondary_mid_ref}
-      description: updates a Secondary MID and returns the updated version
+      description: Updates a Secondary MID and returns the updated version. On the Merchant Detail page, supports the "Edit Secondary MID" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1163,9 +1163,9 @@ paths:
     get:
       tags:
       - mid-management
-      summary: On the Merchant Detail page, Scondary MIDs tab, this populates the single view of a Secondary MID
+      summary: Get Secondary MID Details
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/{secondary_mid_ref}
-      description: pulls the Secondary MID information for a given secondary_mid_ref
+      description: Pulls the Secondary MID information for a given secondary_mid_ref. On the Merchant Detail page, Scondary MIDs tab, this populates the single view of a Secondary MID
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1188,9 +1188,9 @@ paths:
     post:
       tags:
       - mid-management
-      summary: On the Merchant Detail page, Secondry MID single view, supports the linking of a Secondary MID to a Location
+      summary: Link Secondary MID with Location
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/{secondary_mid_ref}/secondary_mid_location_links
-      description: creates a link between a Secondary MID and a Location
+      description: Creates a link between a Secondary MID and a Location. On the Merchant Detail page, Secondry MID single view, supports the linking of a Secondary MID to a Location.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1235,9 +1235,9 @@ paths:
     get:
       tags:
       - mid-management
-      summary: On the Merchant Detail page, Secondry MID single view, supports viewing the linked Locations, supports pagination 
+      summary: List Secondary MID Location Links
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/{secondary_mid_ref}/secondary_mid_location_links
-      description: displays a list of Locations linked to a Secondary MID
+      description: Displays a list of Locations linked to a Secondary MID. On the Merchant Detail page, Secondry MID single view, supports viewing the linked Locations, supports pagination.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1264,9 +1264,9 @@ paths:
     delete:
       tags: 
       - mid-management
-      summary: On the Secondary MID single view, supports \"Unlink Location" action; On the Location single view, supports the \"Unlink Secondary MID" action
+      summary: Unlink Secondary MID from Location
       operationId: DELETE /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mid_location_links/{link_ref}
-      description: removes a link between a Secondary MID & Location
+      description: Removes a link between a Secondary MID & Location. On the Secondary MID single view, supports "Unlink Location" action; On the Location single view, supports the "Unlink Secondary MID" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1285,9 +1285,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Create new Location" action
+      summary: Create Location
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations
-      description: creates a Location for the Merchant
+      description: Creates a Location for the Merchant. On the Merchant Detail page, supports the "Create new Location" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1346,9 +1346,9 @@ paths:
     get:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, gets the Locations for the Merchant, supports pagination, page size and filtering by location_ref
+      summary: List Locations
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations
-      description: returns the Location list for the Merchant
+      description: On the Merchant Detail page, gets the Locations for the Merchant, supports pagination, page size and filtering by location_ref.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1395,9 +1395,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Delete Location(s)" action
+      summary: Delete Locations
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/deletion
-      description: deletes Locations by location_ref for the Merchant
+      description: Deletes Locations by location_ref for the Merchant. On the Merchant Detail page, supports the "Delete Location(s)" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1444,9 +1444,9 @@ paths:
     post:
       tags:  
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Onboard Location(s)" action
+      summary: Onboard Locations
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/onboarding
-      description: Sends a list of Location refs whose MIDs will be onboarded with Harmonia
+      description: Sends a list of Location refs whose MIDs will be onboarded with Harmonia. On the Merchant Detail page, supports the "Onboard Location(s)" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1477,9 +1477,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Offboard Location(s)" action
+      summary: Offboard Locations
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/offboarding
-      description: Sends MID data to Harmonia for offboarding, based on a provided Location
+      description: Sends MID data to Harmonia for offboarding, based on a provided Location. On the Merchant Detail page, supports the "Offboard Location(s)" action
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1511,9 +1511,9 @@ paths:
     put:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Edit Location" action
+      summary: Edit Location
       operationId: PUT /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}
-      description: updates a Location for a Merchant
+      description: Updates a Location for a Merchant. On the Merchant Detail page, supports the "Edit Location" action
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1573,9 +1573,9 @@ paths:
     get:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"View Location" action
+      summary: Get Location Details
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}
-      description: retrieves a Location for the Merchant
+      description: Retrieves a Location for the Merchant. On the Merchant Detail page, supports the "View Location" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1598,9 +1598,9 @@ paths:
     get:
       tags:
       - mid-management
-      summary: On a single view of a Location, get's the list of MIDs that can be associated to the Location
+      summary: List Available MIDs for Location
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/available_mids
-      description: returns the list of MIDs for association
+      description: Returns the list of MIDs for association. On a single view of a Location, gets the list of MIDs that can be associated to the Location.
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1633,8 +1633,9 @@ paths:
     post:
       tags:
       - mid-management
-      summary: On the single view of a Location, supports the \"associate" MID action
+      summary: Link Location with MID
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/mids
+      description: On the single view of a Location, supports the "associate" MID action
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1709,9 +1710,9 @@ paths:
     get:
       tags:
       - mid-management
-      summary: On a single view of a Location, get's the list of associated MIDs
+      summary: List Location's Associated MIDs
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/mids
-      description: returns the associated list of MIDs
+      description: Returns the associated list of MIDs. On a single view of a Location, gets the list of associated MIDs.
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1739,9 +1740,9 @@ paths:
     post:
       tags:
       - mid-management
-      summary: On the Merchant Detail page, Location single view, supports the linking of a Secondary MID to a Location
+      summary: Link Location with Secondary MID
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/secondary_mid_location_links
-      description: creates a link between a Secondary MID and a Location
+      description: Creates a link between a Secondary MID and a Location. On the Merchant Detail page, Location single view, supports the linking of a Secondary MID to a Location.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1784,9 +1785,9 @@ paths:
     get:
       tags:
       - mid-management
-      summary: On the Merchant Detail page, Location single view, supports viewing the linked Secondary MIDs, supports pagination 
+      summary: List Location's Linked Secondary MIDs
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_red}/secondary_mid_links
-      description: displays a list of Secondary MIDs linked to a Location
+      description: Displays a list of Secondary MIDs linked to a Location. On the Merchant Detail page, Location single view, supports viewing the linked Secondary MIDs, supports pagination.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1813,9 +1814,9 @@ paths:
     post:
       tags:
        - mid-management
-      summary: On the single view of a Location, supports the \"create" Sub-Location action 
+      summary: Create Sub-Location
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations
-      description: Creates a new Sub-Location on a Location 
+      description: Creates a new Sub-Location on a Location. On the single view of a Location, supports the "create" Sub-Location action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1875,9 +1876,9 @@ paths:
     get:
       tags: 
       - mid-management
-      summary: retrieves a list of Sub-Location for a Location
+      summary: List Sub-Locations
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations
-      description: retrieves a list of Sub-Location for a Location
+      description: Retrieves a list of Sub-Location for a Location.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1902,9 +1903,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Delete Location(s)" action
+      summary: Select Sub-Locations
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations/deletion
-      description: deletes Sub-Locations by sub_location_ref for the Merchant
+      description: Deletes Sub-Locations by sub_location_ref for the Merchant. On the Merchant Detail page, supports the "Delete Location(s)" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -1937,9 +1938,9 @@ paths:
     put:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, Location Single View - Sub-Locations, supports the \"Edit Sub-Location" action
+      summary: Edit Sub-Location
       operationId: PUT /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations/{sub_location_ref}
-      description: updates a Sub-Location for a Merchant
+      description: Updates a Sub-Location for a Merchant. On the Merchant Detail page, Location Single View - Sub-Locations, supports the "Edit Sub-Location" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -2000,9 +2001,9 @@ paths:
     get:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, Location Single View - Sub-Location, supports the \"View Sub-Location" action
+      summary: Get Sub-Location Details
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations/{sub_location_ref}
-      description: retrieves a Sub-Location for the Merchant
+      description: Retrieves a Sub-Location for the Merchant. On the Merchant Detail page, Location Single View - Sub-Location, supports the "View Sub-Location" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -2042,9 +2043,9 @@ paths:
     patch:
       tags:
       - mid-management
-      summary: On the Sub-Location single view, supports the Moving of the Sub-Location to a new "parent"
+      summary: Edit Sub-Location Parent
       operationId: PATCH /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations/{sub_location_ref}
-      description: changes the parent location on a sub-location
+      description: Changes the parent location on a Sub-Location. On the Sub-Location single view, supports the Moving of the Sub-Location to a new "parent".
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -2085,9 +2086,9 @@ paths:
     post:
       tags:
        - mid-management
-      summary: On the Merchant Detail Page, supports the \"create" a new PSIMI action 
+      summary: Create PSIMI
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimi
-      description: Creates a new PSIMI on a Merchant 
+      description: Creates a new PSIMI on a Merchant. On the Merchant Detail Page, supports the "create" a new PSIMI action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -2126,9 +2127,9 @@ paths:
     get:
       tags:
       - mid-management 
-      summary: On the Merchant Detail page, gets the PSIMI for the Merchant, supports pagination, page size and filtering on the psimi_ref
+      summary: List PSIMIs
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimi
-      description: returns the PSIMI list for the Merchant
+      description: Returns the PSIMI list for the Merchant. On the Merchant Detail page, gets the PSIMI for the Merchant, supports pagination, page size and filtering on the psimi_ref.
       parameters:
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -2156,9 +2157,9 @@ paths:
     patch:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Edit PSIMI" action
+      summary: Edit PSIMI
       operationId: PATCH /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/{psimi_ref}
-      description: updates an PSIMI and returns the updated version
+      description: Updates an PSIMI and returns the updated version. On the Merchant Detail page, supports the "Edit PSIMI" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -2208,9 +2209,9 @@ paths:
     get:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"View PSIMI" action
+      summary: Get PSIMI Details
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/{psimi_ref}
-      description: retrieves a PSIMI for the Merchant
+      description: Retrieves a PSIMI for the Merchant. On the Merchant Detail page, supports the "View PSIMI" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -2233,9 +2234,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Delete PSIMI(s)" action
+      summary: Delete PSIMIsj
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/deletion
-      description: deletes PSIMI by psimi_ref for the Merchant
+      description: Deletes PSIMI by psimi_ref for the Merchant. On the Merchant Detail page, supports the "Delete PSIMI(s)" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -2279,9 +2280,9 @@ paths:
     post:
       tags:  
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Onboard PSIMI(s)" action
+      summary: Onboard PSIMIs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/onboarding
-      description: Sends a list of PSIMI refs to be onboarded with Harmonia
+      description: Sends a list of PSIMI refs to be onboarded with Harmonia. On the Merchant Detail page, supports the "Onboard PSIMI(s)" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -2319,9 +2320,9 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: On the Merchant Detail page, supports the \"Offboard PSIMI(s)" action
+      summary: Offboard PSIMIsj
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/offboarding
-      description: Sends PSIMI data to Harmonia for offboarding
+      description: Sends PSIMI data to Harmonia for offboarding. On the Merchant Detail page, supports the "Offboard PSIMI(s)" action.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/planRefParam'
@@ -2361,9 +2362,9 @@ paths:
     put:
       tags:
       - customer-wallet
-      summary: Supports creating a user lookup record
+      summary: Create User Lookup
       operationId: PUT /api/{version}/customer_wallet/user_lookups
-      description: Sends information about a customer wallet lookup to be stored for a user, supports pagination - defaults n to 5 & p = 1
+      description: Sends information about a customer wallet lookup to be stored for a user, supports pagination.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/pageSizeParam'
@@ -2399,9 +2400,9 @@ paths:
     get:
       tags:
       - customer-wallet
-      summary: Supports creating a user lookup record
+      summary: List User Lookups
       operationId: GET /api/{version}/customer_wallet/user_lookups
-      description: Sends information about a customer wallet lookup to be stored for a user, supports pagination - defaults n to 5 & p = 1
+      description: Sends information about a customer wallet lookup to be stored for a user, supports pagination.
       parameters: 
         - $ref: 'portal_components.yaml#/components/parameters/versionParam'
         - $ref: 'portal_components.yaml#/components/parameters/pageSizeParam'
@@ -2587,7 +2588,7 @@ components:
           description: path to the Merchant's icon
         location_label: 
           type: string
-          description: the word plural descriptor that should be used when displaying \"locations", defaults to Locations
+          description: the word plural descriptor that should be used when displaying "locations", defaults to Locations
     MerchantCounts:
       type: object
       description: the counts associated with a Merchant that is displayed as part of the Merchant list on the Plan Details Page
