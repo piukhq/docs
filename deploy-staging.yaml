@@ -1,7 +1,7 @@
 openapi: "3.0.0"
 info:
   version: '2.0'
-  title: Bink API
+  title: Bink API Farts
   description: "This document defines the Bink API and details the following:
     <ul>
       <li>URLs.</li> 
