@@ -7,6 +7,11 @@ server {
         index   ${DEPLOYED_ENV}.html;
     }
 
+    location /bpl {
+        root    /usr/share/nginx/html;
+        index   /bpl.html;
+    }
+
     location /healthz {
         return  204;
     }

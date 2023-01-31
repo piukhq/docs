@@ -1,0 +1,147 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Retailer Transaction API
+  description: '**Send retailer transactions to Bink.**' 
+paths: 
+  /retailers/{retailer_id}/transactions:
+    post:
+      summary: "Send retailer transactions to Bink"
+      description: "You can send individual or a list of transactions. Transactions must have a unique ID."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RetailerTransactions'
+      parameters:
+        - in: path
+          name: retailer_id
+          description: "The unique identifier for the retailer."
+          required: true
+          schema:
+            type: string
+      responses: 
+        '200':
+          description: OK
+        '400':
+          description: 'Client needs to modify the request before it can be retried.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericresponse400'
+        '401':
+          description: 'Client authentication failed.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericresponse401'
+        '422':
+          description: 'Field validation error.'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericresponse422'
+components:
+  schemas:
+    RetailerTransactions:
+      type: array
+      items:
+        $ref: '#/components/schemas/RetailerTransaction'
+    RetailerTransaction:
+      type: object
+      required:
+        - transaction_id
+        - amount
+        - auth_code
+        - date
+        - currency_code
+        - payment_scheme
+        - payment_card_first_six
+        - payment_card_last_four
+      properties: 
+        transaction_id: 
+          type: string
+          example: 'QTZENTY0DdGOEJCQkU3'
+        payment_scheme:
+          type: string
+          description: "Specifies the payment card's type."
+          example: 'visa'
+        payment_card_first_six:
+          type: string
+          example: '454546'
+        payment_card_last_four:
+          type: string
+          example: '6309'
+        amount: 
+          type: number
+          example: 23.99
+        currency_code:
+          type: string
+          example: "GBP"
+        auth_code:
+          type: string
+          example: '188328'
+        date: 
+          type: string
+          format: date-time
+          description: 'Transaction date and time in the format defined by RFC 3339, section 5.6, for example, 2023-01-30T11:14:34Z, 2023-01-30T11:14:34+00:00'
+          example: "2023-01-30T11:14:34+00:00"
+        merchant_identifier:
+          type: string
+          description: "A distinctive code that the acquirer or payment processeor assigns to retailers when they open a account. Each merchant store or location may have its own merchant identifier. This field is required unless you provide a retailer_location_id." 
+          example: '10209723'
+        retailer_location_id:
+          type: string
+          example: "store_1"
+          description: "A unique identifier, usually internal to the retailer, that identifies the store or location. This field is mandatory if you cannot provide a merchant identifier."
+    genericresponse400:
+      type: object
+      required:
+        - error_message
+        - error_slug
+      properties:
+        error_message:
+          type: string
+          description: 'Error message that could be displayed to a user.'
+          example: 'Invalid JSON'
+        error_slug:
+          type: string
+          description: 'Human-readable identifier that is easy to code against.'
+          example: 'MALFORMED_REQUEST'
+    genericresponse401:
+      type: object
+      required:
+        - error_message
+        - error_slug
+      properties:
+        error_message:
+          type: string
+          description: 'Error message that could be displayed to a user.'
+          example: 'Supplied token is invalid'
+        error_slug:
+          type: string
+          description: 'Human-readable identifier that is easy to code against.'
+          example: 'INVALID_TOKEN'
+    genericresponse422:
+      type: object
+      required:
+        - error_message
+        - error_slug
+        - fields
+      properties:
+        error_message:
+          type: string
+          description: 'Error message that could be displayed to a user.'
+          example: 'Could not validate fields'
+        error_slug:
+          type: string
+          description: 'Human-readable identifier that is easy to code against.'
+          example: 'FIELD_VALIDATION_ERROR'
+        fields:
+          description: 'List of fields that failed validation.'
+          type: array
+          items:
+            type: string
+          example:
+            - "expected str for dictionary value @ data['payment_card_first_six']"
+            - "required key not provided @ data['auth_code']"
