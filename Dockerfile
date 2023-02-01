@@ -2,54 +2,45 @@ FROM docker.io/node:latest as redoc
 
 RUN npm i -g redoc-cli
 
-# External API v2
 WORKDIR /build
-ADD deploy-*.yaml /build
-RUN for i in deploy*.yaml; do html="${i#deploy-}"; html="${html%.yaml}"; redoc-cli bundle $i --output "$html.html"; done
-WORKDIR /output
-RUN mv ../build/*.html .
+ADD . .
+RUN mkdir -p \
+    /output \
+    /output/apiv1 \
+    /output/apiv2 \
+    /output/bpl \
+    /output/portal
 
-# BPL 
-WORKDIR /build/bpl
-ADD bpl/deploy-bpl.yaml /build/bpl
-RUN for i in deploy*.yaml; do html="${i#deploy-}"; html="${html%.yaml}"; redoc-cli bundle $i --output "$html.html"; done
-WORKDIR /output/bpl
-RUN mv ../../build/bpl/bpl.html ./index.html
+# APIv1
+RUN redoc-cli build apiv1/1.2.yaml --output /output/apiv1/1.2.html
+RUN redoc-cli build apiv1/1.3.yaml --output /output/apiv1/1.3.html
+
+# APIv2
+RUN redoc-cli build apiv2/dev.yaml --output /output/apiv2/dev.html
+RUN redoc-cli build apiv2/staging.yaml --output /output/apiv2/staging.html
+RUN redoc-cli build apiv2/sandbox-retail.yaml --output /output/apiv2/sandbox-retail.html
+RUN redoc-cli build apiv2/sandbox-banking.yaml --output /output/apiv2/sandbox-banking.html
+RUN mv apiv2/appendix.html /output/apiv2/appendix.html
+RUN mv apiv2/changelog.html /output/apiv2/changelog.html
+
+# BPL
+RUN redoc-cli build bpl/deploy.yaml --output /output/bpl/index.html
 
 # Portal
-WORKDIR /build/portal
-ADD portal/portal_api.yaml /build/portal
-ADD portal/portal_components.yaml /build/portal
-RUN redoc-cli bundle portal_api.yaml --output portal.html
-WORKDIR /output/portal
-RUN mv ../../build/portal/portal.html ./index.html
-
-# API v1 legacy specifications
-WORKDIR /build/apiv1
-ADD apiv1/deploy-apiv1_2.yaml /build/apiv1
-ADD apiv1/deploy-apiv1_3.yaml /build/apiv1
-RUN for i in deploy*.yaml; do html="${i#deploy-}"; html="${html%.yaml}"; redoc-cli bundle $i --output "$html.html"; done
-WORKDIR /output/apiv1
-RUN mv ../../build/apiv1/apiv1_2.html ./indexv1_2.html
-RUN mv ../../build/apiv1/apiv1_3.html ./indexv1_3.html
+RUN redoc-cli build portal/api.yaml --output /output/portal/index.html
 
 
-FROM docker.io/ubuntu:latest as mkd2html
-WORKDIR /build
-ADD /pandoc/* /build/
-RUN apt-get update && apt-get -y install pandoc
-RUN pandoc appendix.md -c style.css --self-contained -o appendix.html
-RUN pandoc CHANGELOG.md -c style.css --self-contained -o changelog.html
-WORKDIR /output
-RUN mv /build/*.html /output
+###################################################
+### DevOps owned, do not modify below this line ###
+###################################################
+FROM ghcr.io/binkhq/python:3.11-poetry as poetry
+WORKDIR /src
+ADD . .
+RUN poetry build
 
-
-FROM docker.io/nginx:alpine
-COPY --from=redoc /output/* /usr/share/nginx/html/
-COPY --from=redoc /output/bpl/* /usr/share/nginx/html/bpl/
-COPY --from=redoc /output/portal/* /usr/share/nginx/html/portal/
-COPY --from=redoc /output/apiv1/indexv1_2.html /usr/share/nginx/html/v1/2/index.html
-COPY --from=redoc /output/apiv1/indexv1_3.html /usr/share/nginx/html/v1/3/index.html
-COPY --from=mkd2html /output/* /usr/share/nginx/html/
-RUN chmod 755 /usr/share/nginx/html/bpl/
-ADD config/default.conf.template /etc/nginx/templates/
+FROM ghcr.io/binkhq/python:3.11
+WORKDIR /app
+COPY --from=poetry /src/dist/*whl /src/app/config.toml ./
+RUN pip install *.whl && rm *.whl
+COPY --from=redoc /output .
+RUN ["docs", "serve"]
