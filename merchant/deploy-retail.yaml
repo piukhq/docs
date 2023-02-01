@@ -55,14 +55,12 @@ components:
         - auth_code
         - date
         - currency_code
-        - payment_scheme
-        - payment_card_first_six
-        - payment_card_last_four
+        - payment_card_type
       properties: 
         transaction_id: 
           type: string
           example: 'QTZENTY0DdGOEJCQkU3'
-        payment_scheme:
+        payment_card_type:
           type: string
           description: "Specifies the payment card's type."
           example: 'visa'

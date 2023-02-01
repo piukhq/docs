@@ -11,12 +11,12 @@ WORKDIR /output
 RUN mv ../build/*.html .
 
 # Internal, per-squad API specifications
-WORKDIR /build/bpl
 #WORKDIR /build/apiv1_2
 #WORKDIR /build/apiv1_3
 #WORKDIR /build/merchant
+WORKDIR /build/bpl
 
-ADD bpl/deploy-*.yaml /build/bpl
+ADD bpl/deploy-bpl.yaml /build/bpl
 RUN for i in deploy*.yaml; do html="${i#deploy-}"; html="${html%.yaml}"; redoc-cli bundle $i --output "$html.html"; done
 WORKDIR /output/bpl
 RUN mv ../../build/bpl/*.html .
