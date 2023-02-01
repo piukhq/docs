@@ -9,7 +9,7 @@ server {
 
     location /bpl {
         root    /usr/share/nginx/html;
-        index   bpl.html
+        index   /bpl/index.html;
     }
 
     location /healthz {

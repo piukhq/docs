@@ -19,7 +19,7 @@ WORKDIR /build/bpl
 ADD bpl/deploy-bpl.yaml /build/bpl
 RUN for i in deploy*.yaml; do html="${i#deploy-}"; html="${html%.yaml}"; redoc-cli bundle $i --output "$html.html"; done
 WORKDIR /output/bpl
-RUN mv ../../build/bpl/*.html .
+RUN mv ../../build/bpl/bpl.html ./index.html
 
 
 #ADD apiv1_2/deploy-*.yaml /build/apiv1_2
@@ -38,6 +38,7 @@ RUN mv /build/*.html /output
 
 FROM docker.io/nginx:alpine
 COPY --from=redoc /output/* /usr/share/nginx/html/
-COPY --from=redoc /output/bpl/* /usr/share/nginx/html/
+COPY --from=redoc /output/bpl/* /usr/share/nginx/html/bpl/
 COPY --from=mkd2html /output/* /usr/share/nginx/html/
+RUN chmod 755 /usr/share/nginx/html/bpl/
 ADD config/default.conf.template /etc/nginx/templates/
