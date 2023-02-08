@@ -107,7 +107,7 @@ paths:
         '403':
           description: unauthorised
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422'
+          $ref: 'portal_components.yaml#/components/responses/Error422'
       requestBody:
         content:
           application/json:
@@ -151,7 +151,7 @@ paths:
         '404':
           $ref: 'portal_components.yaml#/components/responses/Error404'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422'
+          $ref: 'portal_components.yaml#/components/responses/Error422'
       requestBody:
         content:
           application/json:
@@ -193,7 +193,7 @@ paths:
         '404':
           $ref: 'portal_components.yaml#/components/responses/Error404'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422'
+          $ref: 'portal_components.yaml#/components/responses/Error422'
       requestBody:
         content:
           application/json:
@@ -267,7 +267,7 @@ paths:
         '409':
           $ref: 'portal_components.yaml#/components/responses/Error409'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422'
+          $ref: 'portal_components.yaml#/components/responses/Error422'
       requestBody:
         content:
           application/json:
@@ -299,7 +299,7 @@ paths:
         '409':
           $ref: 'portal_components.yaml#/components/responses/Error409'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422'
+          $ref: 'portal_components.yaml#/components/responses/Error422'
       requestBody:
         content:
           application/json:
@@ -378,7 +378,7 @@ paths:
         '409':
           $ref: 'portal_components.yaml#/components/responses/Error409'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422'
+          $ref: 'portal_components.yaml#/components/responses/Error422'
       requestBody:
         content:
           application/json:
@@ -436,7 +436,7 @@ paths:
         '409':
           $ref: 'portal_components.yaml#/components/responses/Error409'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422'
+          $ref: 'portal_components.yaml#/components/responses/Error422'
       requestBody:
         content:
           application/json:
@@ -558,7 +558,7 @@ paths:
         '409':
           $ref: 'portal_components.yaml#/components/responses/Error409'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422Value'
+          $ref: 'portal_components.yaml#/components/responses/Error422Value'
       requestBody:
         content:
           application/json:
@@ -635,7 +635,7 @@ paths:
         '404': 
           $ref: 'portal_components.yaml#/components/responses/Error404Multi'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:
@@ -675,7 +675,7 @@ paths:
         '404': 
           $ref: 'portal_components.yaml#/components/responses/Error404Multi'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:
@@ -716,7 +716,7 @@ paths:
         '404': 
           $ref: 'portal_components.yaml#/components/responses/Error404Multi'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:
@@ -930,7 +930,7 @@ paths:
         '409':
           $ref: 'portal_components.yaml#/components/responses/Error409DuplicateValue'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422Value'
+          $ref: 'portal_components.yaml#/components/responses/Error422Value'
       requestBody:
         content:
           application/json:
@@ -1013,7 +1013,7 @@ paths:
         '404': 
           $ref: 'portal_components.yaml#/components/responses/Error404Multi'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:
@@ -1052,7 +1052,7 @@ paths:
         '404': 
           $ref: 'portal_components.yaml#/components/responses/Error404Multi'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:
@@ -1091,7 +1091,7 @@ paths:
         '404': 
           $ref: 'portal_components.yaml#/components/responses/Error404Multi'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:
@@ -1427,7 +1427,7 @@ paths:
         '409':
           description: Location cannot be deleted to the status of linked Secondary MIDs - either unlink them or go to the Secondary MID and offboard them
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:
@@ -1459,7 +1459,7 @@ paths:
         '404': 
           $ref: 'portal_components.yaml#/components/responses/Error404Multi'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:
@@ -1494,7 +1494,7 @@ paths:
         '404': 
           $ref: 'portal_components.yaml#/components/responses/Error404Multi'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:
@@ -1921,7 +1921,7 @@ paths:
         '404': 
           $ref: 'portal_components.yaml#/components/responses/Error404Multi'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:
@@ -2109,7 +2109,7 @@ paths:
         '409':
           $ref: 'portal_components.yaml#/components/responses/Error409DuplicateValue'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422Value'
+          $ref: 'portal_components.yaml#/components/responses/Error422Value'
       requestBody:
         content:
           application/json:
@@ -2234,7 +2234,7 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: Delete PSIMIsj
+      summary: Delete PSIMIs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/deletion
       description: Deletes PSIMI by psimi_ref for the Merchant. On the Merchant Detail page, supports the "Delete PSIMI(s)" action.
       parameters: 
@@ -2262,7 +2262,7 @@ paths:
         '404': 
           $ref: 'portal_components.yaml#/components/responses/Error404Multi'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:
@@ -2302,7 +2302,7 @@ paths:
         '404': 
           $ref: 'portal_components.yaml#/components/responses/Error404Multi'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:
@@ -2320,7 +2320,7 @@ paths:
     post:
       tags: 
       - mid-management
-      summary: Offboard PSIMIsj
+      summary: Offboard PSIMIs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/offboarding
       description: Sends PSIMI data to Harmonia for offboarding. On the Merchant Detail page, supports the "Offboard PSIMI(s)" action.
       parameters: 
@@ -2344,7 +2344,7 @@ paths:
         '404': 
           $ref: 'portal_components.yaml#/components/responses/Error404Multi'
         '422':
-          $ref: 'portal_components.yaml#/components/responses/Errror422MissingRefs'
+          $ref: 'portal_components.yaml#/components/responses/Error422MissingRefs'
       requestBody:
         content:
           application/json:

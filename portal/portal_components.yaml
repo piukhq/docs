@@ -229,7 +229,7 @@ components:
           examples:
             errorExample:
               $ref: '#/components/examples/Error409ValueExample'
-    Errror422:
+    Error422:
       description: validation error
       content:
         application/json:
@@ -238,7 +238,7 @@ components:
           examples:
             errorExample:
               $ref: '#/components/examples/Error422Example'
-    Errror422MissingRefs:
+    Error422MissingRefs:
       description: validation error - missing refs
       content:
         application/json:
@@ -247,7 +247,7 @@ components:
           examples:
             errorExample:
               $ref: '#/components/examples/Error422RefExample'
-    Errror422Value:
+    Error422Value:
       description: validation error - missing values
       content:
         application/json:
