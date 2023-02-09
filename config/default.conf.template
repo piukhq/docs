@@ -17,6 +17,16 @@ server {
         index   /portal/index.html;
     }
 
+    location /v1/2 {
+        root    /usr/share/nginx/html;
+        index   /v1/2/index.html;
+    }
+
+    location /v1/3 {
+        root    /usr/share/nginx/html;
+        index   /v1/3/index.html;
+    }
+
     location /healthz {
         return  204;
     }

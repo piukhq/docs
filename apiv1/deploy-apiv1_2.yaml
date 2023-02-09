@@ -2,14 +2,9 @@ openapi: 3.0.0
 info:
   version: '1.2'
   title: Bink External API
-  description: 'This document defines the Bink API URLs, parameters, request bodies, responses. Each operation offers a mock end point.'
+  description: 'This document defines the Bink API URLs, parameters, request bodies, responses.'
   contact:
     email: mmorar@bink.com
-servers:
-  - description: SwaggerHub API Auto Mocking
-    url: 'https://virtserver.swaggerhub.com/Bink_API/Bink_External_API/1.2'
-  - description: Bink Staging Environment
-    url: 'https://api.staging.gb.bink.com/ubiquity'    
 paths:
   /membership_transactions:
     get:
