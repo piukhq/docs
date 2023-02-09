@@ -1,0 +1,312 @@
+swagger: '2.0'
+info:
+  description: Merchant Search API will enable partners to get merchant id from the SOP system based on address information
+  version: 1.0.0
+  title: Merchant Query API
+# host: apigateway2s.americanexpress.com
+# basePath: /marketing/v4/smartoffers
+tags:
+  - name: search
+schemes:
+  - https
+paths:
+  /merchant/inquiry_results:
+    get:
+      tags:
+        - search
+      summary: Lookup for the merchant information based on the address information
+      description: 'Returns a list of merchant id and information'
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: contain the JSON string with all required data
+          required: true
+          schema:
+            $ref: '#/definitions/SearchRequest'
+        - name: usecaseId
+          in: header
+          description: usecaseId
+          required: true
+          type: string
+          default: ''
+        - name: apiKey
+          in: header
+          description: ApiKey
+          required: true
+          type: string
+          default: ''
+        - name: correlationid
+          in: header
+          description: 'This is a Unique id, Correlation Id for operational logging purpose'
+          required: true
+          type: string
+          default: ''
+        - name: clientId
+          in: header
+          description: clientId
+          required: true
+          type: string
+        - name: size
+          in: header
+          description: size
+          required: false
+          type: integer
+          format: int32
+        - name: from
+          in: header
+          description: from
+          required: false
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/response_200_object'
+        '400':
+          description: invalid request
+          schema:
+            $ref: '#/definitions/response_400_object'
+        '401':
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/response_401_object'
+        '404':
+          description: Unknown Resource
+          schema:
+            $ref: '#/definitions/response_404_object'
+        '500':
+          description: internal error
+          schema:
+            $ref: '#/definitions/response_500_object'
+        '503':
+          description: internal error
+          schema:
+            $ref: '#/definitions/response_503_object'
+        '504':
+          description: internal error
+          schema:
+            $ref: '#/definitions/response_504_object'
+definitions:
+  SearchRequest: 
+    type: object
+    properties:
+      partner_id:
+        type: string
+        description: The partner ID associated with the Amex Data Partnership Team.
+        example: 'AADP0061'
+      postalCode:
+        type: string
+        description: Postal code of the merchant attached while enrolling the merchant to Amex
+        example: '85027 (US), SW1W 9AX (UK)'
+      merchantName:  
+        type: string
+        description: Name of the merchant attached while enrolling the merchant to Amex.More accurate the name given, more accurate the result could be
+        example: Pret a manger
+      street:
+        type: string
+        description: Street address details attached to merchant location. 
+        example: '1583 PHANTOM AV'
+      city:
+        type: string
+        description: City of the merchant location. 
+        example: 'Phoenix'
+      state:
+        type: string
+        description: The state of the merchant location. 
+        example: 'Arizona'
+      phone_number:
+        type: string
+        description: Phone number of the merchant. This must be exact match 
+        example: '1234567890'
+    required:
+      - partner_id
+      - postalCode
+      - merchantName
+      - street
+      - city
+      - state
+  response_200_object:
+    type: object
+    properties:
+      merchant_result:
+        type: array
+        description: 'Merchant search result based on the request params'
+        items:
+          type: object
+          properties:
+            merchantId:
+              type: string
+              description: MerchantID or merchant number assigned while during the merchant on boarding process. Internal to Amex
+              example:  '5027821080'
+            merchantName: 
+              type: string
+              description: Consumer Relevant Merchant Name
+              example: 'Taco Bell'
+            merchantSubmTypeCd:
+              type: string
+              description: Used to identify OptBlue/Aggregator Merchants. Possible values are -  T OptBlue   B OptBlue PSP  A Aggregator PSP  C Custom Contract Aggregator PSPs  N Legacy NAB Accounts  Y Legacy test accounts
+              example: T 
+            merchantSellerId:
+              type: string
+              description: SellerID associated with Merchant
+              example: ''
+            merchantAdline1: 
+              type: string
+              description: Consumer Relevant Merchant Address Line 1
+              example: '1583 PHANTOM AVE'
+            merchantAdLine2: 
+              type: string
+              description: Consumer Relevant Merchant Address Line 2
+              example: ''
+            merchantAdLine3: 
+              type: string
+              description: Consumer Relevant Merchant Address Line 3
+              example: ''
+            merchantAdLine4: 
+              type: string
+              description: Consumer Relevant Merchant Address Line 4
+              example: ''
+            merchantAdLine5: 
+              type: string
+              description: Consumer Relevant Merchant Address Line 5
+              example: ''
+            merchantAdRgnAreaCd: 
+              type: string
+              description: Consumer Relevant Merchant Region/State Code
+              example: 'CA'
+            merchantAdRgnAreaNm: 
+              type: string
+              description: Consumer Relevant Merchant Region/State Name
+              example: 'CALIFORNIA'
+            merchantAdPostTownNm: 
+              type: string
+              description: Consumer Relevant Merchant City
+              example: 'SAN JOSE'
+            merchantAdPstlCd:  
+              type: string
+              description: Consumer Relevant Merchant Postal Code
+              example: '95125-5326'
+            merchantAdCtryNm: 
+              type: string
+              description: Consumer Relevant Merchant Country Name
+              example: 'US'
+            merchantPhoneNo: 
+              type: string
+              description: Consumer Relevant Merchant Phone Number  
+              example: '4089793320'
+            Usagepast3months:
+              type: string
+              description: 'Y or N indicator if SE has been used in past 3 months'
+              example: Y
+      response_code:
+        type: string
+        enum:
+          - "102000"
+          - "102001"
+        description: Valid code for the response
+        example: "102000"
+      response_type:
+        type: string
+        description: Type of response returning 
+        example: "Success"
+      response_description: 
+        type: string
+        description: Detailed description of the response
+        example: "The request was processed successfully."
+  response_400_object:
+    type: object
+    properties:
+      error_code:
+        type: string
+        example: "104003"
+        enum:
+          - '104003'
+          - '104000'
+      error_type:
+        type: string
+        example: "Invalid_request"
+      error_description:
+        type: string
+        example: "Invalid_request"
+  response_401_object:
+    type: object
+    properties:
+      error_code:
+        type: string
+        example: '104013'
+        enum: 
+          - '104010'
+          - '104011'
+          - '104012'
+          - '104013'
+          - '104014'
+      error_description:
+        type: string
+        example: Invalid API key
+      error_type:
+        type: string
+        example: 'Unauthorized'
+  response_404_object:
+    type: object
+    properties:
+      error_code:
+        type: string
+        enum:
+          - '104017'
+        example: '104017'
+      error_description:
+        type: string
+        example: Requested resource not found
+      error_type:
+        type: string
+        example: ''
+  response_500_object:
+    type: object
+    properties:
+      error_code:
+        type: string
+        example: '105000'
+        enum:
+          - '105030'
+      error_description:
+        type: string
+        example: >-
+          The server is currently unavailable, or a severe error has occurred.
+          Please try again
+      error_type:
+        type: string
+        example: ''
+  response_503_object:
+    type: object
+    properties:
+      error_code:
+        type: string
+        example: '105030'
+        enum:
+          - '105030'
+      error_description:
+        type: string
+        example: The API is currently unavailable. Please try again
+      error_type:
+        type: string
+        example: ''
+  response_504_object:
+    type: object
+    properties:
+      error_code:
+        type: string
+        enum:
+          - '105040'
+        example: '105040'
+      error_description:
+        type: string
+        example: The API gateway has experienced a connection timeout
+      error_type:
+        type: string
+        example: ''
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+basePath: /Bink_API/Merchant_Query_API/1.0.0

@@ -11,9 +11,6 @@ WORKDIR /output
 RUN mv ../build/*.html .
 
 # Internal, per-squad API specifications
-#WORKDIR /build/apiv1_2
-#WORKDIR /build/apiv1_3
-#WORKDIR /build/merchant
 WORKDIR /build/bpl
 
 ADD bpl/deploy-bpl.yaml /build/bpl
@@ -22,9 +19,14 @@ WORKDIR /output/bpl
 RUN mv ../../build/bpl/bpl.html ./index.html
 
 
-#ADD apiv1_2/deploy-*.yaml /build/apiv1_2
-#ADD apiv1_3/deploy-*.yaml /build/apiv1_3
-#ADD merchant/deploy-*.yaml /build/merchant
+WORKDIR /build/portal
+
+ADD portal/portal_api.yaml /build/portal
+ADD portal/portal_components.yaml /build/portal
+RUN redoc-cli bundle portal_api.yaml --output portal.html
+WORKDIR /output/portal
+RUN mv ../../build/portal/portal.html ./index.html
+
 
 FROM docker.io/ubuntu:latest as mkd2html
 WORKDIR /build
@@ -39,6 +41,7 @@ RUN mv /build/*.html /output
 FROM docker.io/nginx:alpine
 COPY --from=redoc /output/* /usr/share/nginx/html/
 COPY --from=redoc /output/bpl/* /usr/share/nginx/html/bpl/
+COPY --from=redoc /output/portal/* /usr/share/nginx/html/portal/
 COPY --from=mkd2html /output/* /usr/share/nginx/html/
 RUN chmod 755 /usr/share/nginx/html/bpl/
 ADD config/default.conf.template /etc/nginx/templates/

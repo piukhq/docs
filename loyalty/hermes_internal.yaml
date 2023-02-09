@@ -1,0 +1,289 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Hermes Internal API
+  description: Hermes Internal API
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Bink_API/Hermes_Internal_API/1.0.0
+paths:
+  '/schemes/user_consent/{consent_id}':
+    put: 
+      tags: 
+        - PUT_user_consent
+      summary: 'Update a user consent'
+      parameters: 
+        - in: path
+          name: consent_id
+          description: "Unique resource identifier for the consent"
+          required: true
+          schema: 
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                status: 
+                  type: number
+                  description: "New status code for consent"
+              example: 
+                status: '1'
+      responses:
+        '200':      
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:   
+                    type: integer 
+                    description: 'Consent status'
+  '/schemes/accounts/{account_id}/credentials':
+    put:
+      tags: 
+        - PUT_scheme_account_credentials
+      summary: Put a scheme account credentials 
+      parameters:
+        - in: path
+          name: account_id
+          description: "The unique resource identifier for the scheme account"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:   
+                    type: number 
+                    description: 'Scheme account ID'
+                  status: 
+                    type: number
+                    description: 'New scheme account status code'
+        '401':
+          description: Not authorised, request does not have a valid token
+        '404':
+          description: "Resource specified could not be found"
+    delete:
+      tags: 
+        - DELETE_scheme_account_credentials
+      summary: 'Delete scheme credential answers from a scheme account'
+      parameters:
+        - in: path
+          name: account_id
+          description: "The unique resource identifier for the scheme account"
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:   
+                    type: number 
+                    description: 'Scheme account ID'
+        '401':
+          description: Not authorised, request does not have a valid token
+        '404':
+          description: "Resource specified could not be found"
+  '/schemes/{scheme_id}/accounts/{account_id}/status':
+    post:
+      tags: 
+        - POST_scheme_account_status
+      summary: Update a scheme account status 
+      parameters:
+        - in: path
+          name: account_id
+          description: "The unique resource identifier for the scheme account"
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: scheme_id
+          description: "Scheme ID"
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: 
+                status: 
+                  type: number
+                  description: "New status code for scheme account"
+              example: 
+                status: '0'            
+      responses:
+        '200':
+          description: "**Successful**"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:   
+                    type: number 
+                    description: 'Scheme account ID'
+                  status: 
+                    type: number
+                    description: 'New scheme account status code'
+        '401':
+          description: Not authorised, request does not have a valid token
+#          content:
+#            application/json:
+#              schema:
+#                allOf:
+#                  - $ref: '#/components/schemas/genericresponse401'
+        '404':
+          description: "Resource specified could not be found"
+#          content:
+#            application/json:
+#              schema:
+#                allOf:
+#                  - $ref: '#/components/schemas/genericresponse404'      
+  '/payment_cards/accounts/status/':
+    put: 
+      tags: 
+        - Put_Payment_Card
+      summary: 'API callback from payment card enrolment system (metis) to Hermes'
+      operationId: 'PUT_accounts_status'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePaymentCardRequest'
+        description: Payment Card
+      responses: 
+        '200': 
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdatePaymentCardResponse'
+        '400':
+          description: Invalid status code sent.
+        '401':
+          description: No ID or token provided.
+        '404':
+          description: Not found          
+  '/schemes/accounts/{account_id}/transactions':
+    post: 
+      tags: 
+        - POST_scheme_account_transactions
+      summary: 'Create/update scheme account transactions'
+      parameters: 
+        - in: path
+          name: account_id
+          description: "Unique resource identifier for the account"
+          required: true
+          schema: 
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRequest'
+      responses:
+        '200':      
+          description: "**Successful**"
+        '401':
+          description: No ID or token provided.
+        '404':
+          description: Not found
+components:
+  schemas: 
+    TransactionRequest:
+      type: array
+      items:
+        $ref: '#/components/schemas/Transaction'
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 7778
+        scheme_account_id:
+          type: integer
+          example: 7778
+        created: 
+          type: string
+          format: date
+          example: "2018-10-22 07:49:31.451088"
+        date:  
+          type: string
+          format: date
+          example: "2018-10-22 00:00:00"
+        description:
+          type: string
+          example: "Test transaction: 20 items"
+        location: 
+          type: string
+          example: "Brookwood"
+        points: 
+          type: number
+          example: 5.0
+        value:
+          type: number
+          example: 20.5
+        hash: 
+          type: string
+          example: "6dac94210a29fd1a66f704de640d26df"
+        user_set: 
+          type: array
+          items: 
+            type: integer
+    UpdatePaymentCardResponse:
+      type: object
+      properties:
+        id: 
+          type: string
+        status: 
+          type: string
+    UpdatePaymentCardRequest:
+      type: object
+      properties:
+        card_id:
+          type: string
+          example: "11332"
+        token:
+          type: string
+          example: 'rur93uew0q84uri30'
+        response_status: 
+          type: string
+        response_message:
+          type: string
+        response_state:
+          type: string
+        retry_id:
+          type: string
+        response_action:
+          type: string
+        new_status_code:
+          type: string
+        deactivated_list: 
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+        deactivate_errors:
+          type: object
+          additionalProperties:
+            type: string
+        agent_card_uid:
+          type: string

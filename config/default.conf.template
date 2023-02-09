@@ -12,6 +12,11 @@ server {
         index   /bpl/index.html;
     }
 
+    location /portal {
+        root    /usr/share/nginx/html;
+        index   /portal/index.html;
+    }
+
     location /healthz {
         return  204;
     }

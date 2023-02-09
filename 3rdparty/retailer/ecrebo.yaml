@@ -1,0 +1,429 @@
+openapi: 3.0.0
+info:
+  description: "These are the integrations with Ecrebo for creating & looking up a membership accounts"
+  version: "1.0.0"
+  title: "Ecrebo Bink Integration"
+  contact:
+    email: ajones@bink.com
+tags:
+  - name: authorisation
+    description: Getting a token to use the Ecrebo APIs
+  - name: membership
+    description: Everything about a user's BK membership
+paths:
+  /v1/auth/login:
+    post:
+      tags:
+        - authorisation
+      summary: retrieves a token to use to authenticate Bink on Membership API calls
+      operationId: GET /token
+      requestBody:
+        $ref: '#/components/requestBodies/GetAuthToken'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTokenResponse'
+        '401':
+          description: unauthorised 
+        '503':
+          description: 'Service unavailable'   
+  /v1/list/append_item/{retailer_id}/{category_name}/{list_name}:
+    post:
+      tags:
+        - membership
+      summary: Creates a new BK Membership account with Ecrebo
+      operationId: POST /Membership
+      description: Creates a new BK Membership account for the provided user's email adress; for adding an existing Membership to Bink use GET /Membership with card number
+      requestBody:
+        $ref: '#/components/requestBodies/CreateAccount'
+      parameters:
+        - in: path
+          name: retailer_id
+          schema:
+            type: integer
+          required: true
+          description: the id that specifies what retailer the membership account should be created for
+        - in: path
+          name: category_name
+          schema:
+            type: string
+          required: true
+          description: this should be "assets"
+        - in: path
+          name: list_name
+          schema:
+            type: string
+          required: true
+          description: this should be "membership"
+        - in: header
+          name: Token
+          schema:
+            type: string
+          required: true
+          description: this is the auth token
+        - in: header
+          name: Audit-Tag
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateResponse'
+        '401':
+          description: Token Expired
+        '409':
+          description: Account Exists
+        '422':
+          description: Missing mandatory data field
+        '4XX':
+          description: unknown error
+        '503': 
+          description: 'Service unavailable'   
+  /v1/list/query_item/{retailer_id}/{category_name}/{list_name}/{key}/{value}:
+    get:
+      tags:
+        - membership
+      summary: Get Membership Account
+      operationId: GET /Membership
+      description: Retrieves a BK Membership based on the key/value pair passed into the URL. UUID should be used when getting an Account Balance. Token should be used when a user is adding there existing account to a new wallet. 
+      parameters:
+        - in: path
+          name: retailer_id
+          schema:
+            type: integer
+          required: true
+          description: the id that specifies what retailer the membership account should be retrieved for
+        - in: path
+          name: category_name
+          schema:
+            type: string
+          required: true
+          description: this should be "assets"
+        - in: path
+          name: list_name
+          schema:
+            type: string
+          required: true
+          description: this should be "membership"
+        - in: path
+          name: key
+          description: what type of user identifier is being used
+          required: true
+          explode: true
+          schema:
+            type: string
+            enum: [uuid, token]
+            default: uuid
+        - in: path
+          name: value
+          description: the user identifier to look up a user by (either card number or UUID)
+          required: true
+          explode: true
+          schema:
+            type: string
+        - in: header
+          name: Token
+          schema:
+            type: string
+          required: true
+        - in: header
+          name: Audit-Tag
+          schema:
+            type: string
+            format: uuid
+          required: true
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetResponse'
+        '400':
+          description: invalid identifier key
+        '404':
+          description: user not found for identifier
+        '4XX':
+          description: unknown error
+        '503':
+          description: 'Service unavailable'   
+components:
+  schemas:
+    GetTokenRequest:
+      type: object
+      required:
+        - name
+        - password
+      properties:
+        name:
+          type: string
+          example: fatface_external_staging
+          description: Bink's username to authenticate with Ecrebo
+        password:
+          type: string
+          example: c5tzCv5ms2k8eFR6
+          description: Bink's password to authenticate with Ecrebo
+    NewAccountRequest:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          properties:
+            validated:
+              example: true
+              description: this shoudl always be true
+              type: string
+            email:
+              example: end_user@gmail.com
+              description: email associated with the account
+              type: string
+              minLength: 0
+              maxLength: 64
+              #pattern: (?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])
+            first_name:
+              type: string
+              pattern: (((?=.{1,20}$)[A-Za-z\-\u00C0-\u00FF'])+\s*){1,4}
+              minLength: 1
+              maxLength: 20
+              example: End
+              description: User's first name
+            surname:
+              type: string
+              pattern: (((?=.{1,20}$)[A-Za-z\-\u00C0-\u00FF'])+\s*){1,4}
+              minLength: 1
+              maxLength: 20
+              example: User
+              description: User's surname
+            postcode:
+              type: string
+              pattern: ([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})
+              minLength: 1
+              maxLength: 20
+              example: NW1 1HL
+              description: User's postcode
+            phone_number:
+              type: string
+              minLength: 7
+              maxLength: 20
+              example: 07513438167
+              description: the User's number
+    Data:
+      type: object
+      properties:
+        membership_data:
+          type: object
+          required:
+            - uuid
+            - token
+          properties:
+            rewards:
+              type: object
+              required:
+                - type
+                - config
+                - vouchers
+              properties:
+                type:
+                  type: string
+                  enum: [thresholdmarketing, punchcard, thresholdproductmarketing]
+                  default: punchcard
+                config:
+                  type: object
+                  required: 
+                    - min_threshold
+                    - code_expiry
+                  properties:
+                    min_threshold:
+                      type: integer
+                      example: 5
+                    code_expiry:
+                      type: integer
+                      example: 30
+                    stamps:
+                      description: the number of stamps the user has
+                      type: integer
+                      example: 3
+                    stamps_goal:
+                      description: the number of stamps a user has to accumulate to receive a reward
+                      type: integer
+                      example: 5
+                vouchers:
+                  type: array
+                  description: this is an array of vouchers
+                  items:
+                    $ref: '#/components/schemas/Voucher'
+                  example: 
+                    - code: SrIYNoWstJeDEpLe5rffD
+                      issued: "2020-01-01"
+                      expiry_date: "2020-01-31"
+                    - code: Npv8rd2DhhyvBooHGOBDp
+                      issued: "2019-12-01"
+                      redeemed: "2019-12-15"
+                      expiry_date: "2019-12-31"
+                    - code: 3kpycwRNCm3DLINMAYSHV
+                      issued: "2019-12-15"
+                      expiry_date: "2019-01-14"
+                    - code: LocNU4ZY8YOnJvmjaUt3x
+                      issued: "2020-01-31"
+                      expiry_date: "2020-03-01"
+                    - code: W5wf7uoeQ3HqfqF7klTt5
+                      issued: "2020-01-15"
+                      expiry_date: "2020-02-14"
+                      redeemed: "2020-01-31"
+        uuid:
+          description: this is the loyalty id for the user in ecrebo and should be used for GET account calls
+          type: string
+          format: uuid
+          example: 6a86ee12-f0ab-4861-9364-c46ee26df25e
+        token:
+          description: this is the card number that should be displayed on the card in the wallet and used on the add journey
+          type: string
+          minLength: 16
+          maxLength: 16
+          example: BK00000000994483
+          pattern: (BK)[0-9]{14}
+    Voucher:
+      description: list of vouchers that have been issued, includes redeemed & expired
+      type: object
+      required:
+        - code
+        - issued
+        - expiry_date
+      properties:
+        code:
+          description: the code that is used to redeem the voucher
+          type: string
+          minLength: 21
+          maxLength: 21
+        reason:
+          description: a key that can be used to signify the trigger for the voucher. i.e. join/earn
+          type: string
+        issued:
+          description: the date the voucher was issued
+          type: string
+          format: date
+          #example: 2017-07-21
+        redeemed:
+          description: the date the voucher was redeemed
+          type: string
+          format: date
+          #example: 2017-07-21
+        expiry_date:
+          description: the date the voucher was expired
+          type: string
+          format: date
+          #example: 2017-07-21
+    CreateResponse:
+      type: object
+      required:
+        - list_size
+        - list_version
+        - published
+        - publisher
+      properties:
+        list_id:
+          type: string
+          format: uid
+          description: this should be ignored
+          example: 539ce137-31e5-4716-afe7-42df30f3ce93
+        list_size:
+          type: integer
+          description: this should be ignored
+          example: 238
+        list_version:
+          type: integer
+          format: int16
+          description: this should be ignored
+          example: 61
+        published:
+          type: boolean
+          description: this should be true
+          example: true
+        publisher:
+          type: array
+          items:
+            type: object
+            properties:
+              code:
+                type: integer
+                description: this is the http status code
+                example: 200
+              class_name: 
+                type: string
+                description: this should be ignored
+                example: MembershipResponder
+              message:
+                type: string
+                description: this is "token:uuid"
+                example: BK00000000994483:68c14b3b-a866-4b4d-b77f-816c9a860d89
+    GetTokenResponse:
+      required:
+        - token
+        - valid_until
+      type: object
+      properties:
+        token: 
+          type: string
+          description: auth token for calling Ecrebo APIs
+          example: 605c1011b53b8d8d47dc9f0596beaa33c77fdf33852a7f4e1a31e78b90b6a742
+        valid_until: 
+          type: string
+          #format: date-time
+          example: "2020-02-24T01:04:53.804Z"
+          description: when the returned token will expire
+    GetResponse:
+      type: object
+      required:
+        - list_size
+        - list_version
+        - list_name
+        - list_id
+      properties:
+        list_id:
+          type: string
+          format: uuid
+          description: this should be ingnored
+          example: 539ce137-31e5-4716-afe7-42df30f3ce93
+        list_name:
+          type: string
+          description: this should be ignored
+          example: membership
+        list_version:
+          type: integer
+          description: this should be ignored
+          example: 60
+        list_size:
+          type: integer
+          description: this should be ignored
+          example: 237
+        data:
+          $ref: '#/components/schemas/Data'
+  requestBodies:
+    GetAuthToken:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GetTokenRequest'
+      description: Bink credentials to authenticate with Ecrebo
+      required: true
+    CreateAccount:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NewAccountRequest'
+      description: New user 
+      required: true
+# Added by API Auto Mocking Plugin
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Bink_API/ecrebo-bink_integration/1.0.0

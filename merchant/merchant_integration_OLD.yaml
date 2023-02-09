@@ -1,0 +1,403 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Bink_API/Bink_Merchant_Integration/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Bink_API/Bink_Iceland_Integration_API/1.0.0
+info:
+  description: Bink Merchant Integration API. Standard API for merchant integration. Used by Iceland.
+  version: "1.0.0"
+  title: Bink Merchant Integration API
+  contact:
+    email: mmorar@bink.com
+paths:
+  /{merchant_base_uri}/register:
+    post:
+      tags:
+        - "BNK1 BNK2"
+      summary: "Create new loyalty scheme account"
+      operationId: joinscheme
+      description: "Creates a new loyalty scheme memnbership account"
+      parameters:
+        - in: path
+          name: merchant_base_uri
+          description: "short standardised name for merchant scheme - e.g., iceland"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JoinRequest'
+        description: "New card registration"
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinResponse'
+        '400':
+          description: bad input parameter
+  /{merchant_base_uri}/validate:
+    post:
+      tags:
+        - BNK3
+      summary: "Validate an existing membership card, normally with the intent of adding it to a Bink wallet"
+      operationId: validatescheme
+      parameters:
+        - in: path
+          name: merchant_base_uri
+          description: short standardised name for merchant scheme - e.g., iceland
+          required: true
+          schema:
+            type: string
+            description: "validate a membership card"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidationRequest'
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResponse'
+        '401':
+          description: 'Login Failed'
+        '403':
+          description: 'IP Blocked'
+  /{merchant_base_uri}/balance:
+    post:
+      tags:
+        - BNK4
+      summary: Fetch Balance
+      operationId: fetchbalance
+      parameters:
+        - in: path
+          name: merchant_base_uri
+          description: short standardised name for merchant scheme - e.g., iceland
+          required: true
+          schema:
+            type: string
+            description: "validate a membership card"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BalanceRequest'
+      responses:
+        '200':
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceResponse'
+        '401':
+          description: 'Login Failed'
+        '403':
+          description: 'IP Blocked'
+components:
+  schemas:
+    BalanceRequest:
+      allOf:
+        - $ref: '#/components/schemas/BalanceRequestJSON'
+        - $ref: '#/components/schemas/MetaData'     
+    BalanceRequestJSON:
+      type: object
+      properties:
+        json: 
+          type: object
+          allOf: 
+            - $ref: '#/components/schemas/JSONBase'
+            - type: object
+              properties: 
+                card_number: 
+                  type: string
+                  example: "74430411306609487047"
+                barcode:
+                  type: string
+                  example: "744304113066094870475635"
+                merchant_identifier:
+                  type: string
+                  example: "55544666"
+                callback_url:
+                  type: 
+                    string
+                  example: "https://api.bink.com/join/merchant/acme-bonus-card"        
+                merchant_scheme_id1: 
+                  type: 
+                    string
+                  example: "omzv1jol37dr8ngv5jpnpq4y20ke5x9g"
+                merchant_scheme_id2: 
+                  type: string
+                  example: null    
+    BalanceResponse:
+      allOf:
+        - $ref: '#/components/schemas/BalanceResponseJSON'
+        - $ref: '#/components/schemas/MetaData'
+    BalanceResponseJSON:
+      type: object
+      properties:
+        json: 
+          type: object
+          properties:
+            card_number: 
+              type: string
+              example: "74430411306609487047"
+            barcode:
+              type: string
+              example: "744304113066094870475635"          
+            active:
+              type: boolean
+              example: false
+            balance: 
+              type: number
+              format: double
+              example: 8.38
+            unit: 
+              type: string
+              example: "GBP"
+            alt_balance: 
+              type: number
+              format: double
+              example: 15.0         
+            transactions:
+              type: array
+              items: 
+                $ref: '#/components/schemas/Transaction'                
+            message_uid: 
+              type: string
+              example: "84g62098-9999-46fb-b5df-c611f452ec65"
+            merchant_scheme_id1: 
+              type: 
+                string
+              example: "omzv1jol37dr8ngv5jpnpq4y20ke5x9g"
+            merchant_scheme_id2: 
+              type: string
+              example: null
+    JoinRequest:
+      allOf:
+        - $ref: '#/components/schemas/JoinRequestJSON'
+        - $ref: '#/components/schemas/MetaData'      
+    JoinRequestJSON:
+      type: object
+      properties:
+        json: 
+          type: object
+          allOf: 
+            - $ref: '#/components/schemas/JSONBase'
+            - type: object
+              properties: 
+                email: 
+                  type: string
+                  example: "rodion_raskolnikov@bink.com"
+                address_1:
+                  type: string
+                  example: "2 Queens Square (2nd Floor)"
+                address_2:
+                  type: string
+                  example: "Lyndhurst road"
+                town_city:
+                  type: string
+                  example: "Ascot"
+                county:
+                  type: string
+                  example: "Berkshire"
+                record_uid: 
+                  type: string
+                  example: "x99vrke74gx9xxxx2r3nyyy38zo1dq0l"
+                message_uid: 
+                  type: string
+                  example: "84g62098-9999-46fb-b5df-c611f452ec65"
+                country:
+                  type: string
+                  example: 'GB'
+                callback_url:
+                  type: 
+                    string
+                  example: "https://api.bink.com/join/merchant/acme-bonus-card"
+                marketing_opt_in:
+                  type: 
+                    string
+                  example: true
+                marketing_opt_in_thirdparty: 
+                  type: 
+                    string
+                  example: false
+                merchant_scheme_id1: 
+                  type: 
+                    string
+                  example: "omzv1jol37dr8ngv5jpnpq4y20ke5x9g"
+                merchant_scheme_id2: 
+                  type: string
+                  example: null
+                dob: 
+                  type: string
+                  format: date
+                  example: "1987-09-07"
+                phone1: 
+                  type: number
+                  example: 07468195250    
+    JoinResponse:
+      allOf:
+        - $ref: '#/components/schemas/JoinResponseJSON'
+        - $ref: '#/components/schemas/MetaData'     
+    JoinResponseJSON:    
+      type: object
+      properties:
+        json: 
+          type: object
+          allOf: 
+            - $ref: '#/components/schemas/JSONBase'
+            - type: object
+              properties:
+                card_number: 
+                  type: string
+                  example: "74430411306609487047"
+                barcode:
+                  type: string
+                  example: "744304113066094870475635"
+                error_codes:
+                  type: array
+                  items: 
+                    $ref: '#/components/schemas/ErrorCode'
+            - $ref: '#/components/schemas/MerchantSchemeIDBase'    
+    Transaction:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          example: "2019-09-26T07:52:03"
+        reference:
+          type: string
+          example: "CREDIT"
+        value:
+          type: number
+          format: double
+          example: 14.99
+        unit: 
+          type: string
+          example: "GBP"
+    ValidationRequest:
+      allOf:
+        - $ref: '#/components/schemas/ValidationRequestJSON'
+        - $ref: '#/components/schemas/MetaData'      
+    ValidationRequestJSON: 
+      type: object
+      properties:
+        json: 
+          type: object
+          allOf: 
+            - $ref: '#/components/schemas/JSONBase'
+            - type: object
+              properties:
+                card_number: 
+                  type: string
+                  example: "74430411306609487047"
+                callback_url:
+                  type: string
+                  example: "https://api.bink.com/join/merchant/acme-bonus-card"
+                error_codes:
+                  type: array
+                  items: 
+                    $ref: '#/components/schemas/ErrorCode'
+            - $ref: '#/components/schemas/MerchantSchemeIDBase'        
+    ValidationResponse: 
+      allOf: 
+        - $ref: '#/components/schemas/ValidationResponseJSON'
+        - $ref: '#/components/schemas/MetaData'      
+    ValidationResponseJSON: 
+      type: object
+      properties:
+        json: 
+          type: object
+          allOf: 
+            - $ref: '#/components/schemas/JSONBase'
+            - type: object
+              properties:
+                card_number: 
+                  type: string
+                  example: "74430411306609487047"
+                barcode:
+                  type: string
+                  example: "744304113066094870470958"
+                balance: 
+                  type: number
+                  format: double
+                  example: 15.0
+                unit: 
+                  type: string
+                  example: "GBP"
+                alt_balance: 
+                  type: number
+                  format: double
+                  example: 15.0
+                error_codes:
+                  type: array
+                  items: 
+                    $ref: '#/components/schemas/ErrorCode'
+            - $ref: '#/components/schemas/MerchantSchemeIDBase'        
+    ErrorCode:
+      type: object
+      properties: 
+        code: 
+          type: string
+          example: "E1"
+        description: 
+          type: string
+          example: "Invalid post code"
+    MerchantSchemeIDBase:
+      type: object
+      properties: 
+        merchant_scheme_id1: 
+          type: string
+          example: "Zhguj2jlqWhbLPc4VhPL"
+        merchant_scheme_id2: 
+          type: string
+          example: "JOJyW1xM"
+    MetaData:
+      type: object
+      properties: 
+        record_uid: 
+          type: string
+          example: "x99vrke74gx9xxxx2r3nyyy38zo1dq0l"
+        message_uid: 
+          type: string
+          example: "84g62098-9999-46fb-b5df-c611f452ec65"
+        merchant_id: 
+          type: string
+          example: "iceland-bonus-card"
+        handler_type:  
+          type: array
+          items: 
+            type: number
+            format: integer
+            example: 1
+        integration_service:
+          type: string
+          example: "ASYNC"
+        direction: 
+          type: string
+          example: "OUTBOUND"
+        expiry_date: 
+          type: string
+          format: date
+          example: "2021-01-24 13:23:20"
+        contains_errors: 
+          type: boolean
+          example: false
+    JSONBase:
+      type: object
+      properties: 
+        record_uid: 
+          type: string
+          example: "x99vrke74gx9xxxx2r3nyyy38zo1dq0l"
+        message_uid: 
+          type: string
+          example: "84g62098-9999-46fb-b5df-c611f452ec65"

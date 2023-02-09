@@ -1,0 +1,174 @@
+openapi: 3.0.0
+info:
+  version: '1'
+  title: 'Metis Internal API '
+  description: ''
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Bink_API/Metis_Internal_API/1
+paths:
+  '/visa/activate/':
+    post: 
+      tags: 
+        - visa_activate
+      summary: 'API call from Bink to Visa Offers to activate transaction feed for a merchant'
+      operationId: 'POST_visa_activate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VOPActivateRequest'
+        description: Payment Card
+      responses: 
+        '200': 
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VOPActivateResponse'
+        '400':
+          description: Bad request
+  '/visa/deactivate/':
+    post: 
+      tags: 
+        - visa_deactivate
+      summary: 'API call from Bink to Visa Offers to deactivate transaction feed for a merchant'
+      operationId: 'POST_visa_deactivate'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VOPDeactivateRequest'
+        description: Payment Card
+      responses: 
+        '200': 
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VOPDeactivateResponse'
+        '400':
+          description: Bad request          
+  '/payment_service/payment_card':
+    delete:
+      tags:
+        - delete_payment_cards
+      summary: Delete a payment card 
+      operationId: DELETE /payment_service/payment_card
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Request parameters not complete
+    post:
+      tags:
+        - payment_cards
+      summary: Add a Payment card
+      operationId: POST /payment_service/payment_card
+      description: "Request to create a payment card"
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Retain unsuccessful
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCardRequest'
+        description: Payment Card
+  '/payment_service/payment_card/update': 
+    post: 
+      tags:
+        - update_payment_cards
+      summary: Update a payment card 
+      operationId: PUT /payment_service/payment_card/update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCardRequest'
+        description: Payment Card
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request
+        '401':
+          description: Not authorised
+        '403':
+          description: Forbidden
+        '404':
+          description: Not found    
+components:
+  schemas:
+    PaymentCardRequest:
+      type: object
+      properties:
+        payment_token:
+          type: string
+          example: 'KX9X9iuw0ux9x9x9x9BU4GSAxot'
+        card_token:
+          type: string
+          example: 'KX9X9iuw0ux9x9x9x9BU4GSAxot'          
+        partner_slug:
+          type: string
+          example: 'visa'
+        id:
+          type: integer
+          example: 69502
+        date:
+          type: integer
+          example: 1610468769
+    VOPActivateRequest:
+      type: object
+      properties:
+        payment_token:
+          type: string
+          example: 'KX9X9iuw0ux9x9x9x9BU4GSAxot'
+        partner_slug:
+          type: string
+          example: 'visa'
+        merchant_slug:
+          type: string
+          example: 'HarveyNichols'
+        id:   
+          type: integer
+          example: 69502
+    VOPActivateResponse:
+      type: object
+      properties:
+        response_status: 
+          type: string
+        agent_response_code: 
+          type: string
+        agent_response_message: 
+          type: string
+        activation_id: 
+          type: string
+          example: "88395654-0b8a-4f2d-9046-2b8669f76bd2"
+    VOPDeactivateRequest:
+      type: object
+      properties:
+        payment_token:
+          type: string
+          example: 'KX9X9iuw0ux9x9x9x9BU4GSAxot'
+        partner_slug: 
+          type: string
+          example: 'visa'
+        activation_id: 
+          type: string
+          example: "88395654-0b8a-4f2d-9046-2b8669f76bd2"
+        id: 
+          type: integer
+          example: 123345
+    VOPDeactivateResponse:
+      type: object
+      properties:
+        response_status: 
+          type: string
+        agent_response_code: 
+          type: string
+        agent_response_message: 
+          type: string
