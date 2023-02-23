@@ -34,12 +34,9 @@ jobs:
           registry: binkcore.azurecr.io
           username: binkcore
           password: ${{ secrets.ACR_BINKCORE_PASSWORD }}
-      - uses: docker/setup-qemu-action@v2
-      - uses: docker/setup-buildx-action@v2
       - uses: docker/build-push-action@v4
         with:
           push: true
-          platforms: linux/amd64, linux/arm64
           tags: |
             binkcore.azurecr.io/docs:${{ env.container_tag }}
             binkcore.azurecr.io/docs:latest
