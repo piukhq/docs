@@ -43,4 +43,4 @@ WORKDIR /app
 COPY --from=poetry /src/dist/*whl /src/app/config.toml ./
 RUN pip install *.whl && rm *.whl
 COPY --from=redoc /output .
-RUN ["docs", "serve"]
+CMD ["docs", "serve"]
