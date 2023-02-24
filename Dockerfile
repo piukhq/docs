@@ -9,7 +9,8 @@ RUN mkdir -p \
     /output/apiv1 \
     /output/apiv2 \
     /output/bpl \
-    /output/portal
+    /output/portal \
+    /output/extras
 
 # APIv1
 RUN redoc-cli build apiv1/1.2.yaml --output /output/apiv1/1.2.html
@@ -20,8 +21,8 @@ RUN redoc-cli build apiv2/dev.yaml --output /output/apiv2/dev.html
 RUN redoc-cli build apiv2/staging.yaml --output /output/apiv2/staging.html
 RUN redoc-cli build apiv2/sandbox-retail.yaml --output /output/apiv2/sandbox-retail.html
 RUN redoc-cli build apiv2/sandbox-banking.yaml --output /output/apiv2/sandbox-banking.html
-RUN mv apiv2/appendix.html /output/apiv2/appendix.html
-RUN mv apiv2/changelog.html /output/apiv2/changelog.html
+RUN mv extras/appendix.html /output/extras/appendix.html
+RUN mv extras/changelog.html /output/extras/changelog.html
 
 # BPL
 RUN redoc-cli build bpl/deploy.yaml --output /output/bpl/index.html

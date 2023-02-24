@@ -14,8 +14,8 @@ info:
     <br><br>
     Document links:
     <ul>
-      <li>[Version History](changelog.html)</li>
-      <li>[Appendix](appendix.html)</li>
+      <li>[Version History](extras/changelog)</li>
+      <li>[Appendix](extras/appendix)</li>
     </ul>"
   contact:
     email: mmorar@bink.com
