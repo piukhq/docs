@@ -10,6 +10,7 @@ RUN mkdir -p \
     /output/apiv2 \
     /output/bpl \
     /output/portal \
+    /output/merchant \
     /output/extras
 
 # APIv1
@@ -30,6 +31,8 @@ RUN redoc-cli build bpl/deploy.yaml --output /output/bpl/index.html
 # Portal
 RUN redoc-cli build portal/api.yaml --output /output/portal/index.html
 
+# Retail Transaction API 
+RUN redoc-cli build merchant/retail_transaction_api.yaml --output /output/merchant/retail_transaction_api.html
 
 ###################################################
 ### DevOps owned, do not modify below this line ###
