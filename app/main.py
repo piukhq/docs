@@ -27,6 +27,7 @@ class DocsServer:
         return JSONResponse({"routes": list(config["routes"].keys())})
 
     def docs(self, path: str) -> FileResponse:
+        path = path.rstrip("/")
         if path not in config["routes"]:
             raise HTTPException(status_code=404, detail="Path not found")
         return FileResponse(f"/app/{config['routes'][path]}")
