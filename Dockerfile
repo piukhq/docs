@@ -11,6 +11,7 @@ RUN mkdir -p \
     /output/bpl \
     /output/portal \
     /output/merchant \
+    /output/merchant/async \
     /output/extras
 
 # APIv1
@@ -33,6 +34,16 @@ RUN redoc-cli build portal/api.yaml --output /output/portal/index.html
 
 # Retail Transaction API 
 RUN redoc-cli build merchant/retail_transaction_api.yaml --output /output/merchant/retail_transaction_api.html
+
+# Async API specifications
+ARG PUPPETEER_SKIP_DOWNLOAD=true
+RUN npm install -g @asyncapi/cli
+RUN npm install -g @asyncapi/html-template
+
+RUN asyncapi generate fromTemplate merchant/async/midas_internal.yaml @asyncapi/html-template -o /output/merchant/async
+RUN sed -i 's/js\//\/app\/merchant\/async\/js\//g' /output/merchant/async/index.html
+RUN sed -i 's/css\//\/app\/merchant\/async\/css\//g' /output/merchant/async/index.html
+
 
 ###################################################
 ### DevOps owned, do not modify below this line ###

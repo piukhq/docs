@@ -1,0 +1,126 @@
+asyncapi: '2.4.0'
+info:
+  title: Midas Internal API
+  version: '1.0.0'
+  description: |
+    MIDAS operations via message queue
+
+    ### Supports the following messages
+
+    * Join Loyalty Plan
+    * Add or Register a Loyalty Card
+    * Request balance and transaction history 
+servers:
+  staging:
+    url: guest:guest@rabbitmq:5672
+    protocol: amqp
+    description: staging broker
+defaultContentType: application/json
+channels:
+  loyalty.join.application:  
+    description: Message queue for Join requests
+    subscribe:
+      message:
+        $ref: '#/components/messages/JoinRequest'
+  authentication.application:
+    description: Message queue for authenticating a Loyalty Card
+    subscribe:
+      message:
+        $ref: '#/components/messages/AuthenticateLoyaltyCard'
+  loyalty_account.retrieve:
+    description: Message queue for loyalty account update requests
+    subscribe:
+      message:
+        $ref: '#/components/messages/RetrieveLoyaltyAccount'
+components:
+  messages:  
+    JoinRequest:
+      name: Join Request
+      title: Join Request 
+      summary: Request to join a particular Loyalty Plan
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/OptionalMetadata'
+          - type: object
+            properties:
+              join_data:
+                type: object
+                description: "The set of data required by the loyalty program in order to successfully process a Join Application."  
+                example:
+                  - encrypted_credentials: 'encrypted_data_here'
+    AuthenticateLoyaltyCard:
+      name: Authenticate Loyalty Account
+      title: Authenticate Loyalty Account
+      summary: Authenticate a Loyalty for the purpose of adding it to a Bink wallet
+      payload:
+        allOf:     
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/OptionalMetadata'
+          - type: object
+            properties:
+              authentication_data:
+                type: object
+                description: "The set of data required by the loyalty program in order to successfully process a Join Application."  
+                example: 
+                  - card_number: "1048169989"
+                  - email: "binktestuser7@wasabi.com"
+    RetrieveLoyaltyAccount:
+      name: Retrieve Loyalty Account
+      title: Retrieve Loyalty Account
+      summary: Refresh the loyalty account with the most recent data from the Loyalty Provider          
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/OptionalMetadata'
+          - type: object
+            properties:
+              system_account_id: 
+                type: string
+                description: "An identifier known to the Loyalty Provider that can be used with their system to get information about the Loyalty Account. This identifier is immutable."
+                example: "2900001"
+              auth_credentials:
+                type: object
+                description: "Provided only if a system_account_id is not sufficient to retrieve the Loyalty Account with the Loyalty Provider. Auth credentials is the set of data that needs to be passed to the Loyalty Provider in order to gain access to the Loyalty Account."
+                example:
+                  - username: "smithbink" 
+                  - password: "WvN+8sKdghZFIHVTaYFI9rFqcypZMOiCIfI6yKJqX3t/GF8V2AFEDFV9iH59fuvQAz4+" 
+  schemas:
+    Metadata: 
+      type: object 
+      properties:
+        type: 
+          description: "The event type identifier, used for event subscriptions and routing"
+          type: string
+          example: "loyalty_account.retrieve"
+        channel: 
+          type: string
+          description: "The identifier for the Channel through which the Join application was initiated."
+          example: "com.barclays.bmb"
+        request_id:
+          type: string
+          description: "The client’s identifier for the Join application request"
+          example: "53568"
+        loyalty_plan:
+          type: string
+          description: "The Loyalty Plan 'slug' to which the Join application applies"          
+          example: "bpl-trenette"
+    OptionalMetadata:
+      type: object  
+      properties:
+        transaction_id:
+          type: string
+          description: "An end-to-end tracing identifier for requests through Bink services."
+        bink_user_id:
+          type: string
+          description: "The Bink User ID for user that initiatied this Join application."             
+        account_id:
+          type: string
+          description: "An identifier that a Consumer can use to uniquely identify a Loyalty Account within a Loyalty Plan."
+  messageTraits:
+    commonHeaders:
+      headers:
+        allOf: 
+         - ref: '#/components/schemas/Metadata'
+         - ref: '#/components/schemas/OptionalMetadata'
+
