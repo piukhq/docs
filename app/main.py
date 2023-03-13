@@ -35,8 +35,8 @@ class DocsServer:
 
 
 app = FastAPI()
-server = DocsServer()
-app.include_router(server.router)
 for path in config["routes"]:
     directory = "/".join(config["routes"][path].rsplit("/")[:-1])
-    app.mount("/" + path, StaticFiles(directory=directory), path)
+    app.mount("/" + directory, StaticFiles(directory=directory), directory)
+server = DocsServer()
+app.include_router(server.router)

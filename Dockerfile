@@ -41,6 +41,8 @@ RUN npm install -g @asyncapi/cli
 RUN npm install -g @asyncapi/html-template
 
 RUN asyncapi generate fromTemplate merchant/async/midas_internal.yaml @asyncapi/html-template -o /output/merchant/async
+RUN sed -i 's/js\//\/merchant\/async\/js\//g' /output/merchant/async/index.html
+RUN sed -i 's/css\//\/merchant\/async\/css\//g' /output/merchant/async/index.html
 
 
 ###################################################
