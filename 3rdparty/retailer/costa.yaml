@@ -1,0 +1,398 @@
+openapi: 3.0.0
+info:
+  description: "Costa Coffee's Loyalty API"
+  version: "1.0.0"
+  title: "Costa API"
+  contact:
+    email: mmorar@bink.com
+paths:
+  /accounts:
+    post:
+      tags:
+        - accounts
+      summary: Creates a new Costa account 
+      operationId: POST /accounts
+      requestBody:
+        content:
+          application/json:
+            schema:      
+              $ref: '#/components/schemas/PostAccountRequest'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostAccountResponse'
+        '401':
+          description: unauthorised 
+        '503':
+          description: 'Service unavailable'
+components:
+  schemas:
+    PostAccountRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: abd@someemail.com
+        title:
+          type: string
+          example: Mrs
+        firstName:
+          type: string
+          example: Abc
+        middleName:
+          type: string
+          example: ""
+        lastName:
+          type: string
+          example: Abc
+        gender:
+          type: string
+          enum: [male, female, other]
+          example: female
+        dateOfBirth:
+          type: string
+          format: date
+          example: "1935-05-10"
+        streetAddress1:
+          type: string
+          example: "8 - Gold Place"
+        streetAddress2:
+          type: string
+          example: ""
+        city:
+          type: string
+          example: Sincity
+        province:
+          type: string
+          example: ""
+        county:
+          type: string
+          example: East Sussex
+        country:
+          type: string
+          pattern: "^[A-Z]{2}$"
+          example: GB
+        postalCode:
+          type: string
+          example: "AA66 3PP"
+        telephone:
+          type: string
+          example: "01273 123456"
+        username:
+          type: string
+          example: abc@someemail.com
+        password:
+          type: string
+          example: password
+        storeCode:
+          type: string
+          example: "43043725"
+        mobilePhone:
+          type: string
+          example: "01234567890"
+        company:
+          type: string
+          example: ""
+        channelType:
+          type: string
+          enum: [W, M, S]
+          example: M
+        cards:
+          type: array
+          items:
+            type: object
+            properties:
+              contentType:
+                type: string
+                example: application/json
+              content:
+                type: object
+                properties:
+                  givexNumber:
+                    type: string
+                    example: "1234567890123456789"
+        mktingOptedin:
+          type: boolean
+          example: true
+        mktingOptinPopupDisplayed:
+          type: boolean
+          example: true
+        termsAndConditionsAccepted:
+          type: boolean
+          example: true
+        promoterCode:
+          type: string
+          example: RAF1234
+    PostAccountResponse: 
+      type: object
+      properties:
+        account:
+          type: object
+          properties:
+            href:
+              type: string
+              example: /accounts/ramreddy.settypalli@gmail.com/
+            contentType:
+              type: string
+              example: application/x-www-form-urlencoded
+            content:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: ramreddy.settypalli@gmail.com
+                title:
+                  type: string
+                  example: Mr
+                firstName:
+                  type: string
+                  example: boston
+                middleName:
+                  type: string
+                  example: asfa
+                lastName:
+                  type: string
+                  example: dsd
+                company:
+                  type: string
+                  example: ''
+                gender:
+                  type: string
+                  example: M
+                dateOfBirth:
+                  type: string
+                  format: date
+                  example: '1990-09-25'
+                streetAddress1:
+                  type: string
+                  example: asdsdd
+                streetAddress2:
+                  type: string
+                  example: null
+                city:
+                  type: string
+                  example: a
+                province:
+                  type: string
+                  example: null
+                county:
+                  type: string
+                  example: GB-ESX
+                country:
+                  type: string
+                  example: GB
+                postalCode:
+                  type: string
+                  example: a
+                telephone:
+                  type: string
+                  example: '2423'
+                mobilePhone:
+                  type: string
+                  example: '81092929292'
+                email:
+                  type: string
+                  example: ramreddy.settypalli@gmail.com
+                mktingOptedin:
+                  type: boolean
+                  example: true
+                permissionSMS:
+                  type: boolean
+                  example: false
+                permissionEmail:
+                  type: boolean
+                  example: true
+                permissionPost:
+                  type: boolean
+                  example: true
+                permissionPhone:
+                  type: boolean
+                  example: false
+                permissionMobile:
+                  type: boolean
+                  example: true
+                permissionPush:
+                  type: boolean
+                  example: false
+                permissionTwitter:
+                  type: boolean
+                  example: false
+                permissionFacebook:
+                  type: boolean
+                  example: false
+                permissionSurvey:
+                  type: boolean
+                  example: true
+                permissionProfiling:
+                  type: boolean
+                  example: true
+                permissionAttr1:
+                  type: boolean
+                  example: true
+                permissionAttr2:
+                  type: boolean
+                  example: false
+                permissionAttr3:
+                  type: boolean
+                  example: false
+                permissionAttr4:
+                  type: boolean
+                  example: false
+                permissionAttr5:
+                  type: boolean
+                  example: false
+                permissionAttr6:
+                  type: boolean
+                  example: false
+                permissionAttr7:
+                  type: boolean
+                  example: false
+                permissionAttr8:
+                  type: boolean
+                  example: false
+                permissionAttr9:
+                  type: boolean
+                  example: true
+                permissionAttr10:
+                  type: boolean
+                  example: true
+                promoterCode:
+                  type: string
+                  example: RAF1234
+                beansSequence:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - GREEN_BEAN
+                      - STAND_BEAN
+                      - PROMO_BEAN
+                    example:
+                      - GREEN_BEAN
+                      - GREEN_BEAN
+                      - GREEN_BEAN
+                      - STAND_BEAN
+                      - STAND_BEAN
+                      - PROMO_BEAN
+                isBeansEnabled:
+                  type: boolean
+                  example: true
+                cards:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      href:
+                        type: string
+                        example: https://loyalty-testing.eu.cloudhub.io/cards/6337805691010200028423
+                      contentType:
+                        type: string
+                        example: application/x-www-form-urlencoded
+                      content:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: 6337805691010200028423
+                          cardISO:
+                            type: integer
+                            example: 633780
+                          serialNumber:
+                            type: integer
+                            example: 1020002842
+                          cardNumber:
+                            type: string
+                            example: "6337805691010200028423"
+                          givexNumber:
+                            type: string
+                            example: "6337805691010200028423"
+                          status:
+                            type: string
+                            example: active
+                          description:
+                            type: string
+                            example: Costa Pay
+                          currency:
+                            type: string
+                            example: GBP
+                          certificateBalance:
+                            type: integer
+                            example: 0
+                          pointsBalance:
+                            type: integer
+                            example: 1655
+                          pointsValueGBP:
+                            type: integer
+                            example: 1655
+                          type:
+                            type: string
+                            example: digital
+                          preferred:
+                            type: boolean
+                            example: true
+                          groups:
+                            type: array
+                            items:
+                              type: string
+                              example: Collect enabled
+        token:  
+          type: object
+          properties:   
+            href:
+              type: string
+              description: The URL to the token resource
+              example: "/tokens/45C33E7B-878C-49C6-9038-20A880E8E34F/"
+            contentType:
+              type: string
+              description: The content type of the token
+              example: "application/x-www-form-urlencoded"
+            content:
+              type: object
+              properties:
+                value:
+                  type: string
+                  description: The value of the token
+                  example: "AQECAHiACBgFPsYPLHvnK54qxgBne25IYm1azaJ1e55xlak"
+                refreshAfter:
+                  type: string
+                  format: date-time
+                  description: The date and time after which the token must be refreshed
+                  example: "2018-08-31T19:11:48+0000"
+                refreshAction:
+                  type: object
+                  description: The action to take to refresh the token
+                  properties:
+                    href:
+                      type: string
+                      description: The URL to the refresh action
+                      example: "https://loyalty-testing.eu.cloudhub.io/authenticate/refresh"
+                    type:
+                      type: string
+                      description: The content type of the refresh action
+                      example: "application/x-www-form-urlencoded"
+                    method:
+                      type: string
+                      description: The HTTP method used for the refresh action
+                      example: "POST"
+                    inputs:
+                      type: array
+                      description: The inputs required for the refresh action
+                      items:
+                        type: object
+                        properties:
+                          name: 
+                            type: string 
+                            example: 'token'
+                          type:  
+                            type: string
+                            example: 'text'
+                          required:
+                            type: boolean
+                            example: true
+                          label: 
+                            type: string
+                            example: Token

@@ -4,11 +4,10 @@ info:
   version: '1.0.0'
   description: |
     MIDAS operations via message queue
-
     ### Supports the following messages
-
     * Join Loyalty Plan
-    * Add or Register a Loyalty Card
+    * Add a Loyalty Card
+    * Register a Loyalty Card
     * Request balance and transaction history 
 servers:
   staging:
@@ -21,12 +20,17 @@ channels:
     description: Message queue for Join requests
     subscribe:
       message:
-        $ref: '#/components/messages/JoinRequest'
+        $ref: '#/components/messages/MidasRequest'
   authentication.application:
     description: Message queue for authenticating a Loyalty Card
     subscribe:
       message:
-        $ref: '#/components/messages/AuthenticateLoyaltyCard'
+        $ref: '#/components/messages/MidasRequest'
+  loyalty_account.register.application:      
+    description: Message queue for authenticating a Loyalty Card
+    subscribe:
+      message:
+        $ref: '#/components/messages/MidasRequest'  
   loyalty_account.retrieve:
     description: Message queue for loyalty account update requests
     subscribe:
@@ -34,37 +38,20 @@ channels:
         $ref: '#/components/messages/RetrieveLoyaltyAccount'
 components:
   messages:  
-    JoinRequest:
-      name: Join Request
-      title: Join Request 
-      summary: Request to join a particular Loyalty Plan
+    MidasRequest:
+      name: Join / Add / Register Request
+      title: Join / Add / Register Request
+      summary: Request to join a Loyalty Plan or register or add a card for that plan. 
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
-          - $ref: '#/components/schemas/OptionalMetadata'
           - type: object
             properties:
-              join_data:
+              encrypted_credentials:
                 type: object
-                description: "The set of data required by the loyalty program in order to successfully process a Join Application."  
+                description: "Dictionary of credentials / journey fields converted to a string and encrypted with AES."
                 example:
-                  - encrypted_credentials: 'encrypted_data_here'
-    AuthenticateLoyaltyCard:
-      name: Authenticate Loyalty Account
-      title: Authenticate Loyalty Account
-      summary: Authenticate a Loyalty for the purpose of adding it to a Bink wallet
-      payload:
-        allOf:     
-          - $ref: '#/components/schemas/Metadata'
-          - $ref: '#/components/schemas/OptionalMetadata'
-          - type: object
-            properties:
-              authentication_data:
-                type: object
-                description: "The set of data required by the loyalty program in order to successfully process a Join Application."  
-                example: 
-                  - card_number: "1048169989"
-                  - email: "binktestuser7@wasabi.com"
+                  "53022cf12c5959ddf3e733128930dd3d52e3ea" 
     RetrieveLoyaltyAccount:
       name: Retrieve Loyalty Account
       title: Retrieve Loyalty Account
@@ -72,21 +59,23 @@ components:
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
-          - $ref: '#/components/schemas/OptionalMetadata'
           - type: object
             properties:
               system_account_id: 
                 type: string
                 description: "An identifier known to the Loyalty Provider that can be used with their system to get information about the Loyalty Account. This identifier is immutable."
                 example: "2900001"
-              auth_credentials:
+              encrypted_credentials:
                 type: object
-                description: "Provided only if a system_account_id is not sufficient to retrieve the Loyalty Account with the Loyalty Provider. Auth credentials is the set of data that needs to be passed to the Loyalty Provider in order to gain access to the Loyalty Account."
+                description: "Dictionary of credentials / journey fields converted to a string and encrypted with AES."
                 example:
-                  - username: "smithbink" 
-                  - password: "WvN+8sKdghZFIHVTaYFI9rFqcypZMOiCIfI6yKJqX3t/GF8V2AFEDFV9iH59fuvQAz4+" 
+                  "53022cf12c5959ddf3e733128930dd3d52e3ea"  
   schemas:
     Metadata: 
+      allOf:
+         - $ref: '#/components/schemas/RequiredMetadata'
+         - $ref: '#/components/schemas/OptionalMetadata'
+    RequiredMetadata: 
       type: object 
       properties:
         type: 
@@ -117,10 +106,3 @@ components:
         account_id:
           type: string
           description: "An identifier that a Consumer can use to uniquely identify a Loyalty Account within a Loyalty Plan."
-  messageTraits:
-    commonHeaders:
-      headers:
-        allOf: 
-         - ref: '#/components/schemas/Metadata'
-         - ref: '#/components/schemas/OptionalMetadata'
-
