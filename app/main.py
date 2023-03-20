@@ -2,6 +2,7 @@ import tomllib
 
 from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.responses import FileResponse
 
 with open("config.toml", "rb") as f:
@@ -34,5 +35,8 @@ class DocsServer:
 
 
 app = FastAPI()
+for path in config["routes"]:
+    directory = "/".join(config["routes"][path].rsplit("/")[:-1])
+    app.mount("/" + directory, StaticFiles(directory=directory), directory)
 server = DocsServer()
 app.include_router(server.router)

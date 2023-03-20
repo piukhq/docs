@@ -368,7 +368,7 @@ paths:
         '201':
           description: Created, returns the created Merchant
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Merchant'
         '400': 
@@ -399,7 +399,7 @@ paths:
         '200':
           description: Ok
           content:
-            aplication/json:
+            application/json:
               schema:
                 type: array
                 description: the list of Merchants that are associated with the Plan
@@ -426,7 +426,7 @@ paths:
         '200':
           description: Success, returns the updated Merchant
           content:
-            aplication/json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Merchant'
         '403':
@@ -489,6 +489,7 @@ paths:
                 - merchant_ref
                 - plan_metadata
                 - merchant_metadata
+                - merchant_counts
                 properties:
                   merchant_ref:
                     $ref: 'components.yaml#/components/schemas/RefModel'
@@ -498,6 +499,8 @@ paths:
                     $ref: '#/components/schemas/PlanMetaData'
                   merchant_metadata:
                     $ref: '#/components/schemas/MerchantMetaData'
+                  merchant_counts:
+                    $ref: '#/components/schemas/MerchantCounts'
         '403':
           description: unauthorised
         '404': 
@@ -526,7 +529,7 @@ paths:
                     description: the total number of locations, for the Merchant
                   mids_count:
                     type: integer
-                    description: the total number of MIDs for the Merhcant
+                    description: the total number of MIDs for the Merchant
         '403':
           description: unauthorised
         '404': 
@@ -2594,11 +2597,15 @@ components:
       description: the counts associated with a Merchant that is displayed as part of the Merchant list on the Plan Details Page
       required:
         - locations
+        - sub_locations
         - payment_scheme_counts
       properties:
         locations:
           type: integer
           description: the total number of locations, for the Merchant
+        sub_locations:
+          type: integer
+          description: the total number of sub-locations for the Merchant
         payment_schemes:
           $ref: '#/components/schemas/PaymentSchemeCounts'
     MIDLink:
@@ -2865,18 +2872,32 @@ components:
       items:
         type: object
         properties:
-          scheme_slug:
+          slug:
             $ref: 'components.yaml#/components/schemas/PaymentSchemeSlug'
-          count:
+          mids:
             type: integer
             description: the number of mids loaded for the scheme
+          secondary_mids:
+            type: integer
+            description: the number of secondary mids loaded for the scheme
+          psimis:
+            type: integer
+            description: the number of psimis loaded for the scheme
+
       example:
-        - scheme_slug: visa
-          count: 1
-        - scheme_slug: mastercard
-          count: 2
-        - scheme_slug: amex
-          count: 1
+        - slug: visa
+          mids: 1
+          secondary_mids: 1
+          psimis: 1
+        - slug: mastercard
+          mids: 1
+          secondary_mids: 2
+          psimis: 3
+        - slug: amex
+          mids: 1
+          secondary_mids: null
+          psimis: null
+       
     UserLookup:
       type: object
       properties:
