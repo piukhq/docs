@@ -156,24 +156,15 @@ components:
       required:
         - error_message
         - error_slug
-        - fields
       properties:
         error_message:
           type: string
           description: 'Error message that could be displayed to a user.'
-          example: 'Could not validate fields'
+          example: 'Invalid JSON'
         error_slug:
           type: string
           description: 'Human-readable identifier that is easy to code against.'
-          example: 'FIELD_VALIDATION_ERROR'
-        fields:
-          description: 'List of fields that failed validation.'
-          type: array
-          items:
-            type: string
-          example:
-            - "expected str for dictionary value @ data['payment_card_first_six']"
-            - "required key not provided @ data['auth_code']"
+          example: 'MALFORMED_REQUEST'
   securitySchemes:
     ApiKeyAuth:      
       type: apiKey

@@ -3,9 +3,37 @@ info:
   description: "Costa Coffee's Loyalty API"
   version: "1.0.0"
   title: "Costa API"
-  contact:
-    email: mmorar@bink.com
 paths:
+  /authenticate:
+    post:
+      tags:
+        - authenticate
+      summary: Login API provides the authentication functionality.
+      operationId: POST /authenticate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthenticateRequest'
+      responses:
+        '200':
+          description: ok
+          content:  
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericresponse400'
+        '401':
+          description: 'Unauthorised'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericresponse401'                
   /accounts:
     post:
       tags:
@@ -20,16 +48,186 @@ paths:
       responses:
         '200':
           description: ok
+          content:  
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '400':
+          description: 'Bad request'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PostAccountResponse'
+                $ref: '#/components/schemas/genericresponse400'
+              example:
+                - error_code: 'REGN001'
+                - description: "The 'email' field is required"  
+        '422':
+          description: 'Unprocessable content'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericresponse422'
+  /vouchers:
+    get:
+      security:
+        - bearerAuth: []
+      tags:
+        - vouchers
+      summary: Retrieves the list of vouchers assigned to the customer’s account
+      operationId: GET /vouchers
+      parameters:
+       - in: query
+         name: offset
+         description: "offset items number"
+         required: false
+         schema:
+           type: integer          
+       - in: query
+         name: limit
+         description: "limit returned items"
+         required: false
+         schema:
+           type: integer
+       - in: query
+         name: statuses
+         description: "Voucher statuses, if not provided all statuses are returned"
+         required: false
+         schema:
+           type: array
+           items:
+            type: string
+            enum: 
+               - I 
+               - E 
+               - C 
+               - U 
+       - in: query
+         name: expiryDateFrom
+         description: "From Expiry Date"
+         required: false
+         schema:
+           type: string
+           format: date
+       - in: query
+         name: expiryDateTo
+         description: "To Expiry Date"
+         required: false
+         schema:
+           type: string
+           format: date           
+       - in: query
+         name: category
+         description: "Voucher category"
+         required: false
+         schema:
+           type: string
+           enum: 
+            - D
+            - DVAT
+            - R
+       - in: query
+         name: locationCode
+         description: "Store code that the voucher availability should be checked against. "
+         required: false
+         schema:
+           type: string
+           format: date
+       - in: query
+         name: shareable
+         description: "If true will only return shareable vouchers"
+         required: false
+         schema:
+           type: boolean
+       - in: query
+         name: shared
+         description: "If true will only return shared vouchers"
+         required: false
+         schema:
+           type: boolean      
+       - in: header
+         name: X-COSTA-LANG
+         description: "Language"
+         required: false
+         schema:
+           type: string
+           example: 'GBR'
+       - in: header
+         name: X-COSTA-COUNTRY
+         description: "Language"
+         required: false
+         schema:
+           type: string
+           example: 'GBR'
+       - in: header
+         name: X-COSTA-CHANNEL
+         description: "Language"
+         required: false
+         schema:
+           type: string
+           example: 'ENG'
+       - in: header
+         name: X-COSTA-TRANSACTION-ID
+         description: "Need to be generated internally and passed"
+         required: false
+         schema:
+           type: string
+           example: '1234-ABCD-5678-EFGH'                                 
+      responses:
+        '200':
+          description: ok
+          content:  
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+        '400':
+          description: 'Bad request'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericresponse400'
         '401':
-          description: unauthorised 
-        '503':
-          description: 'Service unavailable'
+          description: 'Unauthorised'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/genericresponse401'                          
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
+    AuthenticateRequest:
+      type: object 
+      properties:
+        username:
+          type: string
+          example: "sravanthi.pulavarthy@gmail.com"
+        password:
+          type: string
+          example: 
+        deviceIdentifier:
+          type: string
+          example: 
+        deviceDescription:
+          type: string
+          example: 
+        fcmToken:
+          type: string
+          example: 
+        operatingSystem:
+          type: string
+          example: 
+        osVersion:
+          type: string
+          example: 
+        appVersion:
+          type: string
+          example: 
+        device:
+          type: string
+          example: 
     PostAccountRequest:
       type: object
       properties:
@@ -127,7 +325,7 @@ components:
         promoterCode:
           type: string
           example: RAF1234
-    PostAccountResponse: 
+    GenericResponse: 
       type: object
       properties:
         account:
@@ -284,61 +482,7 @@ components:
                 cards:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      href:
-                        type: string
-                        example: https://loyalty-testing.eu.cloudhub.io/cards/6337805691010200028423
-                      contentType:
-                        type: string
-                        example: application/x-www-form-urlencoded
-                      content:
-                        type: object
-                        properties:
-                          id:
-                            type: string
-                            example: 6337805691010200028423
-                          cardISO:
-                            type: integer
-                            example: 633780
-                          serialNumber:
-                            type: integer
-                            example: 1020002842
-                          cardNumber:
-                            type: string
-                            example: "6337805691010200028423"
-                          givexNumber:
-                            type: string
-                            example: "6337805691010200028423"
-                          status:
-                            type: string
-                            example: active
-                          description:
-                            type: string
-                            example: Costa Pay
-                          currency:
-                            type: string
-                            example: GBP
-                          certificateBalance:
-                            type: integer
-                            example: 0
-                          pointsBalance:
-                            type: integer
-                            example: 1655
-                          pointsValueGBP:
-                            type: integer
-                            example: 1655
-                          type:
-                            type: string
-                            example: digital
-                          preferred:
-                            type: boolean
-                            example: true
-                          groups:
-                            type: array
-                            items:
-                              type: string
-                              example: Collect enabled
+                    $ref: '#/components/schemas/Card'
         token:  
           type: object
           properties:   
@@ -396,3 +540,121 @@ components:
                           label: 
                             type: string
                             example: Token
+    Card:
+      type: object
+      properties:
+        href:
+          type: string
+          example: https://loyalty-testing.eu.cloudhub.io/cards/6337805691010200028423
+        contentType:
+          type: string
+          example: application/x-www-form-urlencoded
+        content:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 6337805691010200028423
+            cardISO:
+              type: integer
+              example: 633780
+            serialNumber:
+              type: integer
+              example: 1020002842
+            cardNumber:
+              type: string
+              example: "6337805691010200028423"
+            givexNumber:
+              type: string
+              example: "6337805691010200028423"
+            status:
+              type: string
+              example: active
+            description:
+              type: string
+              example: Costa Pay
+            currency:
+              type: string
+              example: GBP
+            certificateBalance:
+              type: integer
+              example: 0
+            pointsBalance:
+              type: integer
+              example: 1655
+            pointsValueGBP:
+              type: integer
+              example: 1655
+            type:
+              type: string
+              example: digital
+            preferred:
+              type: boolean
+              example: true
+            groups:
+              type: array
+              items:
+                type: string
+                example: Collect enabled
+            lostAction: 
+              type: object
+              properties:
+                method: 
+                  type: string
+                  example: 'POST'
+                href:
+                  type: string
+                  example: "https://dm-api-services-t.eu.cloudhub.io/cards/6337802075910200025704/status/lost"
+                inputs: 
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name: 
+                        type: string
+                        example: newCardType
+                      required:
+                        type: boolean
+                        example: false
+    genericresponse400:
+      type: object
+      required:
+        - error_code
+        - description
+      properties:
+        error_code:
+          type: string
+          description: 'Error code'
+          example: 'AUTH004'
+        description:
+          type: string
+          description: 'Error message'
+          example: "The 'username' field is required"
+    genericresponse401:
+      type: object
+      required:
+        - error_code
+        - description
+      properties:
+        error_code:
+          type: string
+          description: 'Error code'
+          example: 'AUTH002'
+        description:
+          type: string
+          description: 'Error message'
+          example: "Invalid credentials"
+    genericresponse422:
+      type: object
+      required:
+        - error_code
+        - description
+      properties:
+        error_code:
+          type: string
+          description: 'Error code'
+          example: 'REGN087'
+        description:
+          type: string
+          description: 'Error message'
+          example: "The identifier used by another customer"
