@@ -49,7 +49,19 @@ paths:
                 No Refunds: 
                   value: Refunds not accepted
         '400':
-          $ref: '#/components/responses/Error400'
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              examples:
+                Invalid transaction datetime:
+                  value:
+                    display_message: Transaction dated before user join.
+                    code: INVALID_TX_DATE
+                Malformed Request:
+                  value:
+                    $ref: '#/components/responses/Error400/content/application~1json/example'
         '401': 
           $ref: '#/components/responses/Error401'
         '403':
