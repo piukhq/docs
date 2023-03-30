@@ -15,21 +15,21 @@ tags:
   - name: retailer_management
     description: endpoints related to the management and configuration of Retailers in BPL
   - name: campaign_management
-    description: endpoints related to the management and configuration of Campaigns in BPL 
+    description: endpoints related to the management and configuration of Campaigns in BPL
   - name: reward_management
     description: endpoints related to the management and configuration of Rewards in BPL
   - name: customer_management
     description: endpoints related to customer accounts in BPL
   - name: public
     description: endpoints that aare available publicly and do not require auth
-paths: 
+paths:
   /api/transactions/{retailer_slug}:
     post:
-      tags: 
+      tags:
         - transaction_processing
       operationId: POST /api/transactions/{retailer_slug}
       description: used to send transaction details to BPL
-      parameters:  
+      parameters:
         - $ref: '#/components/parameters/RetailerSlug'
       responses:
         '200':
@@ -44,9 +44,9 @@ paths:
                   value: Awarded
                 Did not qualify:
                   value: Earn threshold not met
-                Allows Refunds: 
+                Allows Refunds:
                   value: Refund accepted
-                No Refunds: 
+                No Refunds:
                   value: Refunds not accepted
         '400':
           description: bad request
@@ -62,7 +62,7 @@ paths:
                 Malformed Request:
                   value:
                     $ref: '#/components/responses/Error400/content/application~1json/example'
-        '401': 
+        '401':
           $ref: '#/components/responses/Error401'
         '403':
           $ref: '#/components/responses/Error403'
@@ -109,14 +109,17 @@ paths:
           application/json:
             schema:
               type: object
-              required: 
+              required:
                 - id
                 - transaction_total
                 - datetime
                 - location
+                - MID
+                - loyalty_id
+                - transaction_id
               properties:
                 id:
-                  type: string 
+                  type: string
                   description: the transaction_id, that can be used to refer to the transaction; must be unique
                   example: 'BPL1234567890'
                 transaction_total:
@@ -126,26 +129,27 @@ paths:
                 datetime:
                   type: number
                   format: float
-                  description: the date & time the transaction took place
+                  description: the timestamp when transaction took place
                   example: 1615890143
-                mid:
+                MID:
                   type: string
                   description: this is the MID the transaction occured at
                   example: '52033450768997'
                 loyalty_id:
                   type: string
+                  format: uuid
                   description: the loyalty identifier for the acocunt holder with the retailer
                   example: '24eaa5f3-c751-4971-986a-8b925f644f93'
                 transaction_id:
-                  type: string 
+                  type: string
                   description: the payment_transaction_id, this is the id that relates to the payment transaction that was received in Harmonia
                   example: 'BPL1234567890'
   /api/campaigns/{retailer_slug}/status-change:
     post:
-      tags: 
+      tags:
         - campaign_management
       operationId: POST /api/campaigns/{retailer_slug}/status-change
-      description: used to update the status of campaign(s) and trigger the necessary calls to update rewards & balances
+      description: used to update the status of a campaign and trigger the necessary calls to update rewards & balances
       parameters:
         - $ref: '#/components/parameters/RetailerSlug'
       responses:
@@ -153,7 +157,7 @@ paths:
           description: success
         '400':
           $ref: '#/components/responses/Error400'
-        '401': 
+        '401':
           $ref: '#/components/responses/Error401'
         '403':
           $ref: '#/components/responses/Error403'
@@ -162,19 +166,29 @@ paths:
           content:
             application/json:
               schema:
-                type: array
+                type: string
                 items:
                   $ref: '#/components/schemas/BasicResponse'
                 example:
                   - display_message: Campaign not found for provided slug
                     code: NO_CAMPAIGN_FOUND
-                    campaigns:
-                      - test-campaign-1
-                      - test-campaign-2
         '409':
-          $ref: '#/components/responses/Error409Campaigns'
+          description: invalid status request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              examples:
+                Invalid Status Request:
+                  value:
+                  - display_message: The requested status change could not be performed.
+                    code: INVALID_STATUS_REQUESTED
+                Missing Campaign Components:
+                  value:
+                  - display_message: the provided campaign could not be made active
+                    code: MISSING_CAMPAIGN_COMPONENTS
         '422':
-          description: issue with transaction fields
+          description: issue with request body fields
           content:
             application/json:
               schema:
@@ -184,31 +198,31 @@ paths:
                 code: FIELD_VALIDATION_ERROR
                 fields:
                   - requested_status
-                  - campaign_slugs
+                  - campaign_slug
       requestBody:
         content:
           application/json:
             schema:
               type: object
-              required: 
+              required:
                 - requested_status
-                - campaign_slugs
+                - campaign_slug
                 - activity_metadata
               properties:
                 requested_status:
                   type: string
-                  description: the status that all included campaigns should be moved to
+                  description: the status that the campaign should be moved to
                   enum: [ cancelled, ended, active ]
-                campaign_slugs:
-                  type: array
-                  description: list of campaign slugs to apply the new status to
+                campaign_slug:
+                  type: string
+                  description: campaign slug to apply the new status to
                   items:
                     type: string
                     pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
                 pending_rewards_action:
                   type: string
                   enum: [ convert, remove ]
-                  description: what should be done to the pending rewards on ending campaign(s)
+                  description: what should be done to the pending rewards on ending campaign. Default is remove.
                 activity_metadata:
                   type: object
                   required:
@@ -219,16 +233,16 @@ paths:
                       description: the username of who made the change request in the Admin Panel
   /api/campaigns/{retailer_slug}/migration:
     post:
-      tags: 
+      tags:
         - campaign_management
-      parameters: 
+      parameters:
         - $ref: '#/components/parameters/RetailerSlug'
       responses:
         '200':
           description: success
         '400':
           $ref: '#/components/responses/Error400'
-        '401': 
+        '401':
           $ref: '#/components/responses/Error401'
         '403':
           $ref: '#/components/responses/Error403'
@@ -241,15 +255,33 @@ paths:
                 items:
                   $ref: '#/components/schemas/BasicResponse'
                 example:
-                  - display_message: Campaign not found for provided slug
+                    display_message: Campaign(s) not found for provided slug(s).
                     code: NO_CAMPAIGN_FOUND
                     campaigns:
                       - test-campaign-1
                       - test-campaign-2
         '409':
-          $ref: '#/components/responses/Error409Campaigns'
+          description: invalid status request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BasicResponse'
+              examples:
+                Invalid Status Request:
+                  value:
+                  - display_message: The requested status change(s) could not be performed.
+                    code: INVALID_STATUS_REQUESTED
+                    campaigns:
+                      - test-campaign-1
+                      - test-campaign-2
+                Missing Campaign Components:
+                  value:
+                  - display: the provided campaign(s) could not be made active
+                    code: "MISSING_CAMPAIGN_COMPONENTS"
+                    campaigns:
+                      - test-campaign-1
         '422':
-          description: issue with transaction fields
+          description: issue with request body fields
           content:
             application/json:
               schema:
@@ -265,7 +297,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: 
+              required:
                 - to_campaign
                 - from_campaign
                 - pending_rewards_action
@@ -273,10 +305,10 @@ paths:
               properties:
                 to_campaign:
                   type: string
-                  description: the slug of the campaogn to be activated, must be in draft
+                  description: the slug of the campaign to be activated, must be in draft
                 from_campaign:
                   type: string
-                  description: the slug of the campaogn to be ended, must be in active
+                  description: the slug of the campaign to be ended, must be in active
                 pending_rewards_action:
                   type: string
                   enum: [ transfer, convert, remove ]
@@ -285,6 +317,8 @@ paths:
                   type: object
                   required:
                     - transfer
+                    - conversion_rate
+                    - qualifying_threshold
                   properties:
                     transfer:
                       type: boolean
@@ -293,19 +327,27 @@ paths:
                       type: integer
                       minimum: 1
                       maximum: 100
-                      description: the rate to convert applicable balances, as a percentage 
+                      description: the rate to convert applicable balances, as a percentage
                     qualifying_threshold:
                       type: integer
                       minimum: 0
                       maximum: 100
                       description: precentage of the reward goal the balance has to meet in order to be transfered, 0 = all balances are transfered
+                activity_metadata:
+                  type: object
+                  required:
+                    - sso_username
+                  properties:
+                    sso_username:
+                      type: string
+                      description: the username of who made the change request in the Admin Panel
   /api/loyalty/{retailer_slug}/accounts/enrolment:
     post:
-      tags: 
+      tags:
         - customer_management
       operationId: POST /api/loyalty/{retails_slug}/accounts/enrolment
       description: starts the process of creating a new BPL account
-      parameters: 
+      parameters:
         - $ref: '#/components/parameters/RetailerSlug'
       responses:
         '202':
@@ -314,7 +356,7 @@ paths:
           $ref: '#/components/responses/Error400'
         '401':
           $ref: '#/components/responses/Error401'
-        '403': 
+        '403':
           $ref: '#/components/responses/Error403'
         '409':
           description: account already exists
@@ -325,6 +367,8 @@ paths:
               example:
                 display_message: It appears this account already exists.
                 code: ACCOUNT_EXISTS
+                fields:
+                  - email
         '422':
           description: field validation error, inc missing required field
           content:
@@ -350,7 +394,7 @@ paths:
               properties:
                 credentials:
                   type: object
-                  required: 
+                  required:
                     - email
                     - first_name
                     - last_name
@@ -359,7 +403,7 @@ paths:
                       type: string
                       format: email
                       pattern: ^(?=[^@]{1,64}@)(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$
-                      description: account holder provided value 
+                      description: account holder provided value
                       example: user@domain.com
                     first_name:
                       type: string
@@ -384,7 +428,7 @@ paths:
                     address_line1:
                       type: string
                       pattern: ^(?=.*[a-zA-Z])([a-zA-Z0-9#.,;:+\-&' ]){1,100}$
-                      description: account holder provided value 
+                      description: account holder provided value
                       example: 2 Queens Square (2nd floor)
                     address_line2:
                       type: string
@@ -399,20 +443,20 @@ paths:
                     postcode:
                       type: string
                       pattern: ^([A-Za-z][A-Ha-hJ-Yj-y]?[0-9][A-Za-z0-9]? ?[0-9][A-Za-z]{2}|[Gg][Ii][Rr] ?0[Aa]{2})$
-                      description: account holder provided value 
+                      description: account holder provided value
                       example: SL5 9FE
                 marketing_preferences:
                   type: array
                   items:
                     type: object
                     properties:
-                      key: 
+                      key:
                         type: string
                         description: 'marketing preference name'
                         example: 'email_marketing'
                       value:
                         type: boolean
-                        description: flag value 
+                        description: flag value
                         example: false
                 callback_url:
                   type: string
@@ -427,7 +471,7 @@ paths:
         - customer_management
       operationId: POST /api/loyalty/{retailer_slug}/accounts/getbycredentials
       description: validates account ownership and returns account if applicable
-      parameters: 
+      parameters:
         - $ref: '#/components/parameters/RetailerSlug'
         - $ref: '#/components/parameters/UserChannel'
         - $ref: '#/components/parameters/TxQty'
@@ -446,10 +490,27 @@ paths:
           $ref: '#/components/responses/Error403'
         '404':
           $ref: '#/components/responses/Error404AccountNotFound'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - account_number
+              properties:
+                email:
+                  type: string
+                  description: the email of the account holder
+                account_number:
+                  type: string
+                  description: the account number associated with user
   /api/loyalty/{retailer_slug}/accounts/{account_uuid}:
     get:
       tags:
         - customer_management
+      operationId: GET /api/loyalty/{retailer_slug}/accounts/{account_uuid}
+      description: Get Account holder by UUID
       parameters:
         - $ref: '#/components/parameters/RetailerSlug'
         - in: path
@@ -476,74 +537,13 @@ paths:
           $ref: '#/components/responses/Error403'
         '404':
           $ref: '#/components/responses/Error404AccountNotFound'
-  /api/loyalty/{retailer_slug}/accounts/{account_uuid}/status:
-    patch:
-      tags:
-        - customer_management
-      operationId: PATCH /api/loyalty/{retailer_slug}/accounts/{account_uuid}/status
-      description: updates the current status of an account
-      parameters:
-        - in: path
-          name: retailer_slug
-          description: Part of the URI that identifies the retailer in a readable form
-          required: true
-          schema:
-            type: string
-            pattern: ^(((?=.{1,100}$)[A-Za-z0-9])*)$
-        - in: path
-          name: account_uuid
-          description: Part of the URI that identifies the account to change the status
-          required: true
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: status updated
-        '400':
-          $ref: '#/components/responses/Error400'
-        '401':
-          $ref: '#/components/responses/Error401'
-        '403':
-          $ref: '#/components/responses/Error403'
-        '404':
-          $ref: '#/components/responses/Error404AccountNotFound'
-        '409':
-          description: invalid status request
-          content:
-            application/json:
-              schema: 
-                $ref: '#/components/schemas/BasicResponse'
-              example:
-                display_message: Status could not be updated as requested.
-                code: STATUS_UPDATE_FAILED
-        '422':
-          description: field validation error, inc missing required field, inc bad status
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BasicResponse'
-              example:
-                display_message: Submitted fields are missing or invalid.
-                code: FIELD_VALIDATION_ERROR
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required: 
-                - status
-              properties:
-                status:
-                  type: string
-                  description: the new status of the account holder
   /api/public/{retailer_slug}/marketing/unsubscribe:
     get:
-      tags: 
+      tags:
         - public
       operationId: GET /api/public/{retailer_slug}/marketing/unsubscribe?u=<account_holder_token>
       description: simple operation that updates an account's marketing opt-in to false if not already, whilst there are required parameters - we do not surface any errors to the caller and these errors are only raised internally
-      parameters: 
+      parameters:
         - $ref: '#/components/parameters/RetailerSlug'
         - in: query
           name: u
@@ -560,16 +560,16 @@ paths:
             text/html:
               schema:
                 type: string
-  /api/public/{retailer_slug}/reward/{reward_id}:
+  /api/public/{retailer_slug}/reward/{reward_uuid}:
     get:
       tags:
         - public
-      operationId: GET /api/public/{retailer_slug}/reward/{reward_id}
+      operationId: GET /api/public/{retailer_slug}/reward/{reward_uuid}
       description: grabs some basic reward information based on the reward's uuid which should be pulled from the account holder rewards table, given the retailer slugs match
       parameters:
         - $ref: '#/components/parameters/RetailerSlug'
         - in: path
-          name: reward_id
+          name: reward_uuid
           description: Part of the URI that identifies the specific reward by its UUID
           required: true
           schema:
@@ -581,7 +581,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: 
+                required:
                   - code
                   - expiry_date
                   - template_slug
@@ -591,21 +591,16 @@ paths:
                     type: string
                     description: the unique code for a reward
                     example: KJLE94K092GLJ
-                  expiry_date: 
+                  expiry_date:
                     type: string
                     format: date
                     description: date the reward has/will expire - format ISO-8601 YYYY-MM-DD
                     example: 2022-05-30
-                  redeemed_date:  
+                  redeemed_date:
                     type: string
                     format: date
                     description: date the reward has/will expire - format ISO-8601 YYYY-MM-DD
                     example: 2022-06-30
-                  pin:
-                    type: string
-                    pattern: ^(((?=.{1,8}$)[0-9])*)$
-                    description: single-use pin required to use the reward
-                    example: 4675
                   template_slug:
                     type: string
                     description: the slug that identifies what template should be used for the display of this reward
@@ -615,8 +610,17 @@ paths:
                     description: the status of the reward
                     enum: ["issued", "expired", "redeemed"]
         '404':
-          description: not found
-components: 
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                type: string
+                items:
+                  $ref: '#/components/schemas/BasicResponse'
+                example:
+                  - display_message: Request is invalid
+                    code: INVALID_REQUEST
+components:
   responses:
     Error400:
       description: bad request
@@ -654,30 +658,6 @@ components:
           example:
             display_message: Account not found for provided credentials.
             code: NO_ACCOUNT_FOUND
-    Error409Campaigns:
-      description: invalid status request
-      content:
-          application/json:
-            schema: 
-              type: array
-              items:
-                $ref: '#/components/schemas/BasicResponse'
-              example: 
-                - display_message: Campaign not found for provided slug
-                  code: NO_CAMPAIGN_FOUND
-                  campaigns:
-                    - test-campaign-1
-                    - test-campaign-2
-                - display_message: The requested status change could not be performed.
-                  code: INVALID_STATUS_REQUESTED
-                  campaigns:
-                    - test-campaign-a
-                    - test-campaign-b
-                - display_message: the provided campaign(s) could not be made active
-                  code: MISSING_CAMPAIGN_COMPONENTS
-                  campaigns:
-                    - test-campaign-x
-                    - test-campaign-y
   parameters:
     RetailerSlug:
       in: path
@@ -718,7 +698,7 @@ components:
           description: unique identifier for the account, immutable
         account_number:
           type: string
-          description: human readable account identifier, mutable 
+          description: human readable account identifier, mutable
         current_balances:
           type: array
           description: an account can only have one balance value per campaign_slug
@@ -760,14 +740,14 @@ components:
               amount_currency:
                 type: string
                 example: GBP
-              location: 
+              location:
                 type: string
                 description: the store name
               loyalty_earned_value:
                 type: string
                 description: The value of loyalty credit earned as part of the transaction in numerical format
                 example: 2
-              loyalty_earned_type:  
+              loyalty_earned_type:
                 type: string
                 example: stamps
         pending_rewards:
@@ -775,17 +755,17 @@ components:
           description: list of account holder's pending rewards
           items:
             type: object
-            required: 
+            required:
               - created_date
               - conversion_date
               - campaign_slug
             properties:
-              created_date: 
+              created_date:
                 type: integer
                 format: unix
                 description: date the reward was earned by the account holder
                 example: 1615895295
-              conversion_date: 
+              conversion_date:
                 type: integer
                 format: unix
                 description: date the reward will be issued to the account holder
@@ -800,7 +780,7 @@ components:
           description: list of account holder's rewards
           items:
             type: object
-            required: 
+            required:
               - code
               - issued_date
               - expiry_date
@@ -810,12 +790,12 @@ components:
               code:
                 type: string
                 description: the unique code for a reward
-              issued_date:  
+              issued_date:
                 type: integer
                 format: unix
                 description: date the reward was issued to the account holder
                 example: 1615895295
-              expiry_date: 
+              expiry_date:
                 type: integer
                 format: unix
                 description: date the reward has/will expire
@@ -824,7 +804,7 @@ components:
                 type: string
                 description: the status of the reward
                 example: cancelled
-              redeemed_date:  
+              redeemed_date:
                 type: integer
                 format: unix
                 description: date the reward was redeemed
@@ -836,7 +816,7 @@ components:
                 example: retailerstamp2021
     BasicResponse:
       type: object
-      required: 
+      required:
         - display_message
         - code
       properties:
