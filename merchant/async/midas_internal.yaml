@@ -30,7 +30,12 @@ channels:
     description: Message queue for authenticating a Loyalty Card
     subscribe:
       message:
-        $ref: '#/components/messages/MidasRequest'  
+        $ref: '#/components/messages/MidasRequest'
+  loyalty_account.removed.loyalty_card:      
+    description: Message queue for notifying a retailer of a Loyalty Card removed from Bink
+    subscribe:
+      message:
+        $ref: '#/components/messages/MidasRequest'          
   loyalty_account.retrieve:
     description: Message queue for loyalty account update requests
     subscribe:
