@@ -25,6 +25,7 @@ RUN redoc-cli build apiv2/sandbox-retail.yaml --output /output/apiv2/sandbox-ret
 RUN redoc-cli build apiv2/sandbox-banking.yaml --output /output/apiv2/sandbox-banking.html
 RUN mv extras/appendix.html /output/extras/appendix.html
 RUN mv extras/changelog.html /output/extras/changelog.html
+RUN mv extras/givex.html /output/extras/givex.html
 
 # BPL
 RUN redoc-cli build bpl/deploy.yaml --output /output/bpl/index.html
