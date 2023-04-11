@@ -9,6 +9,7 @@ info:
     * Add a Loyalty Card
     * Register a Loyalty Card
     * Request balance and transaction history 
+    * Loyalty card removed from Bink
 servers:
   staging:
     url: guest:guest@rabbitmq:5672
@@ -31,11 +32,11 @@ channels:
     subscribe:
       message:
         $ref: '#/components/messages/MidasRequest'
-  loyalty_account.removed.loyalty_card:      
+  loyalty_account.loyalty_card.removed:      
     description: Message queue for notifying a retailer of a Loyalty Card removed from Bink
     subscribe:
       message:
-        $ref: '#/components/messages/MidasRequest'          
+        $ref: '#/components/messages/MidasCardRemoved'          
   loyalty_account.retrieve:
     description: Message queue for loyalty account update requests
     subscribe:
@@ -43,6 +44,12 @@ channels:
         $ref: '#/components/messages/RetrieveLoyaltyAccount'
 components:
   messages:  
+    MidasCardRemoved:
+      name: Loyalty Card removed from Bink 
+      title: Loyalty Card removed from Bink 
+      summary: Indicates that a loyalty card has been removed from all Bink wallets 
+      payload:
+        $ref: '#/components/schemas/Metadata'
     MidasRequest:
       name: Join / Add / Register Request
       title: Join / Add / Register Request
@@ -105,9 +112,12 @@ components:
         transaction_id:
           type: string
           description: "An end-to-end tracing identifier for requests through Bink services."
+          example: 'XAAAAABKMMOjBv2NT4TY6SQVjC0zV1NURURHRTA2MTkANDM3YzgyY2QtMzYwYS00YTU0LTk0YzMtNWZmNzA3NjQ3Nzgz'
         bink_user_id:
           type: string
           description: "The Bink User ID for user that initiatied this Join application."             
+          example: '232276'
         account_id:
           type: string
           description: "An identifier that a Consumer can use to uniquely identify a Loyalty Account within a Loyalty Plan."
+          example: 'binktestuser7@wasabi.com'
