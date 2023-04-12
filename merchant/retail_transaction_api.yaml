@@ -41,24 +41,11 @@ paths:
       responses: 
         '200':
           description: OK
-        '400':
-          description: 'Client needs to modify the request before it can be retried.'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/genericresponse400'
         '401':
-          description: 'Client authentication failed.'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/genericresponse401'
+          $ref: 'components.yaml#/components/responses/Error401'
+
         '422':
-          description: 'Field validation error.'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/genericresponse422'
+          $ref: 'components.yaml#/components/responses/Error422'
 components:
   schemas:
     RetailerTransactions:
