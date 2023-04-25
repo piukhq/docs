@@ -10,6 +10,7 @@ info:
     * Register a Loyalty Card
     * Request balance and transaction history 
     * Loyalty card removed from Bink
+    * Loyalty card removed from Wallet
 servers:
   staging:
     url: guest:guest@rabbitmq:5672
@@ -32,11 +33,16 @@ channels:
     subscribe:
       message:
         $ref: '#/components/messages/MidasRequest'
-  loyalty_account.loyalty_card.removed:      
+  loyalty_account.loyalty_card.removed.bink:      
     description: Message queue for notifying a retailer of a Loyalty Card removed from Bink
     subscribe:
       message:
-        $ref: '#/components/messages/MidasCardRemoved'          
+        $ref: '#/components/messages/MidasCardRemoved'
+  loyalty_account.loyalty_card.removed.wallet:      
+    description: Message queue for notifying a retailer of a Loyalty Card removed from Bink
+    subscribe:
+      message:
+        $ref: '#/components/messages/MidasCardRemoved'                  
   loyalty_account.retrieve:
     description: Message queue for loyalty account update requests
     subscribe:
@@ -47,7 +53,7 @@ components:
     MidasCardRemoved:
       name: Loyalty Card removed from Bink 
       title: Loyalty Card removed from Bink 
-      summary: Indicates that a loyalty card has been removed from all Bink wallets 
+      summary: Indicates that a loyalty card has been removed from a Bink wallet
       payload:
         $ref: '#/components/schemas/Metadata'
     MidasRequest:
@@ -96,15 +102,15 @@ components:
           example: "loyalty_account.retrieve"
         channel: 
           type: string
-          description: "The identifier for the Channel through which the Join application was initiated."
+          description: "The identifier for the Channel that sent the request"
           example: "com.barclays.bmb"
         request_id:
           type: string
-          description: "The client’s identifier for the Join application request"
+          description: "The client’s identifier for the request"
           example: "53568"
         loyalty_plan:
           type: string
-          description: "The Loyalty Plan 'slug' to which the Join application applies"          
+          description: "The Loyalty Plan 'slug' to which the request applies"          
           example: "bpl-trenette"
     OptionalMetadata:
       type: object  
@@ -115,7 +121,7 @@ components:
           example: 'XAAAAABKMMOjBv2NT4TY6SQVjC0zV1NURURHRTA2MTkANDM3YzgyY2QtMzYwYS00YTU0LTk0YzMtNWZmNzA3NjQ3Nzgz'
         bink_user_id:
           type: string
-          description: "The Bink User ID for user that initiatied this Join application."             
+          description: "The Bink User ID for user created this request"             
           example: '232276'
         account_id:
           type: string
