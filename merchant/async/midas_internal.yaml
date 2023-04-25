@@ -34,12 +34,12 @@ channels:
       message:
         $ref: '#/components/messages/MidasRequest'
   loyalty_account.loyalty_card.removed.bink:
-    description: Message queue for notifying a retailer of a Loyalty Card removed from Bink
+    description: Message queue for notifying a retailer that a Loyalty Card has been removed and no longer exists in any wallet
     subscribe:
       message:
         $ref: '#/components/messages/MidasCardRemovedBink'
   loyalty_account.loyalty_card.removed.wallet:
-    description: Message queue for notifying a retailer of a Loyalty Card removed from Bink
+    description: Message queue for notifying a retailer of a Loyalty Card removed from a wallet
     subscribe:
       message:
         $ref: '#/components/messages/MidasCardRemoved'
