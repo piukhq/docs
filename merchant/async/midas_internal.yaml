@@ -10,7 +10,7 @@ info:
     * Register a Loyalty Card
     * Request balance and transaction history 
     * Loyalty card removed from Bink
-    * Loyalty card removed from Wallet
+    * Loyalty card removed from a Bink Wallet
 servers:
   staging:
     url: 'guest:guest@rabbitmq:5672'
@@ -42,7 +42,7 @@ channels:
     description: Message queue for notifying a retailer of a Loyalty Card removed from a wallet
     subscribe:
       message:
-        $ref: '#/components/messages/MidasCardRemoved'
+        $ref: '#/components/messages/MidasCardRemovedWallet'
   loyalty_account.retrieve:
     description: Message queue for loyalty account update requests
     subscribe:
@@ -50,16 +50,16 @@ channels:
         $ref: '#/components/messages/RetrieveLoyaltyAccount'
 components:
   messages:
-    MidasCardRemoved:
-      name: Loyalty Card removed from Bink
-      title: Loyalty Card removed from Bink
+    MidasCardRemovedWallet:
+      name: Loyalty Card removed from a Bink Wallet
+      title: Loyalty Card removed from a Bink Wallet
       summary: Indicates that a loyalty card has been removed from a Bink wallet
       payload:
         $ref: '#/components/schemas/Metadata'  
     MidasCardRemovedBink:
       name: Loyalty Card removed from Bink
       title: Loyalty Card removed from Bink
-      summary: Indicates that a loyalty card has been removed from a Bink wallet
+      summary: Indicates that a loyalty card has been removed from Bink and no longer exists in any Bink wallet
       payload:
         $ref: '#/components/schemas/RemovedFromBink'        
     MidasRequest:
