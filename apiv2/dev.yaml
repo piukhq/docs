@@ -4099,7 +4099,7 @@ components:
         validation_description:
           type: string
           description: "Helper text/Explanation of validation. Hint on how to resolve"
-          example: 'Password must contain at be longer than 8 and contain at least 1 captial, 1 numeric'
+          example: 'Password must be longer than 8 characters and have at least 1 capital, and 1 numeric.'
           minLength: 0
           maxLength: 250
           pattern: "[\\u0000-\\u2FFF]+"
