@@ -3492,6 +3492,13 @@ components:
           pattern: "[\\u0000-\\u2FFF]+"   
         images: 
           $ref: '#/components/schemas/Images'
+        forgotten_password_url:
+          type: string
+          description: "Url for users to reset their password."
+          example: 'https://www.wasabi.uk/account/forgot'
+          maxLength: 2048
+          minLength: 1
+          pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
     PlanDetails:
       type: object
       properties:
@@ -3596,6 +3603,13 @@ components:
                 maxLength: 50
                 pattern: "[\\u0000-\\u2FFF]+"
                 description: "Brief explanation of what the tier provides."
+        forgotten_password_url:
+          type: string
+          description: "Url for users to reset their password."
+          example: 'https://www.wasabi.uk/account/forgot'
+          maxLength: 2048
+          minLength: 1
+          pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"      
     LoyaltyPlan:
       type: object
       properties:
@@ -4110,7 +4124,7 @@ components:
           pattern: ".*"
         validation_description:
           type: string
-          description: "Text field that can be used to provide additional info about a credential, guiding users on input."
+          description: "Text field that contains additional information on what constitutes a valid value, to guide users on input."
           example: All card numbers start with 6331
           minLength: 0
           maxLength: 250
