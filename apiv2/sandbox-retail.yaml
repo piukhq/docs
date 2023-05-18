@@ -629,6 +629,7 @@ paths:
         <h4>Trusted Channel</h4>
         A Bink supported channel that trusts the partner has completed full verification of the user and no additional validation is required from Bink. 
         The <b>PLL</b> type <b>Loyalty Card</b> will be added using a single credential, instead of full authorisation credentials."
+
       responses:
         '200':
           description: "**Successful**"
@@ -1066,9 +1067,13 @@ paths:
               <ul>
                 <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
               </ul>
-            <br>
+
             <b>IMPORTANT:</b>
-            For this endpoint you will use the <b>add_field</b> or the first <b>authorise_field</b> if no <b>add_field</b> exists.
+            For this endpoint you will use the <b>add_field</b> or the first <b>authorise_field</b> if no <b>add_field</b> exists.<br>
+            <br>
+
+            <h3>Merchant Fields</h3>
+            Provide a unique, immutable identifer for the loyalty membership. We will use this identifier for <b>PLL</b>.
 
             <br><br><b>NOTE</b>: <br>
             <ul>
@@ -1233,7 +1238,7 @@ paths:
         - Loyalty Cards
       summary: Update a Loyalty Card from a Trusted Channel
       operationId: PUT /loyalty_cards/add_trusted
-      description: "Use this operation from a Trusted Channel to correct a loyalty card that is in an error state.
+      description: "Use this operation to update membership details and the **merchant field** from a Trusted Channel when user credentials change.
           <html>
             <body>
               <h3>Journey Fields</h3>
@@ -1252,8 +1257,7 @@ paths:
 
             <br><br><b>NOTE</b>: <br>
             <ul>
-              <li>If the card is a <b>PLL</b> type, success will automatically create <b>PLL</b> links to available <b>Payment Accounts</b>. </li>
-              <li>Some <b>Loyalty Plans</b> might not have any ADD fields, only AUTH fields. You may still use this endpoint to add and authorise <b>Loyalty Cards</b> of this type.</li>
+              <li><b>PLL</b> links will automatically be created to available Payment Accounts. </li>
             </ul>
             </body>
           </html>"
@@ -3488,6 +3492,13 @@ components:
           pattern: "[\\u0000-\\u2FFF]+"   
         images: 
           $ref: '#/components/schemas/Images'
+        forgotten_password_url:
+          type: string
+          description: "Url for users to reset their password."
+          example: 'https://www.wasabi.uk/account/forgot'
+          maxLength: 2048
+          minLength: 1
+          pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"
     PlanDetails:
       type: object
       properties:
@@ -3592,6 +3603,13 @@ components:
                 maxLength: 50
                 pattern: "[\\u0000-\\u2FFF]+"
                 description: "Brief explanation of what the tier provides."
+        forgotten_password_url:
+          type: string
+          description: "Url for users to reset their password."
+          example: 'https://www.wasabi.uk/account/forgot'
+          maxLength: 2048
+          minLength: 1
+          pattern: "((([A-Za-z]{3,9}:(?:\\/\\/)?)(?:[-;:&=\\+\\$,\\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\\+\\$,\\w]+@)[A-Za-z0-9.-]+)((?:\\/[\\+~%\\/.\\w-_]*)?\\??(?:[-\\+=&;%@.\\w_]*)#?(?:[\\w]*))?)"      
     LoyaltyPlan:
       type: object
       properties:
@@ -3841,6 +3859,7 @@ components:
               - order: 1
                 display_label: 'Card number'
                 validation: "^((63317491)|(63317492))[0-9]{10}$"
+                validation_description: "All card numbers start with 6331"
                 description: "Your 10 digit card number"
                 credential_slug: "card_number"
                 type: "text"
@@ -3851,6 +3870,7 @@ components:
               - order: 2
                 display_label: 'Email address'
                 validation: '^(?=[^@]{1,64}@)(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+                validation_description: null
                 description: "Your e-mail address"
                 credential_slug: "email"
                 type: "text"
@@ -3861,6 +3881,7 @@ components:
               - order: 3
                 display_label: 'Password'
                 validation: '^(?=[^@]{1,64}@)(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+                validation_description: "Min 8 characters, 1 uppercase, 1 lowercase and 1 special character required"
                 description: "The password you use to log in to your loyalty account"
                 credential_slug: "password"
                 type: "text"
@@ -3870,6 +3891,8 @@ components:
                 alternative:
               - order: 4
                 display_label: 'Title'
+                validation: '^(Mr|Mrs|Miss|Dame|Ms|Sir|Doctor|Professor|Lord|lady)$'
+                validation_description: null
                 description: "Select title or salutation"
                 credential_slug: "title"
                 type: "choice"
@@ -3889,6 +3912,8 @@ components:
                 alternative:
               - order: 5
                 display_label: 'First name'
+                validation: '^(((?=.{1,20}$)[A-Za-z\\-\À-\ÿ])+\\s*){1,4}$'
+                validation_description: null
                 description: "First name"
                 credential_slug: "first_name"
                 type: "string"
@@ -3898,6 +3923,8 @@ components:
                 alternative:
               - order: 6
                 display_label: 'Last name'
+                validation: '^(((?=.{1,20}$)[A-Za-z\\-\À-\ÿ])+\\s*){1,4}$'
+                validation_description: null
                 description: "Last name"
                 credential_slug: "last_name"
                 type: "string"
@@ -3925,6 +3952,7 @@ components:
               - order: 1
                 display_label: 'Email address'
                 validation: '^(?=[^@]{1,64}@)(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+                validation_description: null
                 description: "Your e-mail address"
                 credential_slug: "email"
                 type: "text"
@@ -3935,6 +3963,7 @@ components:
               - order: 2
                 display_label: 'Password'
                 validation: '^(?=[^@]{1,64}@)(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+                validation_description: "Min 8 characters, 1 uppercase, 1 lowercase and 1 special character required"
                 description: "The password you use to log in to your loyalty account"
                 credential_slug: "password"
                 type: "text"
@@ -3944,6 +3973,8 @@ components:
                 alternative:
               - order: 3
                 display_label: 'Title'
+                validation: '^(Mr|Mrs|Miss|Dame|Ms|Sir|Doctor|Professor|Lord|lady)$'
+                validation_description: null
                 description: "Select title or salutation"
                 credential_slug: "title"
                 type: "choice"
@@ -3963,6 +3994,8 @@ components:
                 alternative:
               - order: 4
                 display_label: 'First name'
+                validation: '^(((?=.{1,20}$)[A-Za-z\\-\À-\ÿ])+\\s*){1,4}$'
+                validation_description: null
                 description: "First name"
                 credential_slug: "first_name"
                 type: "string"
@@ -3972,6 +4005,8 @@ components:
                 alternative:
               - order: 5
                 display_label: 'Last name'
+                validation: '^(((?=.{1,20}$)[A-Za-z\\-\À-\ÿ])+\\s*){1,4}$'
+                validation_description: null
                 description: "Last name"
                 credential_slug: "last_name"
                 type: "string"
@@ -4008,6 +4043,7 @@ components:
                   order: 1
                   display_label: 'Bonus card number'
                   validation: "^((63317491)|(63317492))[0-9]{10}$"
+                  validation_description: "All card numbers start with 6331"
                   description: "Your 10 digit card number"
                   credential_slug: "card_number"
                   type: "text"
@@ -4027,6 +4063,7 @@ components:
               - order: 1
                 display_label: 'Password'
                 validation: '^(?=[^@]{1,64}@)(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$'
+                validation_description: null
                 description: "The password you use to log in to your loyalty account"
                 credential_slug: "password"
                 type: "text"
@@ -4085,6 +4122,13 @@ components:
           minLength: 0
           maxLength: 250
           pattern: ".*"
+        validation_description:
+          type: string
+          description: "Text field that contains additional information on what constitutes a valid value, to guide users on input."
+          example: All card numbers start with 6331
+          minLength: 0
+          maxLength: 250
+          pattern: "[\\u0000-\\u2FFF]+"
         description:
           type: string
           description: "Text field that can be used as a hint to the user, guiding them on input."
@@ -4503,7 +4547,15 @@ components:
           slug:
             type: string
             example: "com.barclays.bmb"
-            description: "Human readible identifier for the channel."
+            description: "Human readible identifier for the channel.
+              <ul>
+                <li><b>com.bink.wallet</b> = Bink App & Web</li>
+                <li><b>com.barclays.bmb</b> = Barclays App </li>
+                <li><b>com.bos.api2</b> = Bank of Scotland App & Web</li>
+                <li><b>com.halifax.api2</b> = Halifax App & Web</li>
+                <li><b>com.lloyds.api2</b> = Lloyds App & Web</li>
+                <li><b>com.squaremeal.web</b> = SquareMeal Web</li>
+              </ul>"
           description:
             type: string
             example: "This Loyalty Card is linked to a Payment Card in the Barclays Mobile Banking channel."
