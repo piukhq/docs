@@ -609,6 +609,40 @@ paths:
           description: bad request
         '404':
           $ref: 'components.yaml#/components/responses/Error404'
+    patch:
+      tags:
+        - mid-management
+      summary: Bulk Edit MIDs
+      operationId: PATCH /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids
+      description: Bulk edit the payment enrolment statuses of a number of primary MIDs.
+      parameters:
+        - $ref: 'components.yaml#/components/parameters/versionParam'
+        - $ref: 'components.yaml#/components/parameters/planRefParam'
+        - $ref: 'components.yaml#/components/parameters/merchantRefParam'
+      responses:
+        '200':
+          description: Success, returns the updated MIDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MID'
+        '400':
+          description: bad request
+        '403':
+          description: unauthorised
+        '404':
+          $ref: 'components.yaml#/components/responses/Error404'
+        '409':
+          $ref: 'components.yaml#/components/responses/Error409'
+        '422':
+          $ref: 'components.yaml#/components/responses/Error422Value'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MIDBulkEdit'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/deletion:
     post:
       tags:
@@ -985,6 +1019,40 @@ paths:
           description: unauthorised
         '404':
           $ref: 'components.yaml#/components/responses/Error404'
+    patch:
+      tags:
+        - mid-management
+      summary: Bulk Edit Secondary MIDs
+      operationId: PATCH /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids
+      description: Bulk edit the payment enrolment statuses of a number of secondary MIDs.
+      parameters:
+        - $ref: 'components.yaml#/components/parameters/versionParam'
+        - $ref: 'components.yaml#/components/parameters/planRefParam'
+        - $ref: 'components.yaml#/components/parameters/merchantRefParam'
+      responses:
+        '200':
+          description: Success, returns the updated secondary MIDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SecondaryMID'
+        '400':
+          description: bad request
+        '403':
+          description: unauthorised
+        '404':
+          $ref: 'components.yaml#/components/responses/Error404'
+        '409':
+          $ref: 'components.yaml#/components/responses/Error409'
+        '422':
+          $ref: 'components.yaml#/components/responses/Error422Value'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SecondaryMIDBulkEdit'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/deletion:
     post:
       tags:
@@ -2643,6 +2711,19 @@ components:
           description: only populated if the payment scheme is VISA
         payment_enrolment_status:
           $ref: 'components.yaml#/components/schemas/PaymentEnrolmentStatus'
+    MIDBulkEdit:
+      type: object
+      required:
+        - mid_refs
+        - payment_enrolment_status
+      properties:
+        mid_refs:
+          type: array
+          description: the list of MID refs that are to be updated
+          items:
+            $ref: 'components.yaml#/components/schemas/RefModel'
+        payment_enrolment_status:
+          $ref: 'components.yaml#/components/schemas/PaymentEnrolmentStatus'
     SecondaryMIDLink:
       type: object
       required:
@@ -2694,6 +2775,19 @@ components:
         payment_scheme_store_name:
           type: string
           description: this is a value that comes from the Payment Scheme
+        payment_enrolment_status:
+          $ref: 'components.yaml#/components/schemas/PaymentEnrolmentStatus'
+    SecondaryMIDBulkEdit:
+      type: object
+      required:
+        - secondary_mid_refs
+        - payment_enrolment_status
+      properties:
+        secondary_mid_refs:
+          type: array
+          description: the list of secondary MID refs that are to be updated
+          items:
+            $ref: 'components.yaml#/components/schemas/RefModel'
         payment_enrolment_status:
           $ref: 'components.yaml#/components/schemas/PaymentEnrolmentStatus'
     LocationLink:
