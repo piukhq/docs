@@ -4,8 +4,8 @@ servers:
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/Bink_API/Portal_External_API/1.0.0
 info:
-  description: This document defines the Portal API URLs, parameters, request bodies, and responses. 
-  version: "1.0.0"
+  description: This document defines the Portal API URLs, parameters, request bodies, and responses.
+  version: '1.0.0'
   title: Portal API
   contact:
     email: ajones@bink.com
@@ -24,7 +24,7 @@ paths:
       summary: List Comments
       operationId: GET /api/{version}/directory_comments?ref=<ref>
       description: Returns comments where the ref is the owner or the subject
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/pageSizeParam'
         - $ref: 'components.yaml#/components/parameters/pageNumParam'
@@ -50,8 +50,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  entity_comments: 
-                    description: comments that have the entity as the subject 
+                  entity_comments:
+                    description: comments that have the entity as the subject
                     type: object
                     required:
                       - comments
@@ -60,14 +60,14 @@ paths:
                       subject_type:
                         type: string
                         description: the type of the subject(s)
-                        enum: ["plan", "merchant"]
+                        enum: ['plan', 'merchant']
                       comments:
                         type: array
                         description: all of the comments that the ref is a subject on, i.e. if the ref is a mid - all comments where that mid is in the subject list
                         items:
                           $ref: '#/components/schemas/Comment'
                   lower_comments:
-                    description: comments that are "owned by" the entity 
+                    description: comments that are "owned by" the entity
                     type: array
                     items:
                       type: object
@@ -75,13 +75,21 @@ paths:
                         subject_type:
                           type: string
                           description: the type of the subject(s)
-                          enum: ["plan", "merchant", "mid", "secondary_mid", "location", "psimi"]
+                          enum:
+                            [
+                              'plan',
+                              'merchant',
+                              'mid',
+                              'secondary_mid',
+                              'location',
+                              'psimi',
+                            ]
                         comments:
                           type: array
                           description: all the comments that the ref is the owner of, i.e. if ref is a plan - all comments on the plan's merchant(s)
                           items:
                             $ref: '#/components/schemas/Comment'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -93,7 +101,7 @@ paths:
       summary: Create Comment
       operationId: POST /api/{version}/directory_comments
       description: Used to create comments on different entities in MID Management
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
       responses:
         '201':
@@ -102,7 +110,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Comment'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -125,16 +133,16 @@ paths:
                 subject_type:
                   type: string
                   format: enum
-                  description: the type of the subject entity 
+                  description: the type of the subject entity
                   enum: [plan, merchant, mid, location, secondary mid, psimi]
   /api/{version}/directory_comments/{comment_ref}:
     post:
       tags:
-       - mid-management
+        - mid-management
       summary: Create Comment
       operationId: POST /api/{version}/directory_comments/{comment_ref}
       description: Creates a new comment as a child for a given comment ref. Used to reply to a comment
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/commentRef'
       responses:
@@ -144,7 +152,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Comment'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -169,14 +177,14 @@ paths:
                 subject_type:
                   type: string
                   enum: [merchant, mid, location, secondary mid, psimi]
-                  description: the type of the subject entity 
+                  description: the type of the subject entity
     patch:
       tags:
-       - mid-management
+        - mid-management
       summary: Edit Comment
       operationId: PATCH /api/{version}/directory_comments/{comment_ref}
       description: Updates the text associated with a comment.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/commentRef'
       responses:
@@ -186,7 +194,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Comment'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -205,17 +213,17 @@ paths:
                   description: the text of the comment
     delete:
       tags:
-       - mid-management
+        - mid-management
       summary: Delete Comment
       operationId: DELETE /api/{version}/directory_comments/{comment_ref}
       description: Deletes a comment.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/commentRef'
       responses:
         '204':
           description: Deleted
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -223,12 +231,12 @@ paths:
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans:
     get:
-      tags: 
+      tags:
         - mid-management
       summary: List Plans
       operationId: GET /api/{version}/plans
-      description:  Retrieves all the Plans that have been loaded into the Merchant Data directory.
-      parameters: 
+      description: Retrieves all the Plans that have been loaded into the Merchant Data directory.
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/pageSizeParam'
         - $ref: 'components.yaml#/components/parameters/pageNumParam'
@@ -241,7 +249,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Plan'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -254,13 +262,13 @@ paths:
       parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
       responses:
-        '201': 
+        '201':
           description: Created, returns the created Plan
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Plan'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -274,7 +282,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PlanMetaData'
   /api/{version}/plans/{plan_ref}:
-    put: 
+    put:
       tags:
         - mid-management
       summary: Edit Plan
@@ -284,17 +292,17 @@ paths:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
       responses:
-        '200': 
+        '200':
           description: Success, returns the updated object
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Plan'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
         '409':
           $ref: 'components.yaml#/components/responses/Error409'
@@ -305,7 +313,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PlanMetaData'
-    delete: 
+    delete:
       tags:
         - mid-management
       summary: Delete Plan
@@ -315,7 +323,7 @@ paths:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
       responses:
-        '202': 
+        '202':
           description: Accepted, returns the status of the plan
           content:
             application/json:
@@ -326,11 +334,11 @@ paths:
                     $ref: 'components.yaml#/components/schemas/DeletionStatus'
         '204':
           description: Success, no content
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
     get:
       tags:
@@ -348,20 +356,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PlanDetails'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Create Merchant
       operationId: POST /api/{version}/plans/{plan_ref}/merchants
       description: On the Plan/Plan Detail page, supports the "Create New Merchant" action
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
       responses:
@@ -371,7 +379,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Merchant'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -385,12 +393,12 @@ paths:
             schema:
               $ref: '#/components/schemas/MerchantMetaData'
     get:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: List Merchants
       operationId: GET /api/{version}/plans/{plan_ref}/merchants
       description: On the Plan Detail page, gets the Merchants for Plan, supports pagination & page size.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/pageSizeParam'
@@ -405,20 +413,20 @@ paths:
                 description: the list of Merchants that are associated with the Plan
                 items:
                   $ref: '#/components/schemas/Merchant'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}:
     put:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Update Merchant
       operationId: PUT /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}
       description: Updates a given Merchant with the supplied fields. On the Plan Detail/Merchant Detail pages, supports the "Edit Merchant" action
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -431,7 +439,7 @@ paths:
                 $ref: '#/components/schemas/Merchant'
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
         '409':
           $ref: 'components.yaml#/components/responses/Error409'
@@ -443,17 +451,17 @@ paths:
             schema:
               $ref: '#/components/schemas/MerchantMetaData'
     delete:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Delete Merchant
       operationId: DELETE /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}
       description: Performs a cascading soft delete of the Merchant and its resources (i.e. mids, locations, etc). Any corresponding MIDs are also offboarded from Harmonia as part of the delete process.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
       responses:
-        '202': 
+        '202':
           description: Accepted, returns the status of the merchant
           content:
             application/json:
@@ -466,15 +474,15 @@ paths:
           description: Success, does not return anything
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
     get:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Get Merchant Details
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}
       description: Returns the Metadata for the Merchant (including the Plan level Metadata). Populates the Merchant Details Page header.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -486,10 +494,9 @@ paths:
               schema:
                 type: object
                 required:
-                - merchant_ref
-                - plan_metadata
-                - merchant_metadata
-                - merchant_counts
+                  - merchant_ref
+                  - plan_metadata
+                  - merchant_metadata
                 properties:
                   merchant_ref:
                     $ref: 'components.yaml#/components/schemas/RefModel'
@@ -499,20 +506,18 @@ paths:
                     $ref: '#/components/schemas/PlanMetaData'
                   merchant_metadata:
                     $ref: '#/components/schemas/MerchantMetaData'
-                  merchant_counts:
-                    $ref: '#/components/schemas/MerchantCounts'
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/counts:
     get:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Get Merchant Resource Counts
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/counts
       description: On the Merchant Detail page, gets the Merchant's resource counts, supports the delete Merchant modal.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -529,19 +534,19 @@ paths:
                     description: the total number of locations, for the Merchant
                   mids_count:
                     type: integer
-                    description: the total number of MIDs for the Merchant
+                    description: the total number of MIDs for the Merhcant
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Create MID
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids
       description: Creates a MID for the Merchant. On the Merchant Detail page, supports the "Create new MID" action
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -552,11 +557,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MID'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
         '409':
           $ref: 'components.yaml#/components/responses/Error409'
@@ -568,8 +573,8 @@ paths:
             schema:
               type: object
               required:
-              - onboard
-              - mid_metadata
+                - onboard
+                - mid_metadata
               properties:
                 onboard:
                   type: boolean
@@ -577,12 +582,12 @@ paths:
                 mid_metadata:
                   $ref: '#/components/schemas/MIDMetaData'
     get:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: List MIDs
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids
       description: Returns the MIDs list for the Merchant. On the Merchant Detail page, gets the MIDs for the Merchant, supports pagination, page size and filtering on mid_ref
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -600,23 +605,23 @@ paths:
                   $ref: '#/components/schemas/MID'
         '403':
           description: unauthorised
-        '400': 
+        '400':
           description: bad request
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/deletion:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Delete MIDs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/deletion
       description: Deletes MIDs by mid_ref for the Merchant. On the Merchant Detail page, supports the "Delete MID(s)" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
       responses:
-        '202': 
+        '202':
           description: Accepted, returns the status of the MID
           content:
             application/json:
@@ -631,11 +636,11 @@ paths:
                       $ref: 'components.yaml#/components/schemas/DeletionStatus'
         '204':
           description: Success, no content
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '422':
           $ref: 'components.yaml#/components/responses/Error422MissingRefs'
@@ -654,12 +659,12 @@ paths:
                     description: the mid_ref of the MIDs to be deleted
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/onboarding:
     post:
-      tags:  
-      - mid-management
+      tags:
+        - mid-management
       summary: Onboard MIDs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/onboarding
       description: Sends a list of mid_refs to be onboarded with Harmonia. On the Merchant Detail page, supports the "Onboard MID(s)" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -669,13 +674,13 @@ paths:
           content:
             application/json:
               schema:
-               type: array
-               description: list of MIDs that have been sent to be onboarded
-               items:
-                $ref: '#/components/schemas/MID'
-        '400': 
+                type: array
+                description: list of MIDs that have been sent to be onboarded
+                items:
+                  $ref: '#/components/schemas/MID'
+        '400':
           description: bad request
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '422':
           $ref: 'components.yaml#/components/responses/Error422MissingRefs'
@@ -693,12 +698,12 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/offboarding:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Offboard MIDs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/offboarding
       description: Sends MID data to Harmonia for offboarding. On the Merchant Detail page, supports the "Offboard MID(s)" action
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -712,11 +717,11 @@ paths:
                 description: list of MIDs that have been sent to be offboarded
                 items:
                   $ref: '#/components/schemas/MID'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '422':
           $ref: 'components.yaml#/components/responses/Error422MissingRefs'
@@ -734,12 +739,12 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/{mid_ref}:
     patch:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Edit MID
       operationId: PATCH /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/{mid_ref}
       description: Updates a MID and returns the updated version. On the Merchant Detail page, supports the "Edit MID" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -751,11 +756,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MID'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
         '409':
           description: MID is not VISA - if visa_bin supplied
@@ -765,8 +770,7 @@ paths:
                 $ref: 'components.yaml#/components/schemas/ErrorModel'
               example:
                 detail:
-                  -
-                    loc:
+                  - loc:
                       - body
                       - visa_bin
                     msg: field is not valid for payment scheme
@@ -779,32 +783,30 @@ paths:
                 $ref: 'components.yaml#/components/schemas/ErrorModel'
               example:
                 detail:
-                  -
-                    loc:
+                  - loc:
                       - body
                       - visa_bin
                     msg: value is not a valid string
                     type: type_error.string
-                  -
-                    loc:
+                  - loc:
                       - body
                       - payment_enrolment_status
                     msg: value is not valid
                     type: type_error.enum
       requestBody:
-       content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              visa_bin:
-                type: string
-                description: can only be set on MIDs for VISA 
-              payment_enrolment_status:
-                $ref: 'components.yaml#/components/schemas/PaymentEnrolmentStatus'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                visa_bin:
+                  type: string
+                  description: can only be set on MIDs for VISA
+                payment_enrolment_status:
+                  $ref: 'components.yaml#/components/schemas/PaymentEnrolmentStatus'
     get:
       tags:
-      - mid-management
+        - mid-management
       summary: Get MID Details
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/{mid_ref}
       description: Pulls the MID information for a given mid_ref. On the Merchant Detail page, MIDs tab, this populates the single view of a MID.
@@ -822,22 +824,22 @@ paths:
                 type: object
                 description: returns the mid information and the display of the Location, if one is associated with the MID
                 required:
-                - mid
+                  - mid
                 properties:
                   location:
                     $ref: '#/components/schemas/LocationLink'
                   mid:
                     $ref: '#/components/schemas/MID'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/{mid_ref}/location_link:
     put:
       tags:
-      - mid-management
+        - mid-management
       summary: Link MID with Location
       operationId: PUT /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/{mid_ref}/location_link
       description: Creates an association between a Location and a MID. On the MID single view, supports the "Add Location" action.
@@ -853,11 +855,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LocationLink'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           description: not found
           content:
             application/json:
@@ -870,8 +872,7 @@ paths:
                   summary: Example 404 error, from the body
                   value:
                     detail:
-                      - 
-                        loc:
+                      - loc:
                           - body
                           - location
                         msg: location_ref not found
@@ -888,7 +889,7 @@ paths:
                   $ref: 'components.yaml#/components/schemas/RefModel'
     delete:
       tags:
-      - mid-management
+        - mid-management
       summary: Unlink MID from Location
       operationId: DELETE /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/mids/{mid_ref}/location_link
       description: Deletes the Location link from the MID. On the MID single view, supports the "Unlink Location" action; on the Location single view, supports the "Unlink MID" action.
@@ -900,20 +901,20 @@ paths:
       responses:
         '204':
           description: Success, no content
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Create Secondary MID
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids
       description: Creates a Secondary MID for the Merchant. On the Merchant Detail page, supports the "Create new Secondary MID" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -924,7 +925,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SecondaryMID'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -940,8 +941,8 @@ paths:
             schema:
               type: object
               required:
-              - onboard
-              - secondary_mid_metadata
+                - onboard
+                - secondary_mid_metadata
               properties:
                 onboard:
                   type: boolean
@@ -949,12 +950,12 @@ paths:
                 secondary_mid_metadata:
                   $ref: '#/components/schemas/SecondaryMIDMetaData'
     get:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: List Secondary MIDs
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids
       description: Returns the Secondary MIDs list for the Merchant. On the Merchant Detail page, gets the Secondary MIDs for the Merchant, supports pagination, page size and filtering by secondary_mid_ref
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -978,25 +979,25 @@ paths:
                 description: list of Secondary MIDs
                 items:
                   $ref: '#/components/schemas/SecondaryMID'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/deletion:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Delete Secondary MIDs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/deletion
       description: Deletes Secondary MIDs by secondary_mid_ref for the Merchant. On the Merchant Detail page, supports the "Delete Secondary MID(s)" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
       responses:
-        '202': 
+        '202':
           description: Accepted, returns the status of the Secondary MID
           content:
             application/json:
@@ -1011,9 +1012,9 @@ paths:
                       $ref: 'components.yaml#/components/schemas/DeletionStatus'
         '204':
           description: Success, no content
-        '400': 
+        '400':
           description: bad request
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '422':
           $ref: 'components.yaml#/components/responses/Error422MissingRefs'
@@ -1031,12 +1032,12 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/onboarding:
     post:
-      tags:  
-      - mid-management
+      tags:
+        - mid-management
       summary: Onboard Secondary MIDs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/onboarding
       description: Sends a list of secondary_mid_refs to be onboarded with Harmonia. On the Merchant Detail page, supports the "Onboard Secondary MID(s)" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1050,9 +1051,9 @@ paths:
                 description: List of Secondary MIDs that have been sent to Harmonia for onboarding
                 items:
                   $ref: '#/components/schemas/SecondaryMID'
-        '400': 
+        '400':
           description: bad request
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '422':
           $ref: 'components.yaml#/components/responses/Error422MissingRefs'
@@ -1070,12 +1071,12 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/offboarding:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Offboard Secondary MIDs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/offboarding
       description: Sends Secondary MID data to Harmonia for offboarding. On the Merchant Detail page, supports the "Offboard MID(s)" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1089,9 +1090,9 @@ paths:
                 description: list of Secondary MIDs that were sent to Harmonia to be offboarded
                 items:
                   $ref: '#/components/schemas/SecondaryMID'
-        '400': 
+        '400':
           description: bad request
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '422':
           $ref: 'components.yaml#/components/responses/Error422MissingRefs'
@@ -1109,12 +1110,12 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/{secondary_mid_ref}:
     patch:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Edit Secondary MID
       operationId: PATCH /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/{secondary_mid_ref}
       description: Updates a Secondary MID and returns the updated version. On the Merchant Detail page, supports the "Edit Secondary MID" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1126,11 +1127,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SecondaryMID'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
         '422':
           description: validation error
@@ -1140,32 +1141,30 @@ paths:
                 $ref: 'components.yaml#/components/schemas/ErrorModel'
               example:
                 detail:
-                  -
-                    loc:
+                  - loc:
                       - body
                       - payment_scheme_store_name
                     msg: value is not a valid string
                     type: type_error.string
-                  -
-                    loc:
+                  - loc:
                       - body
                       - payment_enrolment_status
                     msg: value is not valid
                     type: type_error.enum
       requestBody:
-       content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              payment_scheme_store_name:
-                type: string
-                description: this is a value that comes from the Payment Scheme
-              payment_enrolment_status:
-                $ref: 'components.yaml#/components/schemas/PaymentEnrolmentStatus'
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_scheme_store_name:
+                  type: string
+                  description: this is a value that comes from the Payment Scheme
+                payment_enrolment_status:
+                  $ref: 'components.yaml#/components/schemas/PaymentEnrolmentStatus'
     get:
       tags:
-      - mid-management
+        - mid-management
       summary: Get Secondary MID Details
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/{secondary_mid_ref}
       description: Pulls the Secondary MID information for a given secondary_mid_ref. On the Merchant Detail page, Scondary MIDs tab, this populates the single view of a Secondary MID
@@ -1181,42 +1180,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SecondaryMID'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/{secondary_mid_ref}/secondary_mid_location_links:
     post:
       tags:
-      - mid-management
+        - mid-management
       summary: Link Secondary MID with Location
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/{secondary_mid_ref}/secondary_mid_location_links
       description: Creates a link between a Secondary MID and a Location. On the Merchant Detail page, Secondry MID single view, supports the linking of a Secondary MID to a Location.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
         - $ref: 'components.yaml#/components/parameters/secondaryMIDRefParam'
       responses:
         '200':
-          description: Updated, returns the display of the Location Linked 
+          description: Updated, returns the display of the Location Linked
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/LocationLink'
-        '201': 
-          description: Created, returns the display of the Location Linked 
+        '201':
+          description: Created, returns the display of the Location Linked
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/LocationLink'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1237,11 +1236,11 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
     get:
       tags:
-      - mid-management
+        - mid-management
       summary: List Secondary MID Location Links
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mids/{secondary_mid_ref}/secondary_mid_location_links
       description: Displays a list of Locations linked to a Secondary MID. On the Merchant Detail page, Secondry MID single view, supports viewing the linked Locations, supports pagination.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1257,7 +1256,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/LocationLink'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1265,20 +1264,20 @@ paths:
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mid_location_links/{link_ref}:
     delete:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Unlink Secondary MID from Location
       operationId: DELETE /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/secondary_mid_location_links/{link_ref}
       description: Removes a link between a Secondary MID & Location. On the Secondary MID single view, supports "Unlink Location" action; On the Location single view, supports the "Unlink Secondary MID" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
         - $ref: 'components.yaml#/components/parameters/linkRef'
       responses:
-        '204': 
+        '204':
           description: Success, Location link deleted - no content
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1286,12 +1285,12 @@ paths:
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Create Location
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations
       description: Creates a Location for the Merchant. On the Merchant Detail page, supports the "Create new Location" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1302,7 +1301,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LocationSummaryResponse'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1316,11 +1315,10 @@ paths:
                 $ref: 'components.yaml#/components/schemas/ErrorModel'
               example:
                 detail:
-                  - 
-                    loc:
+                  - loc:
                       - body
                       - location_id
-                    msg: "Field must be unique: body.location_id."
+                    msg: 'Field must be unique: body.location_id.'
                     type: unique_error
         '422':
           description: validation error
@@ -1335,8 +1333,7 @@ paths:
                   summary: Additional 422 example
                   value:
                     detail:
-                      - 
-                        loc:
+                      - loc:
                           - body
                           - location_id
                         msg: field required
@@ -1347,12 +1344,12 @@ paths:
             schema:
               $ref: '#/components/schemas/LocationMetaData'
     get:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: List Locations
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations
       description: On the Merchant Detail page, gets the Locations for the Merchant, supports pagination, page size and filtering by location_ref.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1388,25 +1385,25 @@ paths:
                 description: list of Locations
                 items:
                   $ref: '#/components/schemas/LocationSummaryResponse'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/deletion:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Delete Locations
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/deletion
       description: Deletes Locations by location_ref for the Merchant. On the Merchant Detail page, supports the "Delete Location(s)" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
       responses:
-        '202': 
+        '202':
           description: Accepted, returns the status of the Location
           content:
             application/json:
@@ -1421,11 +1418,11 @@ paths:
                       $ref: 'components.yaml#/components/schemas/DeletionStatus'
         '204':
           description: Success, no content
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '409':
           description: Location cannot be deleted to the status of linked Secondary MIDs - either unlink them or go to the Secondary MID and offboard them
@@ -1445,21 +1442,21 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/onboarding:
     post:
-      tags:  
-      - mid-management
+      tags:
+        - mid-management
       summary: Onboard Locations
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/onboarding
       description: Sends a list of Location refs whose MIDs will be onboarded with Harmonia. On the Merchant Detail page, supports the "Onboard Location(s)" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
       responses:
         '204':
           description: Success, no content
-        '400': 
+        '400':
           description: bad request
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '422':
           $ref: 'components.yaml#/components/responses/Error422MissingRefs'
@@ -1478,23 +1475,23 @@ paths:
                     description: the location_refs whose MIDs will be onboarded with Harmonia
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/offboarding:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Offboard Locations
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/offboarding
       description: Sends MID data to Harmonia for offboarding, based on a provided Location. On the Merchant Detail page, supports the "Offboard Location(s)" action
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
       responses:
         '204':
           description: Success, no content
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '422':
           $ref: 'components.yaml#/components/responses/Error422MissingRefs'
@@ -1512,12 +1509,12 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}:
     put:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Edit Location
       operationId: PUT /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}
       description: Updates a Location for a Merchant. On the Merchant Detail page, supports the "Edit Location" action
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1529,7 +1526,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LocationDetailResponse'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1543,11 +1540,10 @@ paths:
                 $ref: 'components.yaml#/components/schemas/ErrorModel'
               example:
                 detail:
-                  - 
-                    loc:
+                  - loc:
                       - body
                       - location_id
-                    msg: "Field must be unique: body.location_id."
+                    msg: 'Field must be unique: body.location_id.'
                     type: unique_error
         '422':
           description: validation error
@@ -1562,8 +1558,7 @@ paths:
                   summary: Additional 422 example
                   value:
                     detail:
-                      - 
-                        loc:
+                      - loc:
                           - body
                           - location_id
                         msg: field required
@@ -1574,12 +1569,12 @@ paths:
             schema:
               $ref: '#/components/schemas/LocationMetaData'
     get:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Get Location Details
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}
       description: Retrieves a Location for the Merchant. On the Merchant Detail page, supports the "View Location" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1591,7 +1586,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LocationDetailResponse'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1600,7 +1595,7 @@ paths:
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/available_mids:
     get:
       tags:
-      - mid-management
+        - mid-management
       summary: List Available MIDs for Location
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/available_mids
       description: Returns the list of MIDs for association. On a single view of a Location, gets the list of MIDs that can be associated to the Location.
@@ -1626,7 +1621,7 @@ paths:
                       $ref: '#/components/schemas/MIDLink'
                     locationLink:
                       $ref: '#/components/schemas/LocationLink'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1635,7 +1630,7 @@ paths:
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/mids:
     post:
       tags:
-      - mid-management
+        - mid-management
       summary: Link Location with MID
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/mids
       description: On the single view of a Location, supports the "associate" MID action
@@ -1653,7 +1648,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/MIDLink'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1664,14 +1659,13 @@ paths:
               schema:
                 $ref: 'components.yaml#/components/schemas/ErrorModel'
               examples:
-                errorExample1: 
+                errorExample1:
                   $ref: 'components.yaml#/components/examples/Error404Example'
                 errorExample2:
                   summary: MID not found
                   value:
                     detail:
-                      -
-                        loc:
+                      - loc:
                           - body
                           - mid_value
                         msg: MID not found
@@ -1687,14 +1681,12 @@ paths:
                   summary: Missing required fields
                   value:
                     detail:
-                      -
-                        loc:
+                      - loc:
                           - body
                           - mid_value
                         msg: field required
                         type: value_error.missing
-                      -
-                        loc:
+                      - loc:
                           - body
                           - payment_scheme_slug
                         msg: field required
@@ -1712,7 +1704,7 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
     get:
       tags:
-      - mid-management
+        - mid-management
       summary: List Location's Associated MIDs
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/mids
       description: Returns the associated list of MIDs. On a single view of a Location, gets the list of associated MIDs.
@@ -1733,7 +1725,7 @@ paths:
                 description: returns the list of MIDs that have an association to the Location
                 items:
                   $ref: '#/components/schemas/MIDLink'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1742,11 +1734,11 @@ paths:
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/secondary_mid_location_links:
     post:
       tags:
-      - mid-management
+        - mid-management
       summary: Link Location with Secondary MID
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/secondary_mid_location_links
       description: Creates a link between a Secondary MID and a Location. On the Merchant Detail page, Location single view, supports the linking of a Secondary MID to a Location.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1768,7 +1760,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SecondaryMIDLink'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1787,11 +1779,11 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
     get:
       tags:
-      - mid-management
+        - mid-management
       summary: List Location's Linked Secondary MIDs
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_red}/secondary_mid_links
       description: Displays a list of Secondary MIDs linked to a Location. On the Merchant Detail page, Location single view, supports viewing the linked Secondary MIDs, supports pagination.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1807,7 +1799,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SecondaryMIDLink'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1816,11 +1808,11 @@ paths:
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations:
     post:
       tags:
-       - mid-management
+        - mid-management
       summary: Create Sub-Location
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations
       description: Creates a new Sub-Location on a Location. On the single view of a Location, supports the "create" Sub-Location action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1832,7 +1824,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LocationSummaryResponse'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1846,11 +1838,10 @@ paths:
                 $ref: 'components.yaml#/components/schemas/ErrorModel'
               example:
                 detail:
-                  - 
-                    loc:
+                  - loc:
                       - body
                       - location_id
-                    msg: "Field must be unique: body.location_id."
+                    msg: 'Field must be unique: body.location_id.'
                     type: unique_error
         '422':
           description: validation error
@@ -1865,8 +1856,7 @@ paths:
                   summary: Additional 422 example
                   value:
                     detail:
-                      - 
-                        loc:
+                      - loc:
                           - body
                           - location_id
                         msg: field required
@@ -1877,12 +1867,12 @@ paths:
             schema:
               $ref: '#/components/schemas/LocationMetaData'
     get:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: List Sub-Locations
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations
       description: Retrieves a list of Sub-Location for a Location.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1896,7 +1886,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/LocationSummaryResponse'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1904,12 +1894,12 @@ paths:
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations/deletion:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Select Sub-Locations
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations/deletion
       description: Deletes Sub-Locations by sub_location_ref for the Merchant. On the Merchant Detail page, supports the "Delete Location(s)" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1917,11 +1907,11 @@ paths:
       responses:
         '204':
           description: Success, no content
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '422':
           $ref: 'components.yaml#/components/responses/Error422MissingRefs'
@@ -1939,12 +1929,12 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations/{sub_location_ref}:
     put:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Edit Sub-Location
       operationId: PUT /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations/{sub_location_ref}
       description: Updates a Sub-Location for a Merchant. On the Merchant Detail page, Location Single View - Sub-Locations, supports the "Edit Sub-Location" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -1957,7 +1947,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LocationDetailResponse'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -1971,11 +1961,10 @@ paths:
                 $ref: 'components.yaml#/components/schemas/ErrorModel'
               example:
                 detail:
-                  - 
-                    loc:
+                  - loc:
                       - body
                       - location_id
-                    msg: "Field must be unique: body.location_id."
+                    msg: 'Field must be unique: body.location_id.'
                     type: unique_error
         '422':
           description: validation error
@@ -1990,8 +1979,7 @@ paths:
                   summary: Additional 422 example
                   value:
                     detail:
-                      - 
-                        loc:
+                      - loc:
                           - body
                           - location_id
                         msg: field required
@@ -2002,12 +1990,12 @@ paths:
             schema:
               $ref: '#/components/schemas/LocationMetaData'
     get:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Get Sub-Location Details
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations/{sub_location_ref}
       description: Retrieves a Sub-Location for the Merchant. On the Merchant Detail page, Location Single View - Sub-Location, supports the "View Sub-Location" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -2037,7 +2025,7 @@ paths:
                         description: the display (pretty name or first line of address)
                   sub_location:
                     $ref: '#/components/schemas/LocationDetailResponse'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -2045,7 +2033,7 @@ paths:
           $ref: 'components.yaml#/components/responses/Error404'
     patch:
       tags:
-      - mid-management
+        - mid-management
       summary: Edit Sub-Location Parent
       operationId: PATCH /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/locations/{location_ref}/sub_locations/{sub_location_ref}
       description: Changes the parent location on a Sub-Location. On the Sub-Location single view, supports the Moving of the Sub-Location to a new "parent".
@@ -2067,9 +2055,9 @@ paths:
                 properties:
                   location_ref:
                     $ref: 'components.yaml#/components/schemas/RefModel'
-                  parent_ref: 
+                  parent_ref:
                     $ref: 'components.yaml#/components/schemas/RefModel'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -2082,17 +2070,17 @@ paths:
               type: object
               required:
                 - parent_ref
-              properties: 
+              properties:
                 parent_ref:
                   $ref: 'components.yaml#/components/schemas/RefModel'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis:
     post:
       tags:
-       - mid-management
+        - mid-management
       summary: Create PSIMI
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimi
       description: Creates a new PSIMI on a Merchant. On the Merchant Detail Page, supports the "create" a new PSIMI action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -2103,7 +2091,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PSIMI'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -2119,8 +2107,8 @@ paths:
             schema:
               type: object
               required:
-              - onboard
-              - psimi_metadata
+                - onboard
+                - psimi_metadata
               properties:
                 onboard:
                   type: boolean
@@ -2129,7 +2117,7 @@ paths:
                   $ref: '#/components/schemas/PSIMIMetaData'
     get:
       tags:
-      - mid-management 
+        - mid-management
       summary: List PSIMIs
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimi
       description: Returns the PSIMI list for the Merchant. On the Merchant Detail page, gets the PSIMI for the Merchant, supports pagination, page size and filtering on the psimi_ref.
@@ -2152,18 +2140,18 @@ paths:
                   $ref: '#/components/schemas/PSIMI'
         '403':
           description: unauthorised
-        '400': 
+        '400':
           description: bad request
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/{psimi_ref}:
     patch:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Edit PSIMI
       operationId: PATCH /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/{psimi_ref}
       description: Updates an PSIMI and returns the updated version. On the Merchant Detail page, supports the "Edit PSIMI" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -2175,7 +2163,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PSIMI'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -2194,28 +2182,26 @@ paths:
                   summary: missing field
                   value:
                     detail:
-                      -
-                        loc:
-                          body
+                      - loc: body
                           payment_scheme_merchant_name
                         msg: value is not a valid string
-                        type: type_error.string 
+                        type: type_error.string
       requestBody:
-       content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              payment_scheme_merchant_name:
-                type: string
-                description: this is a value that comes from the Payment Scheme
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                payment_scheme_merchant_name:
+                  type: string
+                  description: this is a value that comes from the Payment Scheme
     get:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Get PSIMI Details
       operationId: GET /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/{psimi_ref}
       description: Retrieves a PSIMI for the Merchant. On the Merchant Detail page, supports the "View PSIMI" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -2227,7 +2213,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PSIMI'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
@@ -2235,17 +2221,17 @@ paths:
           $ref: 'components.yaml#/components/responses/Error404'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/deletion:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Delete PSIMIs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/deletion
       description: Deletes PSIMI by psimi_ref for the Merchant. On the Merchant Detail page, supports the "Delete PSIMI(s)" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
       responses:
-        '202': 
+        '202':
           description: Accepted, returns the status of the PSIMI
           content:
             application/json:
@@ -2260,9 +2246,9 @@ paths:
                       $ref: 'components.yaml#/components/schemas/DeletionStatus'
         '204':
           description: Success, no content
-        '400': 
+        '400':
           description: bad request
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '422':
           $ref: 'components.yaml#/components/responses/Error422MissingRefs'
@@ -2281,12 +2267,12 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/onboarding:
     post:
-      tags:  
-      - mid-management
+      tags:
+        - mid-management
       summary: Onboard PSIMIs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/onboarding
       description: Sends a list of PSIMI refs to be onboarded with Harmonia. On the Merchant Detail page, supports the "Onboard PSIMI(s)" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -2300,9 +2286,9 @@ paths:
                 description: list of PSIMI that were onboarded
                 items:
                   $ref: '#/components/schemas/PSIMI'
-        '400': 
+        '400':
           description: bad request
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '422':
           $ref: 'components.yaml#/components/responses/Error422MissingRefs'
@@ -2321,12 +2307,12 @@ paths:
                     $ref: 'components.yaml#/components/schemas/RefModel'
   /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/offboarding:
     post:
-      tags: 
-      - mid-management
+      tags:
+        - mid-management
       summary: Offboard PSIMIs
       operationId: POST /api/{version}/plans/{plan_ref}/merchants/{merchant_ref}/psimis/offboarding
       description: Sends PSIMI data to Harmonia for offboarding. On the Merchant Detail page, supports the "Offboard PSIMI(s)" action.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/planRefParam'
         - $ref: 'components.yaml#/components/parameters/merchantRefParam'
@@ -2340,11 +2326,11 @@ paths:
                 description: list of PSIMI that have been offboarded
                 items:
                   $ref: '#/components/schemas/PSIMI'
-        '400': 
+        '400':
           description: bad request
         '403':
           description: unauthorised
-        '404': 
+        '404':
           $ref: 'components.yaml#/components/responses/Error404Multi'
         '422':
           $ref: 'components.yaml#/components/responses/Error422MissingRefs'
@@ -2364,11 +2350,11 @@ paths:
   /api/{version}/customer_wallet/user_lookups:
     put:
       tags:
-      - customer-wallet
+        - customer-wallet
       summary: Create User Lookup
       operationId: PUT /api/{version}/customer_wallet/user_lookups
       description: Sends information about a customer wallet lookup to be stored for a user, supports pagination.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/pageSizeParam'
         - $ref: 'components.yaml#/components/parameters/pageNumParam'
@@ -2402,11 +2388,11 @@ paths:
               $ref: '#/components/schemas/UserLookup'
     get:
       tags:
-      - customer-wallet
+        - customer-wallet
       summary: List User Lookups
       operationId: GET /api/{version}/customer_wallet/user_lookups
       description: Sends information about a customer wallet lookup to be stored for a user, supports pagination.
-      parameters: 
+      parameters:
         - $ref: 'components.yaml#/components/parameters/versionParam'
         - $ref: 'components.yaml#/components/parameters/pageSizeParam'
         - $ref: 'components.yaml#/components/parameters/pageNumParam'
@@ -2443,7 +2429,7 @@ components:
           description: name of the person that created the comment (pulled from the auth header)
         is_edited:
           type: boolean
-          description: flag to represent if the comment has been edited 
+          description: flag to represent if the comment has been edited
         is_deleted:
           type: boolean
           description: flag to represent if the comment has been deleted - if true than the text & subjects fields will be empty
@@ -2456,15 +2442,15 @@ components:
               - display_text
               - subject_ref
             properties:
-              display_text: 
+              display_text:
                 type: string
                 description: the text display of the subject
               subject_ref:
                 $ref: 'components.yaml#/components/schemas/RefModel'
               icon_slug:
                 type: string
-                description: the text that tells the frontend if an icon should be displayed 
-                enum: ["visa", "amex", "mastercard"]
+                description: the text that tells the frontend if an icon should be displayed
+                enum: ['visa', 'amex', 'mastercard']
                 example: null
         metadata:
           $ref: '#/components/schemas/CommentMetaData'
@@ -2484,20 +2470,20 @@ components:
           $ref: 'components.yaml#/components/schemas/RefModel'
         owner_type:
           type: string
-          enum: ["plan", "merchant"]
+          enum: ['plan', 'merchant']
           description: the type of the owner entity
-          example: "merchant"
-        text: 
+          example: 'merchant'
+        text:
           type: string
           description: the text of the comment
     Plan:
       type: object
       description: Used to populate the Plan Page with a list of Plans and their meta data & associated counts
       required:
-      - plan_ref
-      - plan_status
-      - plan_metadata
-      - plan_counts
+        - plan_ref
+        - plan_status
+        - plan_metadata
+        - plan_counts
       properties:
         plan_ref:
           $ref: 'components.yaml#/components/schemas/RefModel'
@@ -2510,8 +2496,8 @@ components:
     PlanMetaData:
       type: object
       description: Plan meta data that is set when creating a new plan and that is displayed on the Plan Page & the header of the Plan Detail Page
-      required: 
-      - name
+      required:
+        - name
       properties:
         name:
           type: string
@@ -2522,13 +2508,13 @@ components:
         slug:
           type: string
           description: Django plan slug, if provided this must be unique
-        icon_url: 
+        icon_url:
           type: string
           description: path to the plan's icon
     PlanCounts:
       type: object
       description: the counts associated with a Plan that is displayed as part of the Plan list on the Plan Page
-      required: 
+      required:
         - merchants
         - locations
         - payment_scheme_counts
@@ -2563,10 +2549,10 @@ components:
       type: object
       description: Used to populate the Plan Detail Page with a list of Merchants and their meta data & associated counts
       required:
-      - merchant_ref
-      - merchant_status
-      - merchant_metadata
-      - merchant_counts
+        - merchant_ref
+        - merchant_status
+        - merchant_metadata
+        - merchant_counts
       properties:
         merchant_ref:
           $ref: 'components.yaml#/components/schemas/RefModel'
@@ -2586,10 +2572,10 @@ components:
         name:
           type: string
           description: Pretty name of the Merchant
-        icon_url: 
+        icon_url:
           type: string
           description: path to the Merchant's icon
-        location_label: 
+        location_label:
           type: string
           description: the word plural descriptor that should be used when displaying "locations", defaults to Locations
     MerchantCounts:
@@ -2611,9 +2597,9 @@ components:
     MIDLink:
       type: object
       required:
-      - mid_ref
-      - payment_scheme
-      - mid_value
+        - mid_ref
+        - payment_scheme
+        - mid_value
       properties:
         mid_ref:
           $ref: 'components.yaml#/components/schemas/RefModel'
@@ -2624,12 +2610,12 @@ components:
           description: PSIMI assigned by the payment scheme, Visa - CAID, MasterCard - ACQ_MER_ID, AMEX - MID
     MID:
       type: object
-      required: 
-      - mid_ref
-      - mid_metadata
-      - mid_status
-      - date_added
-      - txm_status
+      required:
+        - mid_ref
+        - mid_metadata
+        - mid_status
+        - date_added
+        - txm_status
       properties:
         mid_ref:
           $ref: 'components.yaml#/components/schemas/RefModel'
@@ -2643,9 +2629,9 @@ components:
           $ref: 'components.yaml#/components/schemas/TxmStatus'
     MIDMetaData:
       type: object
-      required: 
-      - payment_scheme_slug
-      - mid
+      required:
+        - payment_scheme_slug
+        - mid
       properties:
         payment_scheme_slug:
           $ref: 'components.yaml#/components/schemas/PaymentSchemeSlug'
@@ -2660,10 +2646,10 @@ components:
     SecondaryMIDLink:
       type: object
       required:
-      - link_ref
-      - secondary_mid_ref
-      - payment_scheme
-      - secondary_mid_value
+        - link_ref
+        - secondary_mid_ref
+        - payment_scheme
+        - secondary_mid_value
       properties:
         link_ref:
           $ref: 'components.yaml#/components/schemas/RefModel'
@@ -2676,12 +2662,12 @@ components:
           description: Visa - VSID, MasterCard - Location ID, AMEX - ?
     SecondaryMID:
       type: object
-      required: 
-      - secondary_mid_ref
-      - secondary_mid_metadata
-      - secondary_mid_status
-      - date_added
-      - txm_status
+      required:
+        - secondary_mid_ref
+        - secondary_mid_metadata
+        - secondary_mid_status
+        - date_added
+        - txm_status
       properties:
         secondary_mid_ref:
           $ref: 'components.yaml#/components/schemas/RefModel'
@@ -2695,10 +2681,10 @@ components:
           $ref: 'components.yaml#/components/schemas/TxmStatus'
     SecondaryMIDMetaData:
       type: object
-      required: 
-      - payment_scheme_slug
-      - secondary_mid
-      - payment_enrolment_status
+      required:
+        - payment_scheme_slug
+        - secondary_mid
+        - payment_enrolment_status
       properties:
         payment_scheme_slug:
           $ref: 'components.yaml#/components/schemas/PaymentSchemeSlug'
@@ -2749,13 +2735,13 @@ components:
     Location:
       type: object
       required:
-      - location_id
-      - is_physical_location
+        - location_id
+        - is_physical_location
       properties:
         name:
           type: string
           description: Pretty name of a location
-        location_id: 
+        location_id:
           type: string
           description: an external reference provided by the Merchant or relevant 3rd party, otherwise the location_ref
         merchant_internal_id:
@@ -2770,7 +2756,7 @@ components:
         town_city:
           type: string
           description: Optional address information
-        postcode: 
+        postcode:
           type: string
           description: postcode of the location
     LocationDetailResponse:
@@ -2807,7 +2793,7 @@ components:
         name:
           type: string
           description: Pretty name of a location
-        location_id: 
+        location_id:
           type: string
           description: an external reference to a location provided by the Merchant or relevant 3rd party (required)
         merchant_internal_id:
@@ -2831,16 +2817,16 @@ components:
         country:
           type: string
           description: Optional address information
-        postcode: 
+        postcode:
           type: string
           description: postcode of the location (required if physical location)
     PSIMI:
       type: object
       required:
-      - psimi_ref
-      - psimi_metadata
-      - psimi_status
-      - date_added
+        - psimi_ref
+        - psimi_metadata
+        - psimi_status
+        - date_added
       properties:
         psimi_ref:
           $ref: 'components.yaml#/components/schemas/RefModel'
@@ -2855,8 +2841,8 @@ components:
     PSIMIMetaData:
       type: object
       required:
-      - value
-      - payment_scheme_slug
+        - value
+        - payment_scheme_slug
       properties:
         value:
           type: string
@@ -2872,9 +2858,9 @@ components:
       items:
         type: object
         properties:
-          slug:
+          scheme_slug:
             $ref: 'components.yaml#/components/schemas/PaymentSchemeSlug'
-          mids:
+          count:
             type: integer
             description: the number of mids loaded for the scheme
           secondary_mids:
@@ -2897,7 +2883,7 @@ components:
           mids: 1
           secondary_mids: null
           psimis: null
-       
+
     UserLookup:
       type: object
       properties:
@@ -2906,7 +2892,7 @@ components:
           properties:
             user_id:
               type: string
-              description: this is the hermes ID of customer wallet - used to determine uniqueness of a lookup 
+              description: this is the hermes ID of customer wallet - used to determine uniqueness of a lookup
             channel:
               type: string
               description: the channel that the customer wallet belongs to
@@ -2919,7 +2905,7 @@ components:
             type:
               type: string
               description: multiple lookup types will be supported, right now it is JWT
-            criteria: 
+            criteria:
               type: object
               description: json that can be used to re-run the lookup request, for JWT that is just the jwt of the wallet
             datetime:
