@@ -27,7 +27,7 @@ paths:
       tags:
         - Token
       summary: "User registration, login and token refresh."
-      description: "Use this endpoint to get a token for a new user, exisitng user or retrieve a refresh token.<br/><br/><h2>For grant_type\\: b2b</h2>The <code>POST /token</code> request requires an Authorization header with a Bearer token which is a signed JWT with the following claims:
+      description: "Use this endpoint to get a token for a new user, exisitng user or retrieve a refresh token. Change!<br/><br/><h2>For grant_type\\: b2b</h2>The <code>POST /token</code> request requires an Authorization header with a Bearer token which is a signed JWT with the following claims:
         <ul>
           <li><h3>Header claims:</h3></li>
         <ul>
