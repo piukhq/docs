@@ -2092,7 +2092,7 @@ paths:
                         type: string
                         description: the display (pretty name or first line of address)
                   sub_location:
-                    $ref: '#/components/schemas/LocationDetailResponse'
+                    $ref: '#/components/schemas/SubLocationDetailResponse'
         '400':
           description: bad request
         '403':
@@ -2872,6 +2872,22 @@ components:
         linked_secondary_mids_count:
           type: integer
           description: The number of Secondary MIDs associated with this location
+    SubLocationDetailResponse:
+      type: object
+      required:
+        - location_ref
+        - location_metadata
+        - location_status
+        - date_added
+      properties:
+        location_ref:
+          $ref: 'components.yaml#/components/schemas/RefModel'
+        location_metadata:
+          $ref: '#/components/schemas/LocationMetaData'
+        location_status:
+          $ref: 'components.yaml#/components/schemas/DeletionStatus'
+        date_added:
+          $ref: 'components.yaml#/components/schemas/DateAdded'
     LocationMetaData:
       type: object
       required:
