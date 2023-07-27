@@ -2810,7 +2810,6 @@ components:
         - location_metadata
         - location_status
         - date_added
-        - payment schemes
       properties:
         location_ref:
           $ref: 'components.yaml#/components/schemas/RefModel'
@@ -2820,8 +2819,6 @@ components:
           $ref: 'components.yaml#/components/schemas/DeletionStatus'
         date_added:
           $ref: 'components.yaml#/components/schemas/DateAdded'
-        payment_schemes:
-          $ref: '#/components/schemas/PaymentSchemeCounts'
         sub-locations:
           type: array
           items:
@@ -2860,7 +2857,6 @@ components:
         - location_metadata
         - location_status
         - date_added
-        - payment schemes
       properties:
         location_ref:
           $ref: 'components.yaml#/components/schemas/RefModel'
@@ -2870,8 +2866,6 @@ components:
           $ref: 'components.yaml#/components/schemas/DeletionStatus'
         date_added:
           $ref: 'components.yaml#/components/schemas/DateAdded'
-        payment_schemes:
-          $ref: '#/components/schemas/PaymentSchemeCounts'
         linked_mids_count:
           type: integer
           description: The number of MIDs associated with this location
