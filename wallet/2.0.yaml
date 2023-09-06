@@ -374,7 +374,7 @@ paths:
               For this endpoint you will use the <b>add_field</b> or the first <b>authorise_field</b> if no <b>add_field</b> exists.<br>
               <br>
               <h3>Merchant Fields</h3>
-              Provide a unique, immutable identifer for the loyalty membership. We will use this identifier for **PLL**." 
+              Provide a unique, immutable identifer for the loyalty membership. We will use this identifier for **PLL**."
       operationId: POST /wallet/create_trusted
       security:
         - bearerAuth: []
@@ -411,9 +411,15 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse409'
-              example: 
-                error_message: "You may encounter this conflict when a provided payment card is already linked to a different loyalty account. The new wallet will not be created." 
-                error_slug: "CONFLICT"
+              examples:
+                card_conflict:
+                  value:
+                    error_message: "You will encounter this conflict when a provided payment card is already linked to a different loyalty account. The new wallet will not be created."
+                    error_slug: "CONFLICT"
+                user_conflict:
+                  value:
+                    error_message: "You will encounter this conflict when the user already exists. The new wallet will not be created." 
+                    error_slug: "USER_CONFLICT"
         '422':
           description: "**Unprocessable entity** One or more fields in the request did not pass the required validation"
           content:
