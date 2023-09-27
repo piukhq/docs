@@ -27,7 +27,7 @@ paths:
       tags:
         - Token
       summary: "User registration, login and token refresh."
-      description: "Use this endpoint to get a token for a new user, exisitng user or retrieve a refresh token.<br/><br/><h2>For grant_type\\: b2b</h2>The <code>POST /token</code> request requires an Authorization header with a Bearer token which is a signed JWT with the following claims:
+      description: "Use this endpoint to get a token for a new user, exisitng user or retrieve a refresh token.<h2>For grant_type: b2b</h2>The <code>POST /token</code> request requires an Authorization header with a Bearer token which is a signed JWT with the following claims:
         <ul>
           <li><h3>Header claims:</h3></li>
           <ul>
@@ -44,19 +44,42 @@ paths:
           </ul>
         </ul>
         The client must sign the JWT with a private key. Bink will validate the signature against the public key and issue an access_token (see 200 response) if valid, or an error (400 or 401) if not.<br>
-        <h2>For grant_type:refresh_token</h2>Requires an Authorisation header with a Bearer token. Provide the refresh_token value that will have been issued in a previous request to <code>POST /token</code>. This string is opaque to the client."
+        <h2>For grant_type: refresh_token</h2>
+        The <code>POST /token</code> request requires an Authorisation header with a Bearer token. Provide the refresh_token value that will have been issued in a previous request to <code>POST /token</code>. This string is opaque to the client.
+        <h2>For grant_type: client_credentials</h2>
+        The <code>POST /token</code> request requires a BasicAuth header, where the BasicAuth is comprosed of:
+        <ul>
+          <li>**Username:** Bink Bundle Id</li>
+          <li>**Password:** Secret to be provided by Bink
+        </ul>
+        **Additional Requirement:**
+        This grant_type requires that a username is passed in the request payload."
       operationId: token
       security:
         - bearerAuth: []
+        - basicAuth: []
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TokenRequest'
-            example:
-              grant_type: b2b
-              scope:
-                - user
+            examples:
+              B2B:
+                value:
+                  grant_type: b2b
+                  scope:
+                    - user
+              Refresh:
+                value:
+                  grant_type: refresh_token
+                  scope:
+                    - user
+              ClientCredentials:
+                value:
+                  grant_type: client_credentials
+                  username: "testuser@test.com"
+                  scope:
+                    - user
       responses:
         '200':
           description: OK
@@ -314,124 +337,6 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
-  /wallet/create_trusted:
-    post:
-      tags:
-        - Wallet
-        - Token
-      summary: User registration and wallet creation containing a payment & loyalty card with PLL from a Trusted Channel
-      description: "Used, by a Retailer, to create a Bink Wallet for their own channel. It is created linked payment card and loyalty account.
-        <br>
-          The request contains:
-          <br>
-            <h2>Token request</h2>
-            Currently supported token requests are for B2B, user access tokens
-              <ul>
-                <li><h3>Header Claims</h3></li>
-                <ul>
-                  <li>**typ:** type – refers to the type of token; jwt (**OPTIONAL**, only needed if not RSA)</li>
-                  <li>**alg:** algorithm – refers to the encryption used for the public key (**OPTIONAL**, only needed if not RSA)</li>
-                  <li>**kid**: Key ID - Refers to the key-pair used to sign this JWT. **REQUIRED** </li>
-                </ul>
-                <li><h3>Body claims</h3></li>
-                <ul>
-                  <li>**sub**: Subject - A unique, immutable identifier for the user. If this ID does not exist, a new user will be created using this value and the email provided in the email claim. **REQUIRED**</li>
-                  <li>**email**: User’s e-mail address - Must be unique for the channel and is changeable only via the <code>POST /email_update</code> service. **OPTIONAL**</li>
-                  <li>**iat**: Issued At - This claim identifies the time at which the JWT was issued. This claim can be used to determine the age of the JWT. Its value MUST be a number containing a NumericDate value. **REQUIRED**</li>
-                  <li>**exp**: Expiry - This claim identifies the time at which the JWT expires. **REQUIRED**</li>
-                </ul>
-              </ul>
-            <br>
-            <h2>Payment Card</h2>
-            This resource represents a primary account number (PAN) which can be associated with one or more physical payment cards (e.g., with different expiry dates or cardholder names).
-            <br><br>
-            When posting to an existing account with the same **fingerprint**, if the following fields are different in the request, the stored values will be updated:
-            <br>
-            <ul>
-              <li><code>expiry_month</code></li>
-              <li><code>expiry_year</code></li>
-              <li><code>name_on_card</code></li>
-              <li><code>card_nickname</code></li>
-            </ul>
-            <br>
-            **NOTE**: Success will automatically create PLL links to the provided Loyalty Card.
-            <br>
-            <h2>Loyalty Card</h2>
-            When a **PLL** type **Loyalty Card** is added to the Bink service, we typically require the user to provide Add and Authorisation credentials so we can verify ownership with the relevant **Loyalty Plan** provider. Trusted Channel allows an integrated partner to Add a **PLL** type **Loyalty Card** with a single credential, having already validated the user through their own client application.
-            <br><br>
-            This endpoint trusts that the partner has completed full verification of the user and no additional validation is required from Bink.
-            <h3>Credentials</h3>
-              We require a unique identifier that allows us to recognise the membership information verified by the Trusted Channel. Examples of a membership identifier are **card number** or **email**. This data is in <code>journey_fields.add_fields</code> or <code>journey_fields.authorise_fields</code> and can be obtained from either of the following endpoints:
-              <ul>
-                <li><code>GET /loyalty plans</code></li>
-                <li><code> GET /loyalty_plans/{loyalty_plan_id}</code></li>
-              </ul>
-              Or from <code>add_fields</code> and <code>authorise_fields</code> in the endpoint:
-              <ul>
-                <li> <code>/loyalty_plans/{loyalty_plan_id}/journey_fields</code> </li>
-              </ul>
-              <b>IMPORTANT:</b>
-              For this endpoint you will use the <b>add_field</b> or the first <b>authorise_field</b> if no <b>add_field</b> exists.<br>
-              <br>
-              <h3>Merchant Fields</h3>
-              Provide a unique, immutable identifer for the loyalty membership. We will use this identifier for **PLL**."
-      operationId: POST /wallet/create_trusted
-      security:
-        - bearerAuth: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TrustedWalletCreateRequest'
-      responses:
-        '202':
-          description: accepted
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TrustedWalletCreateResponse'
-        '400':
-          description: '**Bad request** Client needs to modify the request before it can be retried'
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/genericresponse400'
-        '401':
-          description: '**Unauthorized** Client does not have valid token'
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/genericresponse401'
-        '409':
-          description: '**Conflict** Could not process the request due to a conflict.'
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/genericresponse409'
-              examples:
-                card_conflict:
-                  value:
-                    error_message: "You will encounter this conflict when a provided payment card is already linked to a different loyalty account. The new wallet will not be created."
-                    error_slug: "CONFLICT"
-                user_conflict:
-                  value:
-                    error_message: "You will encounter this conflict when the user already exists. The new wallet will not be created." 
-                    error_slug: "USER_CONFLICT"
-        '422':
-          description: "**Unprocessable entity** One or more fields in the request did not pass the required validation"
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/genericresponse422'
-              example:
-                error_message: "Could not validate fields"
-                error_slug: "FIELD_VALIDATION_ERROR"
-                fields:
-                  - "expected str for dictionary value @ data['card_number']" 
   /wallet/loyalty_cards/{loyalty_card_id}:
     get:
       security: 
@@ -2390,24 +2295,31 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+    basicAuth:
+      type: http
+      scheme: basic
   schemas:
     TokenRequest:
       type: object
       required:
         - grant_type
+        - scope
       properties:
         grant_type:
           type: string
-          example: 'refresh_token'
-          description: "REQUIRED. Value MUST be set to 'refresh_token'."
+          example: 'client_credentials'
+          description: "REQUIRED."
         scope:
           type: array
-          description: "A list of space-delimited, case-sensitive strings. The strings are defined by the authorization server.  If the value contains multiple space-delimited strings, their order does not matter, and each string adds an additional access range to the requested scope."
+          description: "REQUIRED. A list of space-delimited, case-sensitive strings. The strings are defined by the authorization server.  If the value contains multiple space-delimited strings, their order does not matter, and each string adds an additional access range to the requested scope."
           items:
             type: string
           example:
-            - id
-            - email
+            - user
+        username:
+          type: string
+          description: Required when the grant_type is client_credentials, this provides the user for the response tokens' scope.
+          example: testuser@test.com
     TokenResponseSuccess:
       type: object
       required:
@@ -2454,24 +2366,6 @@ components:
             </ul>"
           example:
             error: 'invalid_client'
-    TrustedWalletCreateRequest:
-      type: object
-      required:
-        - token
-        - loyalty_card
-        - payment_card
-      properties:
-        token:
-          allOf:
-            -  { $ref: '#/components/schemas/TokenRequest' }
-          example:
-            grant_type: b2b
-            scope:
-              - user
-        loyalty_card:
-          $ref: '#/components/schemas/LoyaltyCardAddTrustedRequestAdd'
-        payment_card:
-           $ref: '#/components/schemas/PaymentAccountCreateRequest'
     LoyaltyCardJoinRequest:
       type: object
       description: "The fields that need to be presented to the user in order to become a new member of the Loyalty Plan."
