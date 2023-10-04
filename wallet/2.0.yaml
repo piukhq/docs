@@ -27,7 +27,7 @@ paths:
       tags:
         - Token
       summary: "User registration, login and token refresh."
-      description: "Use this endpoint to get a token for a new user, exisitng user or retrieve a refresh token.<br/><br/><h2>For grant_type\\: b2b</h2>The <code>POST /token</code> request requires an Authorization header with a Bearer token which is a signed JWT with the following claims:
+      description: "Use this endpoint to get a token for a new user, exisitng user or retrieve a refresh token.<h2>For grant_type: b2b</h2>The <code>POST /token</code> request requires an Authorization header with a Bearer token which is a signed JWT with the following claims:
         <ul>
           <li><h3>Header claims:</h3></li>
           <ul>
@@ -44,19 +44,42 @@ paths:
           </ul>
         </ul>
         The client must sign the JWT with a private key. Bink will validate the signature against the public key and issue an access_token (see 200 response) if valid, or an error (400 or 401) if not.<br>
-        <h2>For grant_type:refresh_token</h2>Requires an Authorisation header with a Bearer token. Provide the refresh_token value that will have been issued in a previous request to <code>POST /token</code>. This string is opaque to the client."
+        <h2>For grant_type: refresh_token</h2>
+        The <code>POST /token</code> request requires an Authorisation header with a Bearer token. Provide the refresh_token value that will have been issued in a previous request to <code>POST /token</code>. This string is opaque to the client.
+        <h2>For grant_type: client_credentials</h2>
+        The <code>POST /token</code> request requires a BasicAuth header, where the BasicAuth is comprosed of:
+        <ul>
+          <li>**Username:** Bink Bundle Id</li>
+          <li>**Password:** Secret to be provided by Bink
+        </ul>
+        **Additional Requirement:**
+        This grant_type requires that a username is passed in the request payload."
       operationId: token
       security:
         - bearerAuth: []
+        - basicAuth: []
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/TokenRequest'
-            example:
-              grant_type: b2b
-              scope:
-                - user
+            examples:
+              B2B:
+                value:
+                  grant_type: b2b
+                  scope:
+                    - user
+              Refresh:
+                value:
+                  grant_type: refresh_token
+                  scope:
+                    - user
+              ClientCredentials:
+                value:
+                  grant_type: client_credentials
+                  username: "testuser@test.com"
+                  scope:
+                    - user
       responses:
         '200':
           description: OK
@@ -326,14 +349,16 @@ paths:
           <br>
             <h2>Token request</h2>
             Currently supported token requests are for B2B, user access tokens
+              <h3>For grant_type: b2b</h3>
+              **Signed JWT has the following claims:**
               <ul>
-                <li><h3>Header Claims</h3></li>
+                <li><h4>Header Claims</h4></li>
                 <ul>
                   <li>**typ:** type – refers to the type of token; jwt (**OPTIONAL**, only needed if not RSA)</li>
                   <li>**alg:** algorithm – refers to the encryption used for the public key (**OPTIONAL**, only needed if not RSA)</li>
                   <li>**kid**: Key ID - Refers to the key-pair used to sign this JWT. **REQUIRED** </li>
                 </ul>
-                <li><h3>Body claims</h3></li>
+                <li><h4>Body claims</h4></li>
                 <ul>
                   <li>**sub**: Subject - A unique, immutable identifier for the user. If this ID does not exist, a new user will be created using this value and the email provided in the email claim. **REQUIRED**</li>
                   <li>**email**: User’s e-mail address - Must be unique for the channel and is changeable only via the <code>POST /email_update</code> service. **OPTIONAL**</li>
@@ -341,6 +366,12 @@ paths:
                   <li>**exp**: Expiry - This claim identifies the time at which the JWT expires. **REQUIRED**</li>
                 </ul>
               </ul>
+              <h3>For grant_type: client_credentials</h3>
+              <ul>
+                <li>**Username:** Bink Bundle Id</li>
+                <li>**Password:** Secret to be provided by Bink
+              </ul>
+              **Additional Requirement:** <br> This grant_type requires that a username is passed in the request payload.
             <br>
             <h2>Payment Card</h2>
             This resource represents a primary account number (PAN) which can be associated with one or more physical payment cards (e.g., with different expiry dates or cardholder names).
@@ -378,6 +409,7 @@ paths:
       operationId: POST /wallet/create_trusted
       security:
         - bearerAuth: []
+        - basicAuth: []
       requestBody:
         content:
           application/json:
@@ -1719,7 +1751,7 @@ paths:
                   consents:
                     - consent_slug: EmailOptin
                       value: 'false'
-        description: 'Loyalty Card Join Request'        
+        description: 'Loyalty Card Join Request'
     delete:
       security:
         - bearerAuth: []
@@ -2390,24 +2422,31 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+    basicAuth:
+      type: http
+      scheme: basic
   schemas:
     TokenRequest:
       type: object
       required:
         - grant_type
+        - scope
       properties:
         grant_type:
           type: string
-          example: 'refresh_token'
-          description: "REQUIRED. Value MUST be set to 'refresh_token'."
+          example: 'client_credentials'
+          description: "REQUIRED."
         scope:
           type: array
-          description: "A list of space-delimited, case-sensitive strings. The strings are defined by the authorization server.  If the value contains multiple space-delimited strings, their order does not matter, and each string adds an additional access range to the requested scope."
+          description: "REQUIRED. A list of space-delimited, case-sensitive strings. The strings are defined by the authorization server.  If the value contains multiple space-delimited strings, their order does not matter, and each string adds an additional access range to the requested scope."
           items:
             type: string
           example:
-            - id
-            - email
+            - user
+        username:
+          type: string
+          description: Required when the grant_type is client_credentials, this provides the user for the response tokens' scope.
+          example: testuser@test.com
     TokenResponseSuccess:
       type: object
       required:
@@ -2462,12 +2501,7 @@ components:
         - payment_card
       properties:
         token:
-          allOf:
-            -  { $ref: '#/components/schemas/TokenRequest' }
-          example:
-            grant_type: b2b
-            scope:
-              - user
+          $ref: '#/components/schemas/TokenRequest'
         loyalty_card:
           $ref: '#/components/schemas/LoyaltyCardAddTrustedRequestAdd'
         payment_card:
