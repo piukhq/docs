@@ -20,7 +20,7 @@ info:
   contact:
     email: mmorar@bink.com
   x-logo: 
-    url: https://api.gb.bink.com/content/media/logos/bink_with_text.png
+    url: https://logos.bink.com/img/logos/mono-teal.png
 paths:
   /token:
     post:
