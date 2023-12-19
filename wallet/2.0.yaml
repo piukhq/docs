@@ -761,60 +761,6 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'  
-  /wallet/payment_account_channel_links:
-    get:
-      security:
-        - bearerAuth: []
-      tags:
-        - Wallet
-      summary: View Payment Account links in all channels
-      operationId: GET /wallet/payment_account_channel_links
-      description: 
-        "Provide the user with visibility of where they have <b>Loyalty Cards</b> with linked <b>Payment Accounts</b> in other Bink supported channels.
-        This offers a more complete view of <b>Loyalty Cards</b> and <b>Payment Accounts</b> in order to manage them across their Bink estate.
-        <br>
-        <u>Caveat</u>
-        <br>
-        This is only available if the channel is <b>Trusted</b>.
-        
-        <h4>Trusted Channel</h4>
-        A Bink supported channel that trusts the partner has completed full verification of the user and no additional validation is required from Bink. 
-        The <b>PLL</b> type <b>Loyalty Card</b> will be added using a single credential, instead of full authorisation credentials."
-
-      responses:
-        '200':
-          description: "**Successful**"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/payment_account_channel_links'
-              example:
-                loyalty_cards:
-                  - id: 24729
-                    channels:
-                      - slug: "com.barlays.bmb"
-                        description: "You have a Payment Card in the Barclays Mobile Banking channel."
-                      - slug: "com.bink.wallet.web"
-                        description: "You have a Payment Card in the Bink channel."
-                  - id: 23121
-                    channels:
-                      - slug: "com.halifax.api2"
-                        description: "You have a Payment Card in the Halifax banking channel."
-                
-        '401':
-          description: Not authorised, request does not have a valid token
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/genericresponse401'  
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/genericresponse403'  
   /loyalty_plans:
     get:
       security:
@@ -4670,46 +4616,6 @@ components:
           minimum: 0
           maximum: 99999999999
           example: 1617549941 
-    payment_account_channel_links: 
-      type: object
-      properties:
-        loyalty_cards:
-            type: array
-            description: "This list of Loyalty Cards and channels where there is a linked Payment Account."
-            items:
-              $ref: '#/components/schemas/loyalty_card_channels'
-    loyalty_card_channels:
-      type: object
-      properties:
-        id:
-          type: integer
-          description: "Unique resrouce identifier for this Loyalty Card."
-          example: 347821
-        channels: 
-          $ref: '#/components/schemas/Channels'            
-    Channels:
-      description: "Describes the channels in which a Loyalty Cards exist."
-      type: array
-      items:
-        minItems: 0
-        type: object
-        properties:
-          slug:
-            type: string
-            example: "com.barclays.bmb"
-            description: "Human readible identifier for the channel.
-              <ul>
-                <li><b>com.bink.wallet</b> = Bink App & Web</li>
-                <li><b>com.barclays.bmb</b> = Barclays App </li>
-                <li><b>com.bos.api2</b> = Bank of Scotland App & Web</li>
-                <li><b>com.halifax.api2</b> = Halifax App & Web</li>
-                <li><b>com.lloyds.api2</b> = Lloyds App & Web</li>
-                <li><b>com.squaremeal.web</b> = SquareMeal Web</li>
-              </ul>"
-          description:
-            type: string
-            example: "This Loyalty Card is linked to a Payment Card in the Barclays Mobile Banking channel."
-            description: "Full description of channels where the Loyalty has a linked Payment Account."          
     CredentialRequest_TC_Add:
       type: object
       description: "The fields that need to be presented to the user in order to Authorise the Loyalty Card"
