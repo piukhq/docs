@@ -1276,13 +1276,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoyaltyCardProcessResponse'
-        '202':
-          description: "**Accepted** Authorisation in progress.  Response contains resource Id."
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/LoyaltyCardProcessResponse'
         '400':
           description: '**Bad request** Client needs to modify the request before it can be retried'
           content:
