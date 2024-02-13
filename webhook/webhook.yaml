@@ -1,0 +1,97 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: Bink Webhook API
+  description:  "<h1>Introduction</h1>Receive Identified Transactions from Bink.
+    <br><br>
+    This API describes the payload that receivers should expect to receive and how to respond to the webhook when it arrives. Receivers will implement this API specification to receive Identified Transactions from Bink. An Identified Transaction object represents a customer card payment at an enrolled retailer location. <br><br> This API accepts a JSON body and provides HTTP response codes and a JSON response body.
+    <h2>Authentication</h2>
+    Bink uses API keys to authenticate requests. Provide your API key in every request in the X-API-KEY header. Bink will provide each retailer with an API key upon integration. 
+    <br><br>
+    <h2>Errors</h2>
+    Bink's API uses HTTP response codes. Codes in the 2xx range indicate success. Requests that result in errors codes have a code in the 4xx range and a JSON body containing <i>error_message</i> and <i>error_slug</i> fields. 
+
+    <h2>Versioning</h2>
+    The Identified Transaction Webhook API is versionless, all changes will be backward-compatible. Any future changes that are backward-incompatible with result in a new API operation. 
+    <br><br>
+    <h2>Idempotency</h2>
+    Clients may safely retry retail transaction requests. All requests must contain a transaction identifer. You can safely resend a retail transaction provided it contains the same transaction identifier <i>(transaction_id)</i> as the original request.
+    "
+paths: 
+  /retailers/{retailer_id}/webhook_endpoints:
+    post:
+      security: 
+        - ApiKeyAuth: [] 
+      tags:
+        - Webhook endpoints
+      summary: "Create a webhook endpoint"
+      description: "Create a webhook endpoint to be notified about events that happen in your enrolled retailer."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookEndpoint'
+      parameters:
+        - in: path
+          name: retailer_id
+          description: "The unique identifier for the retailer. Bink will provide this value to you."
+          required: true
+          schema:
+            type: string
+      responses: 
+        '200':
+          description: OK
+        '401':
+          $ref: '../common/components.yaml#/components/responses/Error401'
+        '422':
+          $ref: '../common/components.yaml#/components/responses/Error422'  
+webhooks:
+  identifiedTransactions: 
+    post:
+      security: 
+        - ApiKeyAuth: [] 
+      tags:
+        - Identified Transaction
+      summary: "Webhooks for identified transactions"
+      description: "You can send an individual or a list of transactions. Transactions must have a unique ID and contain all required parameters. To ensure optimal performance, each value should use the format specified."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentifiedTransaction'
+      responses: 
+        '200':
+          description: OK
+        '401':
+          $ref: '../common/components.yaml#/components/responses/Error401'
+        '422':
+          $ref: '../common/components.yaml#/components/responses/Error422'
+components:
+  schemas:
+    IdentifiedTransaction:
+      type: object
+      properties:
+        user_id:
+          type: string
+          description: The unique identifier of the user involved in the transaction.
+        amount:
+          type: number
+          description: The monetary amount of the transaction.
+        location_id:
+          type: string
+          description: The unique identifier of the location where the transaction occurred.
+        date_time: 
+          type: string
+          format: date-time
+          description: The date and time when the transaction occurred.
+    WebhookEndpoint:
+      type: object
+      properties: 
+        enabled_events:
+          type: array
+          items:
+            type: string
+          description: "The events that will trigger the webhook. Possible values are 'identified_transaction' and 'transaction'."
+        url: 
+          type: string
+          description: "The URL that will receive the webhook payload."
