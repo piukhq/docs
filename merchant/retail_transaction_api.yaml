@@ -42,10 +42,9 @@ paths:
         '200':
           description: OK
         '401':
-          $ref: 'components.yaml#/components/responses/Error401'
-
+          $ref: '../common/components.yaml#/components/responses/Error401'
         '422':
-          $ref: 'components.yaml#/components/responses/Error422'
+          $ref: '../common/components.yaml#/components/responses/Error422'
 components:
   schemas:
     RetailerTransactions:

@@ -18,6 +18,7 @@ RUN mkdir -p \
 RUN redoc-cli build wallet/1.2.yaml --output /output/wallet/1.2.html
 RUN redoc-cli build wallet/1.3.yaml --output /output/wallet/1.3.html
 RUN redoc-cli build wallet/2.0.yaml --output /output/wallet/2.0.html
+RUN redoc-cli build webhook/webhook.yaml --output /output/webhook/webhook.html
 RUN mv extras/appendix.html /output/extras/appendix.html
 RUN mv extras/changelog.html /output/extras/changelog.html
 RUN mv extras/givex.html /output/extras/givex.html
