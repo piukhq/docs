@@ -191,6 +191,19 @@ components:
           examples:
             errorExample:
               $ref: '#/components/examples/Error401Example'
+    Error403: 
+      description: Forbidden 
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error_message: 
+                type: string
+                example: "You are not authorized to access this resource"
+              error_slug: 
+                type: string
+                example: "not_authorized"          
     Error404Multi:
       description: Not found, path & body
       content:
