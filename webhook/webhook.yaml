@@ -1,6 +1,9 @@
 openapi: 3.1.0
+servers: 
+  - url: https://retail.gb.bink.com/webhooks/"
+    description: "Retail sandbox server"
 info:
-  version: 1.0.0
+  version: 1.0.0-oas3.1
   title: Bink Webhook API
   description:  "<h1>Bink webhook endpoints</h1>
     This API allows clients to register their webhook endpoints with Bink. <br><br> This API accepts a JSON body and provides HTTP response codes and a JSON response body.
@@ -16,6 +19,8 @@ info:
     <h2>Versioning</h2>
     The Webhook API is versionless, all changes will be backward-compatible. Any future changes that are backward-incompatible with result in a new API operation. 
     "
+  x-logo: 
+    url: https://logos.bink.com/img/logos/mono-teal.png    
 paths: 
   /retailers/{retailer_id}/webhook_endpoints:
     post:
@@ -51,7 +56,18 @@ paths:
         '401':
           $ref: '../common/components.yaml#/components/responses/Error401'
         '403':
-          $ref: '../common/components.yaml#/components/responses/Error403'
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_message: 
+                    type: string
+                    example: "You are not authorized to access this resource"
+                  error_slug: 
+                    type: string
+                    example: "not_authorized"
         '422':
           $ref: '../common/components.yaml#/components/responses/Error422'  
 webhooks:
@@ -102,12 +118,13 @@ components:
             type: string
           description: "The events that will trigger the webhook. Possible values are 'identified_transaction'. </br>An Identified Transaction object represents a customer card payment at an enrolled retailer location. "
           examples: 
-            - "identified_transaction"
+            - ["identified_transaction", "mid_enrolled"]
         url: 
           type: string
           description: "The URL that will receive the webhook payload."
           example: "https://example.com/webhook"
-        enabled: 
-          type: boolean
-          description: "Whether the webhook is enabled or not."
-          example: true
+  securitySchemes:
+    ApiKeyAuth:      
+      type: apiKey
+      in: header     
+      name: X-API-KEY

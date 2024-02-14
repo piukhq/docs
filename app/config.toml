@@ -9,6 +9,7 @@
 "v1.3" = "wallet/1.3.html"
 "v2" = "wallet/2.0.html"
 "bpl" = "bpl/index.html"
+"webhook" = "webhook/webhook.html"
 "portal" = "portal/index.html"
 "transaction" = "merchant/retail_transaction_api.html"
 "midas_messaging" = "merchant/async/index.html"
