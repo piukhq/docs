@@ -12,12 +12,13 @@ RUN mkdir -p \
     /output/portal \
     /output/merchant \
     /output/merchant/async \
-    /output/extras
+    /output/extras \
+    /output/webhook
 
 # Wallet
 RUN redoc-cli build wallet/1.2.yaml --output /output/wallet/1.2.html
 RUN redoc-cli build wallet/1.3.yaml --output /output/wallet/1.3.html
-RUN redoc-cli build wallet/2.0.yaml --output /output/wallet/2.0.html
+RUN npx @redocly/cli build-docs wallet/2.0.yaml --template wallet/template.hbs --output /output/wallet/2.0.html
 RUN npx @redocly/cli build-docs webhook/webhook.yaml --template webhook/template.hbs --output /output/webhook/webhook.html
 
 RUN mv extras/appendix.html /output/extras/appendix.html

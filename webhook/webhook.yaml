@@ -70,6 +70,43 @@ paths:
                     example: "not_authorized"
         '422':
           $ref: '../common/components.yaml#/components/responses/Error422'  
+  /retailers/{retailer_id}/webhook_endpoints/{webhook_id}:
+    patch:
+      security: 
+        - ApiKeyAuth: []
+      tags:
+        - Webhook endpoints
+      summary: "Update a webhook endpoint"
+      description: "Update a webhook endpoint "       
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookEndpoint'
+      parameters:
+        - in: path
+          name: retailer_id
+          description: "The unique identifier for the retailer. Bink will provide this value to you."
+          required: true
+          schema:
+            type: string
+      responses: 
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  webhook_id: 
+                    type: number
+                    example: 123
+        '401':
+          $ref: '../common/components.yaml#/components/responses/Error401'
+        '403':
+          $ref: '../common/components.yaml#/components/responses/Error403'
+        '422':
+          $ref: '../common/components.yaml#/components/responses/Error422'
 webhooks:
   Identified Transaction Webhook: 
     post:
