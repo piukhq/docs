@@ -13,7 +13,8 @@ RUN mkdir -p \
     /output/merchant \
     /output/merchant/async \
     /output/extras \
-    /output/webhook
+    /output/webhook \
+    /output/wallet
 
 # Wallet
 RUN redoc-cli build wallet/1.2.yaml --output /output/wallet/1.2.html
