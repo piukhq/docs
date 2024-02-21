@@ -5,7 +5,7 @@
 "root_redirect_path" = "/v2"
 
 [routes]
-"v2" = "wallet/2.0.html"
+"v2" = "wallet/api.html"
 "bpl" = "bpl/index.html"
 "webhook" = "webhook/webhook.html"
 "portal" = "portal/index.html"
