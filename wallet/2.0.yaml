@@ -17,10 +17,9 @@ info:
       <li>[Version History](changelog)</li>
       <li>[Appendix](appendix)</li>
     </ul>"
-  contact:
-    email: mmorar@bink.com
   x-logo: 
     url: https://logos.bink.com/img/logos/mono-teal.png
+    href: https://bink.com/
 paths:
   /token:
     post:
