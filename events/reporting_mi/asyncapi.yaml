@@ -4,24 +4,6 @@ info:
   version: 1.0.0
   description: |
     Events for Reporting and MI
-    ### Supports the following messages
-    * User Created
-    * User Deleted via API
-    * User Accessed Bink Service 
-    * Loyalty Card Add and Authorise request
-    * Loyalty Card Add and Authorise success
-    * Loyalty Card Add and Authorise failed
-    * Loyalty Card Authorise request
-    * Loyalty Card Authorise success
-    * Loyalty Card Authorise failed
-    * Loyalty Card Join Request
-    * Loyalty Card Join Success
-    * Loyalty Card Join Failed
-    * Loyalty Card Register Request
-    * Loyalty Card Register Success
-    * Loyalty Card Register Failed
-    * Loyalty Card Removed
-    * Loyalty Card Status Change
 defaultContentType: application/json
 servers:
   staging:
@@ -131,6 +113,30 @@ channels:
       subscribe.message:
         $ref: '#/components/messages/LoyaltyCardStatusChange'
     description: Message queue for loyalty card status change
+  payment.account.added:
+    address: payment.account.added
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/PaymentAccountAdded'
+    description: Message queue for payment account added
+  payment.account.removed:
+    address: payment.account.removed
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/PaymentAccountRemoved'
+    description: Message queue for payment account removed
+  payment.account.status.change:
+    address: payment.account.status.change
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/PaymentAccountStatusChange'
+    description: Message queue for payment account status change
+  transaction.exported:
+    address: transaction.exported
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/TransactionExport'
+    description: Message queue for transaction export
 operations:
   user.created:
     action: send
@@ -234,6 +240,30 @@ operations:
       $ref: '#/channels/lc.statuschange'
     messages:
       - $ref: '#/channels/lc.statuschange/messages/subscribe.message'
+  payment.account.added:
+    action: send
+    channel:
+      $ref: '#/channels/payment.account.added'
+    messages:
+      - $ref: '#/channels/payment.account.added/messages/subscribe.message'
+  payment.account.removed:
+    action: send
+    channel:
+      $ref: '#/channels/payment.account.removed'
+    messages:
+      - $ref: '#/channels/payment.account.removed/messages/subscribe.message'
+  payment.account.status.change: 
+    action: send
+    channel:
+      $ref: '#/channels/payment.account.status.change'
+    messages:
+      - $ref: '#/channels/payment.account.status.change/messages/subscribe.message' 
+  transaction.exported:
+    action: send
+    channel:
+      $ref: '#/channels/transaction.exported'
+    messages:
+      - $ref: '#/channels/transaction.exported/messages/subscribe.message'
 components:
   messages:
     UserCreated:
@@ -379,6 +409,40 @@ components:
           - $ref: '#/components/schemas/AddAndAuthData'
           - $ref: '#/components/schemas/MainAnswer'
           - $ref: '#/components/schemas/ToStatus'
+    PaymentAccountAdded:
+      name: Payment Account Added
+      title: Payment Account Added
+      summary: Indicates that a user has added a payment account
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/PaymentAccountDetails'
+          - $ref: '#/components/schemas/Status'
+    PaymentAccountRemoved:
+      name: Payment Account Removed
+      title: Payment Account Removed
+      summary: Indicates that a user has removed a payment account
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/PaymentAccountDetails'
+          - $ref: '#/components/schemas/Status'
+    PaymentAccountStatusChange:
+      name: Payment Account Status Change
+      title: Payment Account Status Change
+      summary: Indicates that a user has changed the status of a payment account
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/PaymentAccountDetails'
+          - $ref: '#/components/schemas/FromStatus'
+          - $ref: '#/components/schemas/ToStatus'
+    TransactionExport:
+      name: Transaction Export
+      title: Transaction Export
+      summary: Indicates that a transaction has been exported
+      payload:
+        $ref: '#/components/schemas/TransactionExport'
   schemas:
     Metadata:
       allOf:
@@ -427,12 +491,109 @@ components:
           type: string
           description: "The loyalty plan identifier"
           example: "329"
+    PaymentAccountDetails:
+      type: object
+      properties:
+        payment_account_id:
+          type: string
+          description: "The payment account identifier"
+          example: "1234567890"
+        fingerprint:
+          type: string
+          description: "The payment account fingerprint"
+          example: "ade13eacf"
+        expiry_date:
+          type: string
+          format: date
+          example: "2022-12-31"
+          description: "The payment account expiry date"
+        token:
+          type: string
+          description: "The payment account token"
+          example: "1234567890"
+    TransactionExport:
+      type: object
+      properties:
+        event_type:
+          type: string
+          description: "The event type identifier, used for event subscriptions and routing"
+          example: "transaction.exported"
+        event_date_time:
+          type: string
+          format: date-time
+          example: "2020-12-31"
+        internal_user_ref:
+          type: string
+          example: "12345"
+          description: "Database user ID (not UUID)"
+        transaction_id:
+          type: string
+          description: "The transaction identifier"
+          example: "1234567890"
+        provider_slug:
+          type: string
+          description: "Retailer slug"
+          example: "loyalteas"
+        transaction_date:
+          type: string
+          format: date
+          example: "2020-12-31"
+          description: "The transaction date"
+        spend_amount:
+          type: number
+          format: float
+          example: 10.00
+          description: "The transaction amount" 
+        spend_currency:
+          type: string
+          example: "GBP"
+          description: "The transaction currency" 
+        loyalty_id:
+          type: string
+          description: "The loyalty card identifier"
+          example: "1234567890" 
+        mid:
+          type: string
+          description: "The merchant identifier"
+          example: "1234567890"
+        scheme_account_id:
+          type: string
+          description: "The scheme account identifier"
+          example: "1234567890"
+        credentials:
+          type: string
+          description: "Credentials"
+          example: "XC73464D"
+        status:
+          type: string
+          description: "export status"
+          example: "0"
+        feed_type:
+          type: string
+          description: "feed type"
+          example: "0"  
+        location_id:
+          type: string
+          description: "location id"
+          example: "0"  
+        merchant_internal_id:
+          type: string
+          description: "merchant internal id"
+          example: "0"  
+        payment_card_account_id:
+          type: string
+          description: "payment account id"
+          example: "0"  
+        settlement_key:
+          type: string
+          description: "settlement key"
+          example: "0"
     Status:
       type: object
       properties: 
         status:
           type: string
-          description: "The response code from the retailer system"
+          description: "Account status"
           example: "0"
     MainAnswer:     
       type: object
@@ -446,5 +607,12 @@ components:
       properties:
         to_status:
           type: string
-          description: "The new status of the scheme account"
+          description: "New account status"
+          example: "0"
+    FromStatus:
+      type: object
+      properties:
+        from_status:
+          type: string
+          description: "Old account status"
           example: "0"
