@@ -17,6 +17,11 @@ info:
     * Loyalty Card Join Request
     * Loyalty Card Join Success
     * Loyalty Card Join Failed
+    * Loyalty Card Register Request
+    * Loyalty Card Register Success
+    * Loyalty Card Register Failed
+    * Loyalty Card Removed
+    * Loyalty Card Status Change
 defaultContentType: application/json
 servers:
   staging:
@@ -96,6 +101,36 @@ channels:
       subscribe.message:
         $ref: '#/components/messages/LoyaltyCardJoinFailed'
     description: Message queue for loyalty card join failed
+  lc.register.request:
+    address: lc.register.request
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardRegisterRequest'
+    description: Message queue for loyalty card register request
+  lc.register.success:
+    address: lc.register.success
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardRegisterSuccess'
+    description: Message queue for loyalty card register success
+  lc.register.failed:
+    address: lc.register.failed
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardRegisterFailed'
+    description: Message queue for loyalty card register failed
+  lc.removed:
+    address: lc.removed
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardRemoved'
+    description: Message queue for loyalty card removed
+  lc.statuschange:
+    address: lc.statuschange
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardStatusChange'
+    description: Message queue for loyalty card status change
 operations:
   user.created:
     action: send
@@ -169,6 +204,36 @@ operations:
       $ref: '#/channels/lc.join.failed'
     messages:
       - $ref: '#/channels/lc.join.failed/messages/subscribe.message'    
+  lc.register.request:
+    action: send
+    channel:
+      $ref: '#/channels/lc.register.request'
+    messages:
+      - $ref: '#/channels/lc.register.request/messages/subscribe.message'
+  lc.register.success:
+    action: send
+    channel:
+      $ref: '#/channels/lc.register.success'
+    messages:
+      - $ref: '#/channels/lc.register.success/messages/subscribe.message'
+  lc.register.failed:
+    action: send
+    channel:
+      $ref: '#/channels/lc.register.failed'
+    messages:
+      - $ref: '#/channels/lc.register.failed/messages/subscribe.message'
+  lc.removed:
+    action: send
+    channel:
+      $ref: '#/channels/lc.removed'
+    messages:
+      - $ref: '#/channels/lc.removed/messages/subscribe.message'
+  lc.statuschange:
+    action: send
+    channel:
+      $ref: '#/channels/lc.statuschange'
+    messages:
+      - $ref: '#/channels/lc.statuschange/messages/subscribe.message'
 components:
   messages:
     UserCreated:
@@ -265,6 +330,55 @@ components:
           - $ref: '#/components/schemas/AddAndAuthData'
           - $ref: '#/components/schemas/MainAnswer'
           - $ref: '#/components/schemas/Status'
+    LoyaltyCardRegisterRequest:
+      name: Loyalty Card Register Request
+      title: Loyalty Card Register Request
+      summary: Indicates that a user has requested to register a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+    LoyaltyCardRegisterSuccess:
+      name: Loyalty Card Register Success
+      title: Loyalty Card Register Success
+      summary: Indicates that a user has successfully registered a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardRegisterFailed: 
+      name: Loyalty Card Register Failed
+      title: Loyalty Card Register Failed
+      summary: Indicates that a user has failed to register a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardRemoved:
+      name: Loyalty Card Removed
+      title: Loyalty Card Removed
+      summary: Indicates that a user has removed a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardStatusChange:
+      name: Loyalty Card Status Change
+      title: Loyalty Card Status Change
+      summary: Indicates that a user has changed the status of a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/ToStatus'
   schemas:
     Metadata:
       allOf:
@@ -327,3 +441,10 @@ components:
           type: string
           description: "The credential field used as unique key value on the scheme account record"
           example: "XC73464D"
+    ToStatus:
+      type: object
+      properties:
+        to_status:
+          type: string
+          description: "The new status of the scheme account"
+          example: "0"
