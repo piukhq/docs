@@ -1,0 +1,205 @@
+asyncapi: 3.0.0
+info:
+  title: Loyalty Management
+  version: 1.0.0
+  description: |
+    MIDAS operations via message queue
+    ### Supports the following messages
+    * Join Loyalty Plan
+    * Add a Loyalty Card
+    * Register a Loyalty Card
+    * Request balance and transaction history 
+    * Loyalty card removed from Bink
+    * Loyalty card removed from a Bink Wallet
+defaultContentType: application/json
+servers:
+  staging:
+    host: 'guest:guest@rabbitmq:5672'
+    protocol: amqp
+    description: staging broker
+channels:
+  loyalty.join.application:
+    address: loyalty.join.application
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/MidasRequest'
+    description: Message queue for Join requests
+  authentication.application:
+    address: authentication.application
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/MidasRequest'
+    description: Message queue for authenticating a Loyalty Card
+  loyalty_account.register.application:
+    address: loyalty_account.register.application
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/MidasRequest'
+    description: Message queue for authenticating a Loyalty Card
+  loyalty_account.loyalty_card.removed.bink:
+    address: loyalty_account.loyalty_card.removed.bink
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/MidasCardRemovedBink'
+    description: >-
+      Message queue for notifying a retailer that a Loyalty Card has been
+      removed and no longer exists in any wallet
+  loyalty_account.loyalty_card.removed.wallet:
+    address: loyalty_account.loyalty_card.removed.wallet
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/MidasCardRemovedWallet'
+    description: >-
+      Message queue for notifying a retailer of a Loyalty Card removed from a
+      wallet
+  loyalty_account.retrieve:
+    address: loyalty_account.retrieve
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/RetrieveLoyaltyAccount'
+    description: Message queue for loyalty account update requests
+operations:
+  loyalty.join.application.subscribe:
+    action: send
+    channel:
+      $ref: '#/channels/loyalty.join.application'
+    messages:
+      - $ref: '#/channels/loyalty.join.application/messages/subscribe.message'
+  authentication.application.subscribe:
+    action: send
+    channel:
+      $ref: '#/channels/authentication.application'
+    messages:
+      - $ref: '#/channels/authentication.application/messages/subscribe.message'
+  loyalty_account.register.application.subscribe:
+    action: send
+    channel:
+      $ref: '#/channels/loyalty_account.register.application'
+    messages:
+      - $ref: >-
+          #/channels/loyalty_account.register.application/messages/subscribe.message
+  loyalty_account.loyalty_card.removed.bink.subscribe:
+    action: send
+    channel:
+      $ref: '#/channels/loyalty_account.loyalty_card.removed.bink'
+    messages:
+      - $ref: >-
+          #/channels/loyalty_account.loyalty_card.removed.bink/messages/subscribe.message
+  loyalty_account.loyalty_card.removed.wallet.subscribe:
+    action: send
+    channel:
+      $ref: '#/channels/loyalty_account.loyalty_card.removed.wallet'
+    messages:
+      - $ref: >-
+          #/channels/loyalty_account.loyalty_card.removed.wallet/messages/subscribe.message
+  loyalty_account.retrieve.subscribe:
+    action: send
+    channel:
+      $ref: '#/channels/loyalty_account.retrieve'
+    messages:
+      - $ref: '#/channels/loyalty_account.retrieve/messages/subscribe.message'
+components:
+  messages:
+    MidasCardRemovedWallet:
+      name: Loyalty Card removed from a Bink Wallet
+      title: Loyalty Card removed from a Bink Wallet
+      summary: Indicates that a loyalty card has been removed from a Bink wallet
+      payload:
+        $ref: '#/components/schemas/Metadata'
+    MidasCardRemovedBink:
+      name: Loyalty Card removed from Bink
+      title: Loyalty Card removed from Bink
+      summary: >-
+        Indicates that a loyalty card has been removed from Bink and no longer
+        exists in any Bink wallet
+      payload:
+        $ref: '#/components/schemas/RemovedFromBink'
+    MidasRequest:
+      name: Join / Add / Register Request
+      title: Join / Add / Register Request
+      summary: Request to join a Loyalty Plan or register or add a card for that plan.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - type: object
+            properties:
+              encrypted_credentials:
+                type: object
+                description: >-
+                  Dictionary of credentials / journey fields converted to a
+                  string and encrypted with AES.
+                example: 53022cf12c5959ddf3e733128930dd3d52e3ea
+    RetrieveLoyaltyAccount:
+      name: Retrieve Loyalty Account
+      title: Retrieve Loyalty Account
+      summary: >-
+        Refresh the loyalty account with the most recent data from the Loyalty
+        Provider
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - type: object
+            properties:
+              system_account_id:
+                type: string
+                description: >-
+                  An identifier known to the Loyalty Provider that can be used
+                  with their system to get information about the Loyalty
+                  Account. This identifier is immutable.
+                example: '2900001'
+              encrypted_credentials:
+                type: object
+                description: >-
+                  Dictionary of credentials / journey fields converted to a
+                  string and encrypted with AES.
+                example: 53022cf12c5959ddf3e733128930dd3d52e3ea
+  schemas:
+    RemovedFromBink:
+      allOf:
+        - $ref: '#/components/schemas/RequiredMetadata'
+        - $ref: '#/components/schemas/OptionalMetadata'
+    Metadata:
+      allOf:
+        - $ref: '#/components/schemas/RequiredMetadata'
+        - $ref: '#/components/schemas/OptionalMetadata'
+        - $ref: '#/components/schemas/BinkUserId'
+    RequiredMetadata:
+      type: object
+      properties:
+        type:
+          description: 'The event type identifier, used for event subscriptions and routing'
+          type: string
+          example: loyalty_account.retrieve
+        channel:
+          type: string
+          description: The identifier for the Channel that sent the request
+          example: com.barclays.bmb
+        request_id:
+          type: string
+          description: The client’s identifier for the request
+          example: '53568'
+        loyalty_plan:
+          type: string
+          description: The Loyalty Plan 'slug' to which the request applies
+          example: bpl-trenette
+    OptionalMetadata:
+      type: object
+      properties:
+        transaction_id:
+          type: string
+          description: An end-to-end tracing identifier for requests through Bink services.
+          example: >-
+            XAAAAABKMMOjBv2NT4TY6SQVjC0zV1NURURHRTA2MTkANDM3YzgyY2QtMzYwYS00YTU0LTk0YzMtNWZmNzA3NjQ3Nzgz
+        account_id:
+          type: string
+          description: >-
+            An identifier that a Consumer can use to uniquely identify a Loyalty
+            Account within a Loyalty Plan.
+          example: binktestuser7@wasabi.com
+    BinkUserId:
+      type: object
+      properties:
+        bink_user_id:
+          type: string
+          description: The Bink User ID for user created this request
+          example: '232276'

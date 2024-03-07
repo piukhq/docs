@@ -10,7 +10,9 @@
 "webhook" = "webhook/webhook.html"
 "portal" = "portal/index.html"
 "transaction" = "merchant/retail_transaction_api.html"
-"midas_messaging" = "merchant/async/index.html"
+"loyalty_management" = "events/loyalty_management/async/index.html"
+"reporting_mi" = "events/reporting_mi/async/index.html"
+#"transaction_processing" = "events/transaction_processing/async/index.html"
 
 "appendix" = "extras/appendix.html"
 "changelog" = "extras/changelog.html"

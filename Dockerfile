@@ -9,7 +9,8 @@ RUN mkdir -p \
     /output/bpl \
     /output/portal \
     /output/merchant \
-    /output/merchant/async \
+    /output/events/loyalty_management/async \
+    /output/events/reporting_mi/async \
     /output/extras \
     /output/webhook \
     /output/wallet
@@ -38,11 +39,17 @@ RUN redoc-cli build merchant/retail_transaction_api.yaml --output /output/mercha
 ARG PUPPETEER_SKIP_DOWNLOAD=true
 RUN npm install -g @asyncapi/cli
 RUN npm install -g @asyncapi/html-template
+RUN npm install -g @asyncapi/parser@3.0.5
 
-RUN asyncapi generate fromTemplate merchant/async/midas_internal.yaml @asyncapi/html-template -o /output/merchant/async
-RUN sed -i 's/js\//\/merchant\/async\/js\//g' /output/merchant/async/index.html
-RUN sed -i 's/css\//\/merchant\/async\/css\//g' /output/merchant/async/index.html
 
+RUN asyncapi generate fromTemplate events/loyalty_management/asyncapi.yaml @asyncapi/html-template -o /output/events/loyalty_management/async
+RUN sed -i 's/js\//\/events\/loyalty_management\/async\/js\//g' /output/events/loyalty_management/async/index.html
+RUN sed -i 's/css\//\/events\/loyalty_management\/async\/css\//g' /output/events/loyalty_management/async/index.html
+
+
+RUN asyncapi generate fromTemplate events/reporting_mi/asyncapi.yaml @asyncapi/html-template -o /output/events/reporting_mi/async
+RUN sed -i 's/js\//\/events\/reporting_mi\/async\/js\//g' /output/events/reporting_mi/async/index.html
+RUN sed -i 's/css\//\/events\/reporting_mi\/async\/css\//g' /output/events/reporting_mi/async/index.html
 
 ###################################################
 ### DevOps owned, do not modify below this line ###
