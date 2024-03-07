@@ -1,153 +1,618 @@
-asyncapi: 2.6.0
+asyncapi: 3.0.0
 info:
-  title: Loyalty Management
+  title: Transaction Processing
   version: 1.0.0
   description: |
-    MIDAS operations via message queue
-    ### Supports the following messages
-    * Join Loyalty Plan
-    * Add a Loyalty Card
-    * Register a Loyalty Card
-    * Request balance and transaction history 
-    * Loyalty card removed from Bink
-    * Loyalty card removed from a Bink Wallet
+    Events from the Transaction Processing service
+defaultContentType: application/json
 servers:
   staging:
-    url: 'guest:guest@rabbitmq:5672'
+    host: 'guest:guest@rabbitmq:5672'
     protocol: amqp
     description: staging broker
-defaultContentType: application/json
 channels:
-  loyalty.join.application:
-    description: Message queue for Join requests
-    subscribe:
-      message:
-        $ref: '#/components/messages/MidasRequest'
-  authentication.application:
-    description: Message queue for authenticating a Loyalty Card
-    subscribe:
-      message:
-        $ref: '#/components/messages/MidasRequest'
-  loyalty_account.register.application:
-    description: Message queue for authenticating a Loyalty Card
-    subscribe:
-      message:
-        $ref: '#/components/messages/MidasRequest'
-  loyalty_account.loyalty_card.removed.bink:
-    description: Message queue for notifying a retailer that a Loyalty Card has been removed and no longer exists in any wallet
-    subscribe:
-      message:
-        $ref: '#/components/messages/MidasCardRemovedBink'
-  loyalty_account.loyalty_card.removed.wallet:
-    description: Message queue for notifying a retailer of a Loyalty Card removed from a wallet
-    subscribe:
-      message:
-        $ref: '#/components/messages/MidasCardRemovedWallet'
-  loyalty_account.retrieve:
-    description: Message queue for loyalty account update requests
-    subscribe:
-      message:
-        $ref: '#/components/messages/RetrieveLoyaltyAccount'
+  user.created:
+    address: user.created
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/UserCreated'
+    description: Message queue for user creation
+  user.deleted.api:
+    address: user.deleted.api
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/UserDeletedAPI'
+    description: Message queue for user deletion via API 
+  user.session.start:
+    address: user.session.start
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/UserSessionStart'
+    description: Message queue for user session start
+  lc.addandauth.request:
+    address: lc.addandauth.request
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardAddAndAuthRequest'
+    description: Message queue for loyalty card add and authorise request 
+  lc.addandauth.success:
+    address: lc.addandauth.success
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardAddAndAuthResponse'
+    description: Message queue for loyalty card add and authorise success
+  lc.addandauth.failed:
+    address: lc.addandauth.failed
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardAddAndAuthResponse'
+    description: Message queue for loyalty card add and authorise failed  
+  lc.auth.request:
+    address: lc.auth.request
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardAddAndAuthRequest'
+    description: Message queue for loyalty card authorise request
+  lc.auth.success:
+    address: lc.auth.success
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardAddAndAuthResponse'
+    description: Message queue for loyalty card authorise success
+  lc.auth.failed:
+    address: lc.auth.failed
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardAddAndAuthResponse'
+    description: Message queue for loyalty card authorise failed
+  lc.join.request:
+    address: lc.join.request
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardJoinRequest'
+    description: Message queue for loyalty card join request
+  lc.join.success:
+    address: lc.join.success
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardJoinSuccess'
+    description: Message queue for loyalty card join success
+  lc.join.failed:
+    address: lc.join.failed
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardJoinFailed'
+    description: Message queue for loyalty card join failed
+  lc.register.request:
+    address: lc.register.request
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardRegisterRequest'
+    description: Message queue for loyalty card register request
+  lc.register.success:
+    address: lc.register.success
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardRegisterSuccess'
+    description: Message queue for loyalty card register success
+  lc.register.failed:
+    address: lc.register.failed
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardRegisterFailed'
+    description: Message queue for loyalty card register failed
+  lc.removed:
+    address: lc.removed
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardRemoved'
+    description: Message queue for loyalty card removed
+  lc.statuschange:
+    address: lc.statuschange
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/LoyaltyCardStatusChange'
+    description: Message queue for loyalty card status change
+  payment.account.added:
+    address: payment.account.added
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/PaymentAccountAdded'
+    description: Message queue for payment account added
+  payment.account.removed:
+    address: payment.account.removed
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/PaymentAccountRemoved'
+    description: Message queue for payment account removed
+  payment.account.status.change:
+    address: payment.account.status.change
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/PaymentAccountStatusChange'
+    description: Message queue for payment account status change
+  transaction.exported:
+    address: transaction.exported
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/TransactionExport'
+    description: Message queue for transaction export
+operations:
+  user.created:
+    action: send
+    channel:
+      $ref: '#/channels/user.created'
+    messages:
+      - $ref: '#/channels/user.created/messages/subscribe.message'
+  user.deleted.api:
+    action: send
+    channel:
+      $ref: '#/channels/user.deleted.api'
+    messages:
+      - $ref: '#/channels/user.deleted.api/messages/subscribe.message'
+  user.session.start:
+    action: send
+    channel:
+      $ref: '#/channels/user.session.start'
+    messages:
+      - $ref: '#/channels/user.session.start/messages/subscribe.message'
+  lc.addandauth.request:
+    action: send
+    channel:
+      $ref: '#/channels/lc.addandauth.request'
+    messages:
+      - $ref: '#/channels/lc.addandauth.request/messages/subscribe.message' 
+  lc.addandauth.success:
+    action: send
+    channel:
+      $ref: '#/channels/lc.addandauth.success'
+    messages:
+      - $ref: '#/channels/lc.addandauth.success/messages/subscribe.message'
+  lc.addandauth.failed:
+    action: send
+    channel:
+      $ref: '#/channels/lc.addandauth.failed'
+    messages:
+      - $ref: '#/channels/lc.addandauth.failed/messages/subscribe.message'
+  lc.auth.request:
+    action: send
+    channel:
+      $ref: '#/channels/lc.auth.request'
+    messages:
+      - $ref: '#/channels/lc.auth.request/messages/subscribe.message'
+  lc.auth.success:
+    action: send
+    channel:
+      $ref: '#/channels/lc.auth.success'
+    messages:
+      - $ref: '#/channels/lc.auth.success/messages/subscribe.message'
+  lc.auth.failed:
+    action: send
+    channel:
+      $ref: '#/channels/lc.auth.failed'
+    messages:
+      - $ref: '#/channels/lc.auth.failed/messages/subscribe.message'    
+  lc.join.request:
+    action: send
+    channel:
+      $ref: '#/channels/lc.join.request'
+    messages:
+      - $ref: '#/channels/lc.join.request/messages/subscribe.message'
+  lc.join.success:
+    action: send
+    channel:
+      $ref: '#/channels/lc.join.success'
+    messages:
+      - $ref: '#/channels/lc.join.success/messages/subscribe.message'
+  lc.join.failed:
+    action: send
+    channel:
+      $ref: '#/channels/lc.join.failed'
+    messages:
+      - $ref: '#/channels/lc.join.failed/messages/subscribe.message'    
+  lc.register.request:
+    action: send
+    channel:
+      $ref: '#/channels/lc.register.request'
+    messages:
+      - $ref: '#/channels/lc.register.request/messages/subscribe.message'
+  lc.register.success:
+    action: send
+    channel:
+      $ref: '#/channels/lc.register.success'
+    messages:
+      - $ref: '#/channels/lc.register.success/messages/subscribe.message'
+  lc.register.failed:
+    action: send
+    channel:
+      $ref: '#/channels/lc.register.failed'
+    messages:
+      - $ref: '#/channels/lc.register.failed/messages/subscribe.message'
+  lc.removed:
+    action: send
+    channel:
+      $ref: '#/channels/lc.removed'
+    messages:
+      - $ref: '#/channels/lc.removed/messages/subscribe.message'
+  lc.statuschange:
+    action: send
+    channel:
+      $ref: '#/channels/lc.statuschange'
+    messages:
+      - $ref: '#/channels/lc.statuschange/messages/subscribe.message'
+  payment.account.added:
+    action: send
+    channel:
+      $ref: '#/channels/payment.account.added'
+    messages:
+      - $ref: '#/channels/payment.account.added/messages/subscribe.message'
+  payment.account.removed:
+    action: send
+    channel:
+      $ref: '#/channels/payment.account.removed'
+    messages:
+      - $ref: '#/channels/payment.account.removed/messages/subscribe.message'
+  payment.account.status.change: 
+    action: send
+    channel:
+      $ref: '#/channels/payment.account.status.change'
+    messages:
+      - $ref: '#/channels/payment.account.status.change/messages/subscribe.message' 
+  transaction.exported:
+    action: send
+    channel:
+      $ref: '#/channels/transaction.exported'
+    messages:
+      - $ref: '#/channels/transaction.exported/messages/subscribe.message'
 components:
   messages:
-    MidasCardRemovedWallet:
-      name: Loyalty Card removed from a Bink Wallet
-      title: Loyalty Card removed from a Bink Wallet
-      summary: Indicates that a loyalty card has been removed from a Bink wallet
+    UserCreated:
+      name: User Created 
+      title: User Created
+      summary: Indicates that a user has signed up to the Bink Service
+      payload:
+        $ref: '#/components/schemas/Metadata'
+    UserDeletedAPI:
+      name: User Deleted API
+      title: User Deleted API
+      summary: Indicates that a user has been deleted via the API
       payload:
         $ref: '#/components/schemas/Metadata'  
-    MidasCardRemovedBink:
-      name: Loyalty Card removed from Bink
-      title: Loyalty Card removed from Bink
-      summary: Indicates that a loyalty card has been removed from Bink and no longer exists in any Bink wallet
+    UserSessionStart:
+      name: User Session Start
+      title: User Session Start
+      summary: Indicates that a user has acessed the Bink Service
       payload:
-        $ref: '#/components/schemas/RemovedFromBink'        
-    MidasRequest:
-      name: Join / Add / Register Request
-      title: Join / Add / Register Request
-      summary: Request to join a Loyalty Plan or register or add a card for that plan.
-      payload:
-        allOf:
-          - $ref: '#/components/schemas/Metadata'
-          - type: object
-            properties:
-              encrypted_credentials:
-                type: object
-                description: >-
-                  Dictionary of credentials / journey fields converted to a
-                  string and encrypted with AES.
-                example: 53022cf12c5959ddf3e733128930dd3d52e3ea
-    RetrieveLoyaltyAccount:
-      name: Retrieve Loyalty Account
-      title: Retrieve Loyalty Account
-      summary: >-
-        Refresh the loyalty account with the most recent data from the Loyalty
-        Provider
+        $ref: '#/components/schemas/Metadata'
+    LoyaltyCardAddAndAuthRequest:
+      name: Loyalty Card Add and Authorise Request
+      title: Loyalty Card Add and Authorise Request
+      summary: Indicates that a user has requested to add and authorise a loyalty card
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
-          - type: object
-            properties:
-              system_account_id:
-                type: string
-                description: >-
-                  An identifier known to the Loyalty Provider that can be used
-                  with their system to get information about the Loyalty
-                  Account. This identifier is immutable.
-                example: '2900001'
-              encrypted_credentials:
-                type: object
-                description: >-
-                  Dictionary of credentials / journey fields converted to a
-                  string and encrypted with AES.
-                example: 53022cf12c5959ddf3e733128930dd3d52e3ea
+          - $ref: '#/components/schemas/AddAndAuthData'    
+          - $ref: '#/components/schemas/MainAnswer'
+    LoyaltyCardAddAndAuthResponse:
+      name: Loyalty Card Add and Authorise Response 
+      title: Loyalty Card Add and Authorise Response
+      summary: Event generated when loyalty card add and authorise request is successful or failed 
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    AuthoriseRequest:
+      name: Loyalty Card Authorise Request
+      title: Loyalty Card Authorise Request
+      summary: Indicates that a user has requested to authorise a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'      
+          - $ref: '#/components/schemas/MainAnswer'
+    AuthoriseSuccess:
+      name: Loyalty Card Authorise Success
+      title: Loyalty Card Authorise Success
+      summary: Indicates that a user has successfully authorised a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    AuthoriseFailed:
+      name: Loyalty Card Authorise Failed
+      title: Loyalty Card Authorise Failed
+      summary: Indicates that a user has failed to authorise a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardJoinRequest:
+      name: Loyalty Card Join Request
+      title: Loyalty Card Join Request
+      summary: Indicates that a user has requested to join a loyalty plan
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+    LoyaltyCardJoinSuccess:
+      name: Loyalty Card Join Success
+      title: Loyalty Card Join Success
+      summary: Indicates that a user has successfully joined a loyalty plan
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardJoinFailed:
+      name: Loyalty Card Join Failed
+      title: Loyalty Card Join Failed
+      summary: Indicates that a user has failed to join a loyalty plan
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardRegisterRequest:
+      name: Loyalty Card Register Request
+      title: Loyalty Card Register Request
+      summary: Indicates that a user has requested to register a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+    LoyaltyCardRegisterSuccess:
+      name: Loyalty Card Register Success
+      title: Loyalty Card Register Success
+      summary: Indicates that a user has successfully registered a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardRegisterFailed: 
+      name: Loyalty Card Register Failed
+      title: Loyalty Card Register Failed
+      summary: Indicates that a user has failed to register a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardRemoved:
+      name: Loyalty Card Removed
+      title: Loyalty Card Removed
+      summary: Indicates that a user has removed a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardStatusChange:
+      name: Loyalty Card Status Change
+      title: Loyalty Card Status Change
+      summary: Indicates that a user has changed the status of a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/ToStatus'
+    PaymentAccountAdded:
+      name: Payment Account Added
+      title: Payment Account Added
+      summary: Indicates that a user has added a payment account
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/PaymentAccountDetails'
+          - $ref: '#/components/schemas/Status'
+    PaymentAccountRemoved:
+      name: Payment Account Removed
+      title: Payment Account Removed
+      summary: Indicates that a user has removed a payment account
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/PaymentAccountDetails'
+          - $ref: '#/components/schemas/Status'
+    PaymentAccountStatusChange:
+      name: Payment Account Status Change
+      title: Payment Account Status Change
+      summary: Indicates that a user has changed the status of a payment account
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/PaymentAccountDetails'
+          - $ref: '#/components/schemas/FromStatus'
+          - $ref: '#/components/schemas/ToStatus'
+    TransactionExport:
+      name: Transaction Export
+      title: Transaction Export
+      summary: Indicates that a transaction has been exported
+      payload:
+        $ref: '#/components/schemas/TransactionExport'
   schemas:
-    RemovedFromBink:
-      allOf: 
-        - $ref: '#/components/schemas/RequiredMetadata'
-        - $ref: '#/components/schemas/OptionalMetadata'
     Metadata:
       allOf:
         - $ref: '#/components/schemas/RequiredMetadata'
-        - $ref: '#/components/schemas/OptionalMetadata'
-        - $ref: '#/components/schemas/BinkUserId'
     RequiredMetadata:
       type: object
       properties:
-        type:
+        event_type:
           description: 'The event type identifier, used for event subscriptions and routing'
           type: string
-          example: loyalty_account.retrieve
+          example: user.created
+        origin:
+          description: 'Identifier for what triggered the event.'
+          type: string
+          enum: ["channel", "django.admin", "merchant.callback"]
+          example: channel
         channel:
           type: string
           description: The identifier for the Channel that sent the request
           example: com.barclays.bmb
-        request_id:
+        event_date_time:
           type: string
-          description: The client’s identifier for the request
-          example: '53568'
+          format: date-time
+          example: 
+          description: "Date and time of event creation in UTC"  
+        external_user_ref:
+          type: string
+          example: "1645109767123456"
+          description: "external identifier as passed in by client"  
+        internal_user_ref:
+          type: string
+          example: "12345"
+          description: "Database user ID (not UUID)"            
+        email:
+          type: string
+          description: "User's e-mail address"
+          example: "user@example.com"
+    AddAndAuthData:
+      type: object
+      properties:   
+        scheme_account_id:
+          type: string
+          description: "The scheme account identifier"
+          example: "1234567890"
         loyalty_plan:
           type: string
-          description: The Loyalty Plan 'slug' to which the request applies
-          example: bpl-trenette
-    OptionalMetadata:
+          description: "The loyalty plan identifier"
+          example: "329"
+    PaymentAccountDetails:
       type: object
       properties:
+        payment_account_id:
+          type: string
+          description: "The payment account identifier"
+          example: "1234567890"
+        fingerprint:
+          type: string
+          description: "The payment account fingerprint"
+          example: "ade13eacf"
+        expiry_date:
+          type: string
+          format: date
+          example: "2022-12-31"
+          description: "The payment account expiry date"
+        token:
+          type: string
+          description: "The payment account token"
+          example: "1234567890"
+    TransactionExport:
+      type: object
+      properties:
+        event_type:
+          type: string
+          description: "The event type identifier, used for event subscriptions and routing"
+          example: "transaction.exported"
+        event_date_time:
+          type: string
+          format: date-time
+          example: "2020-12-31"
+        internal_user_ref:
+          type: string
+          example: "12345"
+          description: "Database user ID (not UUID)"
         transaction_id:
           type: string
-          description: An end-to-end tracing identifier for requests through Bink services.
-          example: >-
-            XAAAAABKMMOjBv2NT4TY6SQVjC0zV1NURURHRTA2MTkANDM3YzgyY2QtMzYwYS00YTU0LTk0YzMtNWZmNzA3NjQ3Nzgz
-        account_id:
+          description: "The transaction identifier"
+          example: "1234567890"
+        provider_slug:
           type: string
-          description: >-
-            An identifier that a Consumer can use to uniquely identify a Loyalty
-            Account within a Loyalty Plan.
-          example: binktestuser7@wasabi.com
-    BinkUserId:
+          description: "Retailer slug"
+          example: "loyalteas"
+        transaction_date:
+          type: string
+          format: date
+          example: "2020-12-31"
+          description: "The transaction date"
+        spend_amount:
+          type: number
+          format: float
+          example: 10.00
+          description: "The transaction amount" 
+        spend_currency:
+          type: string
+          example: "GBP"
+          description: "The transaction currency" 
+        loyalty_id:
+          type: string
+          description: "The loyalty card identifier"
+          example: "1234567890" 
+        mid:
+          type: string
+          description: "The merchant identifier"
+          example: "1234567890"
+        scheme_account_id:
+          type: string
+          description: "The scheme account identifier"
+          example: "1234567890"
+        credentials:
+          type: string
+          description: "Credentials"
+          example: "XC73464D"
+        status:
+          type: string
+          description: "export status"
+          example: "0"
+        feed_type:
+          type: string
+          description: "feed type"
+          example: "0"  
+        location_id:
+          type: string
+          description: "location id"
+          example: "0"  
+        merchant_internal_id:
+          type: string
+          description: "merchant internal id"
+          example: "0"  
+        payment_card_account_id:
+          type: string
+          description: "payment account id"
+          example: "0"  
+        settlement_key:
+          type: string
+          description: "settlement key"
+          example: "0"
+    Status:
+      type: object
+      properties: 
+        status:
+          type: string
+          description: "Account status"
+          example: "0"
+    MainAnswer:     
       type: object
       properties:
-        bink_user_id:
+        main_answer:
           type: string
-          description: The Bink User ID for user created this request
-          example: '232276'
+          description: "The credential field used as unique key value on the scheme account record"
+          example: "XC73464D"
+    ToStatus:
+      type: object
+      properties:
+        to_status:
+          type: string
+          description: "New account status"
+          example: "0"
+    FromStatus:
+      type: object
+      properties:
+        from_status:
+          type: string
+          description: "Old account status"
+          example: "0"

@@ -1,6 +1,6 @@
 asyncapi: 3.0.0
 info:
-  title: Reporting and MI
+  title: Reporting and MI Events
   version: 1.0.0
   description: |
     Events for Reporting and MI
@@ -137,6 +137,12 @@ channels:
       subscribe.message:
         $ref: '#/components/messages/TransactionExport'
     description: Message queue for transaction export
+  transaction.exported.response:
+    address: transaction.exported.response
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/TransactionExportResponse'
+    description: Message queue for transaction export response
 operations:
   user.created:
     action: send
@@ -264,30 +270,36 @@ operations:
       $ref: '#/channels/transaction.exported'
     messages:
       - $ref: '#/channels/transaction.exported/messages/subscribe.message'
+  transaction.exported.response:
+    action: send
+    channel:
+      $ref: '#/channels/transaction.exported.response'
+    messages:
+      - $ref: '#/channels/transaction.exported.response/messages/subscribe.message'
 components:
   messages:
     UserCreated:
       name: User Created 
       title: User Created
-      summary: Indicates that a user has signed up to the Bink Service
+      summary: A user has signed up to the Bink Service
       payload:
         $ref: '#/components/schemas/Metadata'
     UserDeletedAPI:
       name: User Deleted API
       title: User Deleted API
-      summary: Indicates that a user has been deleted via the API
+      summary: A user has been deleted via the API
       payload:
         $ref: '#/components/schemas/Metadata'  
     UserSessionStart:
       name: User Session Start
       title: User Session Start
-      summary: Indicates that a user has acessed the Bink Service
+      summary: A user has acessed the Bink Service
       payload:
         $ref: '#/components/schemas/Metadata'
     LoyaltyCardAddAndAuthRequest:
       name: Loyalty Card Add and Authorise Request
       title: Loyalty Card Add and Authorise Request
-      summary: Indicates that a user has requested to add and authorise a loyalty card
+      summary: A user has requested to add and authorise a loyalty card
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -306,7 +318,7 @@ components:
     AuthoriseRequest:
       name: Loyalty Card Authorise Request
       title: Loyalty Card Authorise Request
-      summary: Indicates that a user has requested to authorise a loyalty card
+      summary: A user has requested to authorise a loyalty card
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -315,7 +327,7 @@ components:
     AuthoriseSuccess:
       name: Loyalty Card Authorise Success
       title: Loyalty Card Authorise Success
-      summary: Indicates that a user has successfully authorised a loyalty card
+      summary: A user has successfully authorised a loyalty card
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -325,7 +337,7 @@ components:
     AuthoriseFailed:
       name: Loyalty Card Authorise Failed
       title: Loyalty Card Authorise Failed
-      summary: Indicates that a user has failed to authorise a loyalty card
+      summary: A user has failed to authorise a loyalty card
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -335,7 +347,7 @@ components:
     LoyaltyCardJoinRequest:
       name: Loyalty Card Join Request
       title: Loyalty Card Join Request
-      summary: Indicates that a user has requested to join a loyalty plan
+      summary: A user has requested to join a loyalty plan
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -343,7 +355,7 @@ components:
     LoyaltyCardJoinSuccess:
       name: Loyalty Card Join Success
       title: Loyalty Card Join Success
-      summary: Indicates that a user has successfully joined a loyalty plan
+      summary: A user has successfully joined a loyalty plan
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -353,7 +365,7 @@ components:
     LoyaltyCardJoinFailed:
       name: Loyalty Card Join Failed
       title: Loyalty Card Join Failed
-      summary: Indicates that a user has failed to join a loyalty plan
+      summary: Request to join a loyalty plan has failed
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -363,7 +375,7 @@ components:
     LoyaltyCardRegisterRequest:
       name: Loyalty Card Register Request
       title: Loyalty Card Register Request
-      summary: Indicates that a user has requested to register a loyalty card
+      summary: A user has requested to register a loyalty card
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -372,7 +384,7 @@ components:
     LoyaltyCardRegisterSuccess:
       name: Loyalty Card Register Success
       title: Loyalty Card Register Success
-      summary: Indicates that a user has successfully registered a loyalty card
+      summary: Loyalty card registration was successful
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -382,7 +394,7 @@ components:
     LoyaltyCardRegisterFailed: 
       name: Loyalty Card Register Failed
       title: Loyalty Card Register Failed
-      summary: Indicates that a user has failed to register a loyalty card
+      summary: Loyalty card registration has failed
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -392,7 +404,7 @@ components:
     LoyaltyCardRemoved:
       name: Loyalty Card Removed
       title: Loyalty Card Removed
-      summary: Indicates that a user has removed a loyalty card
+      summary: A user has removed a loyalty card
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -402,7 +414,7 @@ components:
     LoyaltyCardStatusChange:
       name: Loyalty Card Status Change
       title: Loyalty Card Status Change
-      summary: Indicates that a user has changed the status of a loyalty card
+      summary: A Loyalty card status has changed
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -412,7 +424,7 @@ components:
     PaymentAccountAdded:
       name: Payment Account Added
       title: Payment Account Added
-      summary: Indicates that a user has added a payment account
+      summary: A user has added a payment account
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -421,7 +433,7 @@ components:
     PaymentAccountRemoved:
       name: Payment Account Removed
       title: Payment Account Removed
-      summary: Indicates that a user has removed a payment account
+      summary: A user has removed a payment account
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -430,7 +442,7 @@ components:
     PaymentAccountStatusChange:
       name: Payment Account Status Change
       title: Payment Account Status Change
-      summary: Indicates that a user has changed the status of a payment account
+      summary: A payment account status has changed
       payload:
         allOf:
           - $ref: '#/components/schemas/Metadata'
@@ -440,20 +452,24 @@ components:
     TransactionExport:
       name: Transaction Export
       title: Transaction Export
-      summary: Indicates that a transaction has been exported
+      summary: A transaction has been exported to a retailer
       payload:
         $ref: '#/components/schemas/TransactionExport'
+    TransactionExportResponse:
+      name: Transaction Export Response
+      title: Transaction Export Response
+      summary: Retailer's response to a transaction export
+      payload:
+        $ref: '#/components/schemas/TransactionExportResponse'
   schemas:
     Metadata:
       allOf:
         - $ref: '#/components/schemas/RequiredMetadata'
     RequiredMetadata:
+      allOf:
+        - $ref: '#/components/schemas/EventTypeDateTime'
       type: object
       properties:
-        event_type:
-          description: 'The event type identifier, used for event subscriptions and routing'
-          type: string
-          example: user.created
         origin:
           description: 'Identifier for what triggered the event.'
           type: string
@@ -463,11 +479,6 @@ components:
           type: string
           description: The identifier for the Channel that sent the request
           example: com.barclays.bmb
-        event_date_time:
-          type: string
-          format: date-time
-          example: 
-          description: "Date and time of event creation in UTC"  
         external_user_ref:
           type: string
           example: "1645109767123456"
@@ -511,17 +522,23 @@ components:
           type: string
           description: "The payment account token"
           example: "1234567890"
-    TransactionExport:
+    EventTypeDateTime:
       type: object
       properties:
         event_type:
           type: string
           description: "The event type identifier, used for event subscriptions and routing"
-          example: "transaction.exported"
+          example: "user.created"
         event_date_time:
           type: string
           format: date-time
           example: "2020-12-31"
+          description: "Date and time of event creation in UTC"      
+    TransactionExport:
+      allOf:
+        - $ref: '#/components/schemas/EventTypeDateTime'
+      type: object
+      properties:
         internal_user_ref:
           type: string
           example: "12345"
@@ -588,6 +605,31 @@ components:
           type: string
           description: "settlement key"
           example: "0"
+    TransactionExportResponse:
+      allOf:
+        - $ref: '#/components/schemas/EventTypeDateTime'
+      type: object
+      properties:
+        transaction_id:
+          type: string
+          description: "The transaction identifier"
+          example: "1234567890"
+        provider_slug:
+          type: string
+          description: "Retailer slug"
+          example: "loyalteas"
+        status_code:
+          type: number
+          description: "The status code"
+          example: 200
+        response_message:
+          type: string
+          description: "The response message"
+          example: "Points added successfully"
+        uuid:
+          type: string
+          description: "UUID"
+          example: "11d3d610-5088-4065-b75a-8bd28f0f14bb"
     Status:
       type: object
       properties: 
@@ -616,3 +658,4 @@ components:
           type: string
           description: "Old account status"
           example: "0"
+          
