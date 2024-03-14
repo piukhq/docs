@@ -25,6 +25,7 @@ RUN mv extras/changelog.html /output/extras/changelog.html
 RUN mv extras/givex.html /output/extras/givex.html
 RUN mv wallet/2.0.yaml /output/wallet/2.0.yaml
 RUN mv wallet/api.html /output/wallet/api.html
+RUN mv events/index.html /output/events/index.html
 
 # BPL
 RUN redoc-cli build bpl/deploy.yaml --output /output/bpl/index.html

@@ -105,6 +105,12 @@ channels:
       subscribe.message:
         $ref: '#/components/messages/LoyaltyCardDeleteAngelia'
     description: Message queue for deleting a Loyalty Card
+  user.delete:
+    address: user.delete
+    messages:
+      subscribe.message:
+        $ref: '#/components/messages/UserDelete'
+    description: Message queue for deleting a User
 operations:
   user.wallet_view:
     action: send
