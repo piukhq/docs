@@ -18,7 +18,7 @@ RUN mkdir -p \
 # Webhook
 #RUN npx @redocly/cli build-docs webhook/webhook.yaml --template webhook/template.hbs --output /output/webhook/webhook.html
 RUN mv webhook/webhook.yaml /output/webhook/webhook.yaml
-RUN mv webhook/webhook.html /output/webhook/webhook.html
+RUN mv webhook/api.html /output/webhook/api.html
 
 RUN mv extras/appendix.html /output/extras/appendix.html
 RUN mv extras/changelog.html /output/extras/changelog.html
