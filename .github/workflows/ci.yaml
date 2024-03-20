@@ -52,7 +52,6 @@ jobs:
         environment:
           - dev
           - lloyds
-          - barclays
           - retail
           - staging
           - production
