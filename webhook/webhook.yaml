@@ -5,22 +5,21 @@ servers:
 info:
   version: 1.0.0
   title: Bink Webhook API
-  description:  "<h1>Bink webhook endpoints</h1>
-    This API allows clients to register their webhook endpoints with Bink. <br><br> This API accepts a JSON body and provides HTTP response codes and a JSON response body.
-    <br><br>
-    This specification also describes the payload that receivers should expect to receive to their endpoints and how to respond to the request. 
-    </br></br>
-    <h2>Authentication</h2>
-    Bink uses API keys to authenticate requests. Provide your API key in every request in the X-API-KEY header. Bink will provide each retailer with an API key upon integration. 
-    <br><br>
-    <h2>Errors</h2>
-    Bink's API uses HTTP response codes. Codes in the 2xx range indicate success. Requests that result in errors codes have a code in the 4xx range and a JSON body containing <i>error_message</i> and <i>error_slug</i> fields. 
-
-    <h2>Versioning</h2>
-    The Webhook API is versionless, all changes will be backward-compatible. Any future changes that are backward-incompatible with result in a new API operation. 
+  
+  description:  "<h1>Bink Retail Transaction Webhook</h1> 
+    Bink offers a webhook that notifies your customer or loyalty system that we have recognised a transaction at one of your enrolled retailers for a .
+    <h2>Webhook endpoint</h2>
+    To receive these notifications, you need to provide us with a URL that we can send the notifications to. We will then send a JSON payload to that URL whenever we recognise a transaction at one of your enrolled retailers.    
+    </br>
+    <h2>Webhook payload</h2>
+    The payload will contain the information specified in this guide. You can use this information to update your customer or loyalty system with the transaction details.
+    </br>
+    <h2>Webhook security</h2>
+    To ensure that the payload is authentic, we will include a secret key in the header (X-API-KEY). You can use this key to verify the authenticity of the request. 
     "
   x-logo: 
-    url: https://logos.bink.com/img/logos/mono-teal.png    
+    url: https://logos.bink.com/img/logos/mono-teal.png
+    href: https://bink.com/
 #paths: 
 #  /retailers/{retailer_id}/webhook_endpoints:
 #    post:
@@ -144,16 +143,20 @@ components:
         user_id:
           type: string
           description: The unique identifier of the user involved in the transaction.
+          example: "XJD458D"
         amount:
           type: number
           description: The monetary amount of the transaction.
+          example: 25.99
         location_id:
           type: string
           description: The unique identifier of the location where the transaction occurred.
+          example: "LONDON-123"
         date_time: 
           type: string
           format: date-time
           description: The date and time when the transaction occurred.
+          example: "2022-01-01T12:00:00Z"
     WebhookEndpoint:
       type: object
       properties: 
