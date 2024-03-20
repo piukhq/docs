@@ -7,9 +7,9 @@ info:
   title: Bink Webhook API
   
   description:  "<h1>Bink Retail Transaction Webhook</h1> 
-    Bink offers a webhook that notifies your customer or loyalty system that we have recognised a transaction at one of your enrolled retailers for a .
+    Bink offers a webhook that notifies your customer or loyalty system that we have recognised a transaction at one of your enrolled retailers.
     <h2>Webhook endpoint</h2>
-    To receive these notifications, you need to provide us with a URL that we can send the notifications to. We will then send a JSON payload to that URL whenever we recognise a transaction at one of your enrolled retailers.    
+    To receive these notifications, you need to provide us with a URL that we can send the notifications to. We will then send a JSON payload to that URL whenever we recognise a transaction at one of your enrolled retailers.
     </br>
     <h2>Webhook payload</h2>
     The payload will contain the information specified in this guide. You can use this information to update your customer or loyalty system with the transaction details.
