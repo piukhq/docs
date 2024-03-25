@@ -43,9 +43,9 @@ RUN npm install -g @asyncapi/html-template
 RUN npm install -g @asyncapi/parser@3.0.5
 
 
-RUN asyncapi generate fromTemplate events/loyalty_management/asyncapi.yaml @asyncapi/html-template -o /output/events/loyalty_management/async
-RUN sed -i 's/js\//\/events\/loyalty_management\/async\/js\//g' /output/events/loyalty_management/async/index.html
-RUN sed -i 's/css\//\/events\/loyalty_management\/async\/css\//g' /output/events/loyalty_management/async/index.html
+RUN asyncapi generate fromTemplate events/loyalty_card_management/asyncapi.yaml @asyncapi/html-template -o /output/events/loyalty_management/async
+RUN sed -i 's/js\//\/events\/loyalty_card_management\/async\/js\//g' /output/events/loyalty_card_management/async/index.html
+RUN sed -i 's/css\//\/events\/loyalty_card_management\/async\/css\//g' /output/events/loyalty_card_management/async/index.html
 
 
 RUN asyncapi generate fromTemplate events/reporting_mi/asyncapi.yaml @asyncapi/html-template -o /output/events/reporting_mi/async

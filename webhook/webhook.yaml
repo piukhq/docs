@@ -6,16 +6,23 @@ info:
   version: 1.0.0
   title: Bink Webhook API
   
-  description:  "<h1>Bink Retail Transaction Webhook</h1> 
+  description:  "<h2>Bink Identified Transaction Webhook</h2> 
+    </br>
     Bink offers a webhook that notifies your customer or loyalty system that we have recognised a transaction at one of your enrolled retailers.
-    <h2>Webhook endpoint</h2>
+    <h3>Webhook endpoint</h3>
     To receive these notifications, you need to provide us with a URL that we can send the notifications to. We will then send a JSON payload to that URL whenever we recognise a transaction at one of your enrolled retailers.
     </br>
-    <h2>Webhook payload</h2>
+    <h3>Webhook payload</h3>
     The payload will contain the information specified in this guide. You can use this information to update your customer or loyalty system with the transaction details.
     </br>
-    <h2>Webhook security</h2>
+    <h3>Webhook security</h3>
     To ensure that the payload is authentic, we will include a secret key in the header (X-API-KEY). You can use this key to verify the authenticity of the request. 
+
+    <style>
+      h2 .red-text {
+       color: #057EA8;
+      }
+    </style>
     "
   x-logo: 
     url: https://logos.bink.com/img/logos/mono-teal.png

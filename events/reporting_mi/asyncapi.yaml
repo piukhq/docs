@@ -528,11 +528,11 @@ components:
         event_type:
           type: string
           description: "The event type identifier, used for event subscriptions and routing"
-          example: "user.created"
+          example: "transaction.exported.response"
         event_date_time:
           type: string
           format: date-time
-          example: "2020-12-31"
+          example: 2023-08-12 22:57:01.242389
           description: "Date and time of event creation in UTC"      
     TransactionExport:
       allOf:
@@ -617,11 +617,19 @@ components:
         provider_slug:
           type: string
           description: "Retailer slug"
-          example: "loyalteas"
+          example: "stonegate"
         status_code:
           type: number
           description: "The status code"
           example: 200
+        response_status_category:
+          type: string
+          description: "A standard set of response categories for all transaction export responses."
+          example: "earn_via_pll"  
+          enum: 
+              - "earn_via_pll"
+              - "earn_already_awarded"
+              - "earn_not_awarded"
         response_message:
           type: string
           description: "The response message"

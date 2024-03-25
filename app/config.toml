@@ -10,7 +10,7 @@
 "webhook" = "webhook/webhook.html"
 "portal" = "portal/index.html"
 "transaction" = "merchant/retail_transaction_api.html"
-"loyalty_management" = "events/loyalty_management/async/index.html"
+"loyalty_card_management" = "events/loyalty_card_management/async/index.html"
 "reporting_mi" = "events/reporting_mi/async/index.html"
 "events" = "events/index.html"
 #"transaction_processing" = "events/transaction_processing/async/index.html"
