@@ -18,15 +18,15 @@ servers:
     protocol: amqp
     description: Staging broker
 channels:
-  loyalty-response: 
-    address: loyalty-response
-    servers: 
-      -  $ref: '#/servers/staging'
-    messages:
-      loyalty_account.account_update:
-        $ref: '#/components/messages/MidasAccountUpdate'
-        tags:
-          - olympus
+#  loyalty-response: 
+#    address: loyalty-response
+#    servers: 
+#      -  $ref: '#/servers/staging'
+#    messages:
+#      loyalty_account.account_update:
+#        $ref: '#/components/messages/MidasAccountUpdate'
+#        tags:
+#          - olympus
   loyalty-request:
     address: loyalty-request
     servers: 
