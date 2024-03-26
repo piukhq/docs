@@ -4,13 +4,6 @@ info:
   version: 1.0.0
   description: |
     Loyalty Card Management operations (Midas)
-    ### Messages between Wallet and Loyalty Card Management systems
-    * Join a loyalty plan
-    * Authentication a loyalty card 
-    * Register a Loyalty card
-    * Request balance and transaction history 
-    * Loyalty card removed from Bink
-    * Loyalty card removed from a Bink Wallet
 defaultContentType: application/json
 servers:
   staging:
@@ -18,15 +11,31 @@ servers:
     protocol: amqp
     description: Staging broker
 channels:
-#  loyalty-response: 
-#    address: loyalty-response
-#    servers: 
-#      -  $ref: '#/servers/staging'
-#    messages:
-#      loyalty_account.account_update:
-#        $ref: '#/components/messages/MidasAccountUpdate'
-#        tags:
-#          - olympus
+  loyalty-response: 
+    address: loyalty-response
+    servers: 
+      -  $ref: '#/servers/staging'
+    messages:
+      loyalty_account.join.success:
+        $ref: '#/components/messages/MidasAccountUpdate'
+        tags:
+          - olympus
+      loyalty_account.account_update:
+        $ref: '#/components/messages/MidasAccountUpdate'
+        tags:
+          - olympus
+      loyalty_account.register.success:
+        $ref: '#/components/messages/MidasAccountUpdate'
+        tags:
+          - olympus          
+      loyalty_account.join.failure:
+        $ref: '#/components/messages/MidasFailedAccountUpdate'
+        tags:
+          - olympus
+      loyalty_account.register.failure:
+        $ref: '#/components/messages/MidasFailedAccountUpdate'
+        tags:
+          - olympus    
   loyalty-request:
     address: loyalty-request
     servers: 
@@ -58,6 +67,46 @@ channels:
           - $ref: '#/components/tags/olympus'
     description: "Olympus: Message queue for Loyalty Management requests"      
 operations:
+  loyalty_account.account_update:
+    action: "send"
+    channel:
+      $ref: '#/channels/loyalty-response'
+    messages:
+      - $ref: '#/channels/loyalty-response/messages/loyalty_account.account_update'
+    tags:
+      - $ref: '#/components/tags/olympus'
+  loyalty_account.join.success:
+    action: "send"
+    channel:
+      $ref: '#/channels/loyalty-response'
+    messages:
+      - $ref: '#/channels/loyalty-response/messages/loyalty_account.join.success'
+    tags:
+      - $ref: '#/components/tags/olympus'
+  loyalty_account.register.success:
+    action: "send"
+    channel:
+      $ref: '#/channels/loyalty-response'
+    messages:
+      - $ref: '#/channels/loyalty-response/messages/loyalty_account.register.success'
+    tags:
+      - $ref: '#/components/tags/olympus'
+  loyalty_account.join.failure:
+    action: "send"
+    channel:
+      $ref: '#/channels/loyalty-response'
+    messages:
+      - $ref: '#/channels/loyalty-response/messages/loyalty_account.join.failure'
+    tags:
+      - $ref: '#/components/tags/olympus'
+  loyalty_account.register.failure:
+    action: "send"
+    channel:
+      $ref: '#/channels/loyalty-response'
+    messages:
+      - $ref: '#/channels/loyalty-response/messages/loyalty_account.register.failure'
+    tags:
+      - $ref: '#/components/tags/olympus'
   loyalty_account.join.application:
     action: "receive"
     channel:
@@ -115,6 +164,20 @@ components:
       name: angelia
       description: "Follows Angelia messaging format."  
   messages:
+    MidasAccountUpdate:
+      name: Update a Loyalty Account
+      title: Update a Loyalty Account
+      summary: >- 
+        "Midas will update a scheme account in Hermes following a successful join, register, authorise (add), account retrieval request from the Loyalty Provider"
+      payload: 
+        $ref: '#/components/schemas/MidasAccountUpdate'
+    MidasFailedAccountUpdate:
+      name: Failed Account Update
+      title: Failed Account Update
+      summary: >-
+        "A loyalty card join or registration attempt has failed"
+      payload: 
+        $ref: '#/components/schemas/MidasFailedAccountUpdate'
     MidasCardRemovedWallet:
       name: Loyalty Card removed from a Bink Wallet
       title: Loyalty Card removed from a Bink Wallet
@@ -339,36 +402,252 @@ components:
           example: "I accept the "
           pattern: "[\\u0000-\\u2FFF]+"
           description: "Describes how to use the Plan Document."
+    Error: 
+      type: object
+      properties:
+        error: 
+          type: object
+          properties: 
+            error_slug:
+              type: string
+              description: "A human-readable error code."
+              example: 'invalid_credentials'
+            error_message:
+              type: string
+              description: "A human-readable error message."
+              example: 'The credentials provided are invalid.'
+    MidasFailedAccountUpdate:
+      allOf: 
+        - $ref: '#/components/schemas/Metadata'
+        - $ref: "#/components/schemas/Error" 
     MidasAccountUpdate:
-      name: Update a Loyalty Account 
-      title: Update a Loyalty Account
-      summary: >-
-        <h2>Midas will update a scheme account in Hermes following a successful:</h2>
-        <ul>
-          <li>join</li>
-          <li>register</li>
-          <li>authorise (add)</li> 
-          <li>account retrieval request</li> 
-        </ul>  
-        from the Loyalty Provider
-      payload:
-        allOf:
-          - $ref: '#/components/schemas/Metadata'
-          - type: object
+      allOf:
+        - $ref: '#/components/schemas/Metadata'
+        - type: object
+          properties:
+            service_transaction_id: 
+              type: string
+              description: "A transaction identifier provided by the loyalty system, if provided"
+              example: "123e4567-e89b-12d3-a456-426655440000"
+            system_account_id:
+              type: string
+              description: >-
+                An identifier known to the Loyalty Provider that can be used
+                with their system to get information about the Loyalty
+                Account. This identifier is immutable.
+                example: "4f0cd07460652fca34c002b76e613c8aff2c1f5a"
+        - $ref: '#/components/schemas/SuccessfulUpdateData'
+    SuccessfulUpdateData:
+      type: object
+      properties:      
+        verified_card_data:
+          type: object
+          properties:
+            card_number:
+              type: string
+              description: >-
+                An identifier that a Consumer can use to uniquely identify
+                a Loyalty Account within a Loyalty Plan.
+              example: "9000812408493741714"
+            barcode: 
+              type: string
+              description: >-
+                A barcode that can be used to identify the Loyalty Account.
+              example: "9000812408493741714"
+        balances:
+          type: object
+          description: "A set of data providing the loyalty account balance information"
+          properties:
+            value:
+              type: number
+              description: Reward value
+              example: 83.88
+            prefix:
+              type: string
+              description: Currency prefix
+              example: "£"
+            suffix:
+              type: string
+              description: Currency suffix
+              example: ""
+            currency:
+              type: string
+              description: Currency code
+              example: "GBP"
+            updated_at:
+              type: integer
+              description:  Timestamp of update (epoch seconds)
+            description:
+              type: string
+              description: Optional reward description
+              example: "Points awarded for purchase"
+            reward_tier:
+              type: integer
+              description: Reward tier level
+              example: 0
+        vouchers: 
+          type: array
+          items:
+            type: object
             properties:
-              system_account_id:
-                type: string
-                description: >-
-                  An identifier known to the Loyalty Provider that can be used
-                  with their system to get information about the Loyalty
-                  Account. This identifier is immutable.
-                example: '2900001'
-              account_data:
+              burn:
                 type: object
                 properties:
-                  account_id:
+                  type:
                     type: string
-                    description: >-
-                      An identifier that a Consumer can use to uniquely identify
-                      a Loyalty Account within a Loyalty Plan.
-                    example:
+                    enum: [voucher]
+                  value:
+                    type: number
+                  prefix:
+                    type: string
+                  suffix:
+                    type: string
+                  currency:
+                    type: string
+              earn:
+                type: object
+                properties:
+                  type:
+                    type: string
+                    enum: [accumulator]
+                  value:
+                    type: number
+                  prefix:
+                    type: string
+                  suffix:
+                    type: string
+                  currency:
+                    type: string
+                  target_value:
+                    type: number
+              state:
+                type: string
+                enum: [inprogress, issued]
+              subtext:
+                type: string
+              headline:
+                type: string
+              body_text:
+                type: string
+              code:
+                type: string
+              date_issued:
+                type: string
+                format: date-time
+              expiry_date:
+                type: string
+                format: date-time
+              barcode_type:
+                type: integer
+              terms_and_conditions_url:
+                type: string
+            examples:
+              - name: In progress voucher
+                payload:
+                  burn:
+                    type: voucher
+                    value: 10.0
+                    prefix: £
+                    suffix: Gift
+                    currency: GBP
+                  earn:
+                    type: accumulator
+                    value: 83.88
+                    prefix: £
+                    suffix:
+                    currency: GBP
+                    target_value: 100.0
+                  state: inprogress
+                  subtext:
+                  headline: Spend £100 to get a £10 gift voucher
+                  body_text:
+                  code:
+                  date_issued: '2022-08-16T00:00:00Z'
+                  expiry_date:
+                  barcode_type: 0
+                  terms_and_conditions_url:
+              - name: Issued voucher
+                payload:
+                  burn:
+                    type: voucher
+                    value: 10.0
+                    prefix: £
+                    suffix: Gift
+                    currency: GBP
+                  earn:
+                    type: accumulator
+                    value: 100.0
+                    prefix: £
+                    suffix:
+                    currency: GBP
+                    target_value: 100.0
+                  state: issued
+                  subtext:
+                  headline: Earned
+                  body_text:
+                  code: Due:20thAug 2022
+                  date_issued: '2022-08-16T00:00:00Z'
+                  expiry_date: '2022-08-20T00:00:00Z'
+                  barcode_type: 0
+                  terms_and_conditions_url:      
+        transactions: 
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              status:
+                type: string
+              amounts:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    value:
+                      type: number
+                    prefix:
+                      type: string
+                    suffix:
+                      type: string
+                    currency:
+                      type: string
+              timestamp:
+                type: integer
+                format: unix-timestamp
+              description:
+                type: string
+          examples:
+            - name: Transaction 1
+              payload:
+                id: 414181
+                status: active
+                amounts:
+                  - value: 411.0
+                    prefix: £
+                    suffix: ""
+                    currency: GBP
+                timestamp: 1660199473
+                description: asos.com £411.00
+            - name: Transaction 2
+              payload:
+                id: 414182
+                status: active
+                amounts:
+                  - value: 601.0
+                    prefix: £
+                    suffix: ""
+                    currency: GBP
+                timestamp: 1660199377
+                description: asos.com £601.00
+            - name: Transaction 3
+              payload:
+                id: 414183
+                status: active
+                amounts:
+                  - value: 21.0
+                    prefix: £
+                    suffix: ""
+                    currency: GBP
+                timestamp: 1660196065
+                description: asos.com £21.00                        
