@@ -1,281 +1,198 @@
 asyncapi: 3.0.0
 info:
-  title: Reporting and MI Events
+  title: Data Warehouse
   version: 1.0.0
   description: |
     Events for Reporting and MI
 defaultContentType: application/json
 servers:
   staging:
-    host: 'guest:guest@rabbitmq:5672'
+    host: 'calm-green-anteater.rmq2.cloudamqp.com'
     protocol: amqp
-    description: staging broker
+    description: Staging broker
 channels:
-  user.created:
-    address: user.created
-    messages:
-      subscribe.message:
+  clickhouse_hermes:
+    address: clickhouse_hermes
+    servers: 
+      -  $ref: '#/servers/staging'
+    messages:  
+      user.created:
         $ref: '#/components/messages/UserCreated'
-    description: Message queue for user creation
-  user.deleted.api:
-    address: user.deleted.api
-    messages:
-      subscribe.message:
+      user.deleted.api:
         $ref: '#/components/messages/UserDeletedAPI'
-    description: Message queue for user deletion via API 
-  user.session.start:
-    address: user.session.start
-    messages:
-      subscribe.message:
+      user.session.start:
         $ref: '#/components/messages/UserSessionStart'
-    description: Message queue for user session start
-  lc.addandauth.request:
-    address: lc.addandauth.request
-    messages:
-      subscribe.message:
+      lc.addandauth.request:
         $ref: '#/components/messages/LoyaltyCardAddAndAuthRequest'
-    description: Message queue for loyalty card add and authorise request 
-  lc.addandauth.success:
-    address: lc.addandauth.success
-    messages:
-      subscribe.message:
+      lc.addandauth.success:
         $ref: '#/components/messages/LoyaltyCardAddAndAuthResponse'
-    description: Message queue for loyalty card add and authorise success
-  lc.addandauth.failed:
-    address: lc.addandauth.failed
-    messages:
-      subscribe.message:
+      lc.addandauth.failed:
         $ref: '#/components/messages/LoyaltyCardAddAndAuthResponse'
-    description: Message queue for loyalty card add and authorise failed  
-  lc.auth.request:
-    address: lc.auth.request
-    messages:
-      subscribe.message:
+      lc.auth.request:
         $ref: '#/components/messages/LoyaltyCardAddAndAuthRequest'
-    description: Message queue for loyalty card authorise request
-  lc.auth.success:
-    address: lc.auth.success
-    messages:
-      subscribe.message:
+      lc.auth.success:
         $ref: '#/components/messages/LoyaltyCardAddAndAuthResponse'
-    description: Message queue for loyalty card authorise success
-  lc.auth.failed:
-    address: lc.auth.failed
-    messages:
-      subscribe.message:
+      lc.auth.failed:
         $ref: '#/components/messages/LoyaltyCardAddAndAuthResponse'
-    description: Message queue for loyalty card authorise failed
-  lc.join.request:
-    address: lc.join.request
-    messages:
-      subscribe.message:
+      lc.join.request:
         $ref: '#/components/messages/LoyaltyCardJoinRequest'
-    description: Message queue for loyalty card join request
-  lc.join.success:
-    address: lc.join.success
-    messages:
-      subscribe.message:
+      lc.join.success:
         $ref: '#/components/messages/LoyaltyCardJoinSuccess'
-    description: Message queue for loyalty card join success
-  lc.join.failed:
-    address: lc.join.failed
-    messages:
-      subscribe.message:
+      lc.join.failed:
         $ref: '#/components/messages/LoyaltyCardJoinFailed'
-    description: Message queue for loyalty card join failed
-  lc.register.request:
-    address: lc.register.request
-    messages:
-      subscribe.message:
+      lc.register.request:
         $ref: '#/components/messages/LoyaltyCardRegisterRequest'
-    description: Message queue for loyalty card register request
-  lc.register.success:
-    address: lc.register.success
-    messages:
-      subscribe.message:
+      lc.register.success:
         $ref: '#/components/messages/LoyaltyCardRegisterSuccess'
-    description: Message queue for loyalty card register success
-  lc.register.failed:
-    address: lc.register.failed
-    messages:
-      subscribe.message:
+      lc.register.failed:
         $ref: '#/components/messages/LoyaltyCardRegisterFailed'
-    description: Message queue for loyalty card register failed
-  lc.removed:
-    address: lc.removed
-    messages:
-      subscribe.message:
+      lc.removed:
         $ref: '#/components/messages/LoyaltyCardRemoved'
-    description: Message queue for loyalty card removed
-  lc.statuschange:
-    address: lc.statuschange
-    messages:
-      subscribe.message:
+      lc.statuschange:
         $ref: '#/components/messages/LoyaltyCardStatusChange'
-    description: Message queue for loyalty card status change
-  payment.account.added:
-    address: payment.account.added
-    messages:
-      subscribe.message:
+      payment.account.added:
         $ref: '#/components/messages/PaymentAccountAdded'
-    description: Message queue for payment account added
-  payment.account.removed:
-    address: payment.account.removed
-    messages:
-      subscribe.message:
+      payment.account.removed:
         $ref: '#/components/messages/PaymentAccountRemoved'
-    description: Message queue for payment account removed
-  payment.account.status.change:
-    address: payment.account.status.change
-    messages:
-      subscribe.message:
+      payment.account.status.change:
         $ref: '#/components/messages/PaymentAccountStatusChange'
-    description: Message queue for payment account status change
-  transaction.exported:
-    address: transaction.exported
-    messages:
-      subscribe.message:
+      transaction.exported:
         $ref: '#/components/messages/TransactionExport'
-    description: Message queue for transaction export
-  transaction.exported.response:
-    address: transaction.exported.response
-    messages:
-      subscribe.message:
+      transaction.exported.response:
         $ref: '#/components/messages/TransactionExportResponse'
-    description: Message queue for transaction export response
 operations:
   user.created:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/user.created'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/user.created/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/user.created'
   user.deleted.api:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/user.deleted.api'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/user.deleted.api/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/user.deleted.api'
   user.session.start:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/user.session.start'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/user.session.start/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/user.session.start'
   lc.addandauth.request:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.addandauth.request'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.addandauth.request/messages/subscribe.message' 
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.addandauth.request'
   lc.addandauth.success:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.addandauth.success'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.addandauth.success/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.addandauth.success'
   lc.addandauth.failed:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.addandauth.failed'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.addandauth.failed/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.addandauth.failed'
   lc.auth.request:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.auth.request'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.auth.request/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.auth.request'
   lc.auth.success:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.auth.success'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.auth.success/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.auth.success'
   lc.auth.failed:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.auth.failed'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.auth.failed/messages/subscribe.message'    
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.auth.failed'
   lc.join.request:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.join.request'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.join.request/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.join.request'
   lc.join.success:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.join.success'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.join.success/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.join.success'
   lc.join.failed:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.join.failed'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.join.failed/messages/subscribe.message'    
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.join.failed'
   lc.register.request:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.register.request'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.register.request/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.register.request'
   lc.register.success:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.register.success'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.register.success/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.register.success'
   lc.register.failed:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.register.failed'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.register.failed/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.register.failed'
   lc.removed:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.removed'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.removed/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.removed'
   lc.statuschange:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/lc.statuschange'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/lc.statuschange/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.statuschange'
   payment.account.added:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/payment.account.added'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/payment.account.added/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/payment.account.added'
   payment.account.removed:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/payment.account.removed'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/payment.account.removed/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/payment.account.removed'
   payment.account.status.change: 
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/payment.account.status.change'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/payment.account.status.change/messages/subscribe.message' 
+      - $ref: '#/channels/clickhouse_hermes/messages/payment.account.status.change'
   transaction.exported:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/transaction.exported'
+      $ref: '#/channels/clickhouse_hermes' 
     messages:
-      - $ref: '#/channels/transaction.exported/messages/subscribe.message'
+      - $ref: '#/channels/clickhouse_hermes/messages/transaction.exported'
   transaction.exported.response:
-    action: send
+    action: receive
     channel:
-      $ref: '#/channels/transaction.exported.response'
-    messages:
-      - $ref: '#/channels/transaction.exported.response/messages/subscribe.message'
+      $ref: '#/channels/clickhouse_hermes' 
+      messages:
+        - $ref: '#/channels/clickhouse_hermes/messages/transaction.exported.response'
 components:
   messages:
     UserCreated:

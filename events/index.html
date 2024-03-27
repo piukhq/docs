@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <!-- needed for adaptive design -->
    <meta charset="utf-8"/>
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <link href="https://fonts.googleapis.com/css?family=Space Grotesk:300,400,700|Roboto:300,400,700" rel="stylesheet">
@@ -29,12 +28,20 @@
         font-family: 'Space Grotesk';
     }
 
+    .link-item {
+      font-size: 1em;
+      color: #141E33;
+        margin: 0;
+        font-family: 'Space Grotesk';
+    }
+
     .link-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
+      display: grid; /* Use grid for tile layout */
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjust the minmax values for desired tile width */
+      grid-gap: 20px; /* Gap between tiles */
       padding: 20px;
       border-radius: 50px 50px 50px 50px;
+      padding-top: 10px;
     }
 
     .link-container a {
@@ -43,7 +50,7 @@
       text-decoration: none;
       padding: 10px 20px;
       border-radius: 5px;
-      margin: 10px;
+      margin: 0; /* Remove margin as grid takes care of spacing */
       display: block;
       text-align: center;
       font-family: 'Space Grotesk';
@@ -60,9 +67,20 @@
   </header>
 
   <div class="link-container">
-    <a href="loyalty_card_management">Loyalty Card Management</a>
-    <a href="reporting_mi">Reporting and MI</a>
-    <a href="#">BPL coming soon</a>
+    <div class="link-item">
+      <h3>Loyalty Management</h3>
+      <a href="loyalty_card_management">Loyalty Card Management</a>
+      <br/>
+      <a href="loyalty_card_management">User and Wallet</a>
     </div>
+    <div class="link-item">
+      <h3>Reporting and MI</h3>
+      <a href="reporting_mi">Data Warehouse</a>
+    </div>
+    <div class="link-item">
+      <h3>BPL</h3>
+      <a href="#">Coming soon</a>
+    </div>
+  </div>
 </body>
 </html>
