@@ -1,0 +1,498 @@
+asyncapi: 3.0.0
+info:
+  title: User and Wallet Management
+  version: 1.0.0
+  description: |
+    ### Messages between Wallet system components (Angela -> Hermes)
+defaultContentType: application/json
+servers:
+  staging:
+    host: 'calm-green-anteater.rmq2.cloudamqp.com'
+    protocol: amqp
+    description: Staging broker
+channels:
+  angelia-hermes-bridge:
+    address: angelia-hermes-bridge
+    servers: 
+      -  $ref: '#/servers/staging'
+    description: "Message queue between Angelia and Hermes"
+    messages:
+      loyalty_card_join:
+        $ref: '#/components/messages/LoyaltyCardJoin'
+        tags:
+          - angelia
+      loyalty_card_register:
+        $ref: '#/components/messages/LoyaltyCardRegister'
+        tags:
+          - angelia
+      loyalty_card_add:
+        $ref: '#/components/messages/LoyaltyCardAdd'
+        tags:
+          - angelia
+      loyalty_card_trusted_add:
+        $ref: '#/components/messages/LoyaltyCardAddTrusted'
+        tags:
+          - angelia
+      delete_loyalty_card:
+        $ref: '#/components/messages/LoyaltyCardDelete'
+        tags:
+          - angelia
+      delete_user:
+        $ref: '#/components/messages/UserDelete'
+        tags:
+          - angelia
+      refresh_balances:
+        $ref: '#/components/messages/BalanceRefresh'
+        tags:
+          - angelia
+operations:
+  loyalty_card_join:
+    action: send
+    channel:
+      $ref: '#/channels/angelia-hermes-bridge'
+    messages:
+      - $ref: '#/channels/angelia-hermes-bridge/messages/loyalty_card_join'
+  loyalty_card_register:
+    action: send
+    channel:
+      $ref: '#/channels/angelia-hermes-bridge'
+    messages:
+      - $ref: '#/channels/angelia-hermes-bridge/messages/loyalty_card_register'
+  loyalty_card_add:
+    action: send
+    channel:
+      $ref: '#/channels/angelia-hermes-bridge'
+    messages:
+      - $ref: '#/channels/angelia-hermes-bridge/messages/loyalty_card_add'
+  loyalty_card_trusted_add:
+    action: send
+    channel:
+      $ref: '#/channels/angelia-hermes-bridge'
+    messages:
+      - $ref: '#/channels/angelia-hermes-bridge/messages/loyalty_card_trusted_add'
+  delete_loyalty_card:
+    action: send
+    channel:
+      $ref: '#/channels/angelia-hermes-bridge'
+    messages:
+      - $ref: '#/channels/angelia-hermes-bridge/messages/delete_loyalty_card'
+  delete_user:
+    action: send
+    channel:
+      $ref: '#/channels/angelia-hermes-bridge'
+    messages:
+      - $ref: '#/channels/angelia-hermes-bridge/messages/delete_user'
+  refresh_balances:
+    action: send
+    channel:
+      $ref: '#/channels/angelia-hermes-bridge'
+    messages:
+      - $ref: '#/channels/angelia-hermes-bridge/messages/refresh_balances'
+components:
+  tags:
+    olympus:
+      name: Olympus Messaging
+      description: "Follows Olympus messaging format."
+    angelia:
+      name: angelia
+      description: "Follows Angelia messaging format."  
+  messages:
+    LoyaltyCardJoin:
+      name: Join a Loyalty Plan
+      title: Join a Loyalty Plan
+      summary: Request to join a Loyalty Plan
+      payload:
+        $ref: '#/components/schemas/LoyaltyCardJoin'
+    LoyaltyCardRegister:
+      name: Register a Loyalty Card
+      title: Register a Loyalty Card
+      summary: Request to register a Loyalty Card
+      payload:
+        $ref: '#/components/schemas/LoyaltyCardRegister'
+    LoyaltyCardAdd:
+      name: Add a Loyalty Card
+      title: Add a Loyalty Card
+      summary: Request to add a Loyalty Card
+      payload:
+        $ref: '#/components/schemas/LoyaltyCardAdd'
+    LoyaltyCardAddTrusted: 
+      name: Add a Loyalty Card from a trusted channel
+      title: Add a Loyalty Card from a trusted channel
+      summary: Request to add a Loyalty Card from a trusted channel
+      payload:
+        $ref: '#/components/schemas/LoyaltyCardAddAndAuth'
+        example:
+          user_id: 66485
+          channel_slug: 'com.stonegate.mixr'
+          utc_adjusted: '2024-03-14T07:45:38.241247+00:00'
+          loyalty_card_id: 
+          journey: 'AddTrusted'
+          entry_id: 1458
+          loyalty_plan_id: 123
+          auto_link: true
+          add_fields:
+            - credential_slug: 'card_number'
+              value: '198749238749'
+          consents:
+            - consent_slug: 'merch_t_and_c'
+              value: 'true'
+    LoyaltyCardDelete:
+      name: Delete a Loyalty Card
+      title: Delete a Loyalty Card
+      summary: Request to delete a Loyalty Card
+      payload:
+        $ref: '#/components/schemas/LoyaltyCardDelete'
+    LoyaltyCardDeleteAngelia:
+      name: Delete a Loyalty Card
+      title: Delete a Loyalty Card
+      summary: Request to delete a Loyalty Card
+      payload:
+        $ref: '#/components/schemas/LoyaltyCardDeleteAngelia'
+    BalanceRefresh:
+      name: Refresh a Loyalty Card balance
+      title: Refresh a Loyalty Card balance
+      summary: Request to refresh the balance of a Loyalty Card
+      payload:
+        $ref: '#/components/schemas/AngeliaCommon'
+    UserDelete:
+      name: Delete a User
+      title: Delete a User
+      summary: Request to delete a User
+      payload:
+        $ref: '#/components/schemas/AngeliaCommon'
+    MidasCardRemovedWallet:
+      name: Loyalty Card removed from a Bink Wallet
+      title: Loyalty Card removed from a Bink Wallet
+      summary: Indicates that a loyalty card has been removed from a Bink wallet
+      payload:
+        $ref: '#/components/schemas/Metadata'
+    MidasCardRemovedBink:
+      name: Loyalty Card removed from Bink
+      title: Loyalty Card removed from Bink
+      summary: >-
+        Indicates that a loyalty card has been removed from Bink and no longer
+        exists in any Bink wallet
+      payload:
+        $ref: '#/components/schemas/RemovedFromBink'
+    MidasRequest:
+      name: Join / Add / Register Request
+      title: Join / Add / Register Request
+      summary: Request to join a Loyalty Plan or register or add a card for that plan.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - type: object
+            properties:
+              encrypted_credentials:
+                type: object
+                description: >-
+                  Dictionary of credentials / journey fields converted to a
+                  string and encrypted with AES.
+                example: 53022cf12c5959ddf3e733128930dd3d52e3ea
+    RetrieveLoyaltyAccount:
+      name: Retrieve Loyalty Account
+      title: Retrieve Loyalty Account
+      summary: >-
+        Refresh the loyalty account with the most recent data from the Loyalty
+        Provider
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - type: object
+            properties:
+              system_account_id:
+                type: string
+                description: >-
+                  An identifier known to the Loyalty Provider that can be used
+                  with their system to get information about the Loyalty
+                  Account. This identifier is immutable.
+                example: '2900001'
+              encrypted_credentials:
+                type: object
+                description: >-
+                  Dictionary of credentials / journey fields converted to a
+                  string and encrypted with AES.
+                example: 53022cf12c5959ddf3e733128930dd3d52e3ea
+  schemas:
+    RemovedFromBink:
+      allOf:
+        - $ref: '#/components/schemas/RequiredMetadata'
+        - $ref: '#/components/schemas/OptionalMetadata'
+    Metadata:
+      allOf:
+        - $ref: '#/components/schemas/RequiredMetadata'
+        - $ref: '#/components/schemas/OptionalMetadata'
+        - $ref: '#/components/schemas/BinkUserId'
+    RequiredMetadata:
+      type: object
+      properties:
+        type:
+          description: 'The event type identifier, used for event subscriptions and routing'
+          type: string
+          example: loyalty_account.retrieve
+        channel:
+          type: string
+          description: The identifier for the Channel that sent the request
+          example: com.barclays.bmb
+        request_id:
+          type: string
+          description: The client’s identifier for the request
+          example: '53568'
+        loyalty_plan:
+          type: string
+          description: The Loyalty Plan 'slug' to which the request applies
+          example: bpl-trenette
+    OptionalMetadata:
+      type: object
+      properties:
+        transaction_id:
+          type: string
+          description: An end-to-end tracing identifier for requests through Bink services.
+          example: >-
+            XAAAAABKMMOjBv2NT4TY6SQVjC0zV1NURURHRTA2MTkANDM3YzgyY2QtMzYwYS00YTU0LTk0YzMtNWZmNzA3NjQ3Nzgz
+        account_id:
+          type: string
+          description: >-
+            An identifier that a Consumer can use to uniquely identify a Loyalty
+            Account within a Loyalty Plan.
+          example: binktestuser7@wasabi.com
+    BinkUserId:
+      type: object
+      properties:
+        bink_user_id:
+          type: string
+          description: The Bink User ID for user created this request
+          example: '232276'
+    AngeliaCommon:
+      type: object
+      properties:
+        user_id: 
+          type: number
+          example: 77483
+        channel_slug:
+          type: string
+          description: "Human-readable identifier for the channel that sent the request. Usually the client application bundle."
+          example: 'com.lloyds.halifax'
+        utc_adjusted:
+          type: string
+          format: date-time
+          example: '2024-03-14T07:45:38.241247+00:00'
+    LoyaltyCardCommon:
+      type: object
+      properties: 
+        loyalty_card_id:
+          type: number
+          description: The unique identifier for the loyalty card
+        journey:
+          type: string
+          description: The loyalty card journey e.g., Add, Register, Join
+          example: 'Join'
+        entry_id:
+          type: number
+          description: 'Unique identifier for the loyalty card'
+          example: 1456
+    LoyaltyCardRegister:
+      allOf:
+        - $ref: '#/components/schemas/AngeliaCommon'
+        - $ref: '#/components/schemas/LoyaltyCardCommon'
+        - type: object
+          properties: 
+            loyalty_plan_id:
+              type: number
+              description: The unique identifier for the loyalty plan
+            auto_link:
+              type: boolean
+              description: Indicates whether the loyalty card is automatically linked to payment cards in the wallet
+            register_fields:
+              type: array
+              minItems: 0
+              items:
+                $ref: '#/components/schemas/CredentialRequest'
+            consents:
+              type: array
+              minItems: 0
+              items:
+                $ref: '#/components/schemas/ConsentRequest'
+      example:
+        user_id: 77483
+        channel_slug: 'com.halifax.api2'
+        utc_adjusted: '2024-03-14T07:45:38.241247+00:00'
+        loyalty_card_id: 1456
+        journey: 'Register'
+        entry_id: 1456
+        loyalty_plan_id: 123
+        auto_link: true
+        register_fields:
+          - credential_slug: 'card_number'
+            value: '198749238749'
+          - credential_slug: 'postcode'
+            value: 'SL5 5TD'
+        consents:
+          - consent_slug: 'merch_t_and_c'
+            value: 'false'
+    LoyaltyCardAdd:
+      allOf:
+        - $ref: '#/components/schemas/AngeliaCommon'
+        - $ref: '#/components/schemas/LoyaltyCardCommon'
+        - type: object
+          properties: 
+            loyalty_plan_id:
+              type: number
+              description: The unique identifier for the loyalty plan
+            auto_link:
+              type: boolean
+              description: Indicates whether the loyalty card is automatically linked to payment cards in the wallet
+            add_fields:
+              type: array
+              minItems: 0
+              items:
+                $ref: '#/components/schemas/CredentialRequest'
+            consents:
+              type: array
+              minItems: 0
+              items:
+                $ref: '#/components/schemas/ConsentRequest'
+      example:
+        user_id: 77485
+        channel_slug: 'com.halifax.api2'
+        utc_adjusted: '2024-03-14T07:45:38.241247+00:00'
+        loyalty_card_id: 1446
+        journey: 'Add'
+        entry_id: 1458
+        loyalty_plan_id: 123
+        auto_link: true
+        add_fields:
+          - credential_slug: 'card_number'
+            value: '198749238749'
+        consents:
+          - consent_slug: 'merch_t_and_c'
+            value: 'true'
+    LoyaltyCardJoin:
+      allOf:
+        - $ref: '#/components/schemas/AngeliaCommon'
+        - $ref: '#/components/schemas/LoyaltyCardCommon'
+        - type: object
+          properties: 
+            loyalty_plan_id:
+              type: number
+              description: The unique identifier for the loyalty plan
+            auto_link:
+              type: boolean
+              description: Indicates whether the loyalty card is automatically linked to payment cards in the wallet
+            join_fields:
+              type: array
+              minItems: 0
+              items:
+                $ref: '#/components/schemas/CredentialRequest'
+            consents:
+              type: array
+              minItems: 0
+              items:
+                $ref: '#/components/schemas/ConsentRequest'
+    LoyaltyCardAddAndAuth:
+      allOf:
+        - $ref: '#/components/schemas/LoyaltyCardAdd'
+        - type: object
+          properties: 
+            authorise_fields:
+              type: array
+              minItems: 0
+              items:
+                $ref: '#/components/schemas/CredentialRequest'
+    LoyaltyCardDelete:
+      allOf:
+        - $ref: '#/components/schemas/AngeliaCommon'
+        - $ref: '#/components/schemas/LoyaltyCardCommon'
+    LoyaltyCardDeleteAngelia:
+      allOf:
+        - $ref: '#/components/schemas/AngeliaCommon'
+        - $ref: '#/components/schemas/LoyaltyCardCommon' 
+    PaymentCardCommon:
+      payment_account_id:
+        type: number
+        description: The unique identifier for the payment account
+      auto_link:
+        type: boolean
+        description: Indicates whether the payment account is automatically linked to the loyalty card
+    AuthFields: 
+      type: object
+      properties:
+        authorise_fields:
+          type: array
+          minItems: 0
+          description: "The fields that need to be presented to the user in order to Authorise the Loyalty Card."
+          items:
+            allOf: 
+            - $ref: '#/components/schemas/CredentialRequest'
+            example:
+              credential_slug: 'postcode'
+              value: 'SL5 5TD'   
+            consents: 
+              type: array
+              description: "Brand marketing information to be displayed and sometimes accepted by the user."
+              items:
+                $ref: '#/components/schemas/ConsentRequest'                                        
+    CredentialRequest:
+      type: object
+      description: "The fields that need to be presented to the user in order to Authorise the Loyalty Card"
+      properties:
+        credential_slug:
+          type: string
+          description: "A common name which can be used in mapping or prepopulating data."
+          example: 'card_number'
+        value:
+          type: string
+          description: 'Value associated with this field.'
+          example: '198749238749'
+    ConsentRequest:
+      type: object
+      description: "Placeholder 2"
+      properties:
+        consent_slug:
+          type: string
+          description: "A common name which can be used in mapping or prepopulating data."
+          example: 'merch_t_and_c'
+        value:
+          type: string
+          description: 'Value associated with this field.'
+          example: 'false'    
+    PlanDocumentRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Specifies the document name as provided in this plan's journey fields.
+          example: Terms & conditions.
+        value:
+          type: string
+          description: Value associated with this field.
+          example: "Terms & conditions"
+    DocumentBase:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'Retailer terms and conditions'
+          pattern: "[\\u0000-\\u2FFF]+"
+          description: "The reference name of the Document."
+        url:
+          type: string
+          example: 'https://policies.address.com/retailer/tc.html%22'
+          pattern: "[\\u0000-\\u2FFF]+"
+          description: "Link to the Document contents."
+        is_acceptance_required:
+          type: boolean
+          example: true
+          description: "Indicates whether or not the user must accept this Document before being allowed to proceed with the journey."
+        order:
+          type: integer
+          description: "Specifies the order in which to display this field. The order is unique within the entire list of fields that need to be displayed to support the chosen journey. The field list can be made up of **Credentials**, **Plan Documents** and **Consents**."
+          example: 1
+          minimum: 1
+          maximum: 9999
+          pattern: "[0-9]+"
+        description:
+          type: string
+          example: "I accept the "
+          pattern: "[\\u0000-\\u2FFF]+"
+          description: "Describes how to use the Plan Document."

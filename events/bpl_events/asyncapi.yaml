@@ -1,0 +1,586 @@
+asyncapi: 3.0.0
+info:
+  title: Data Warehouse
+  version: 1.0.0
+  description: |
+    Events for Reporting and MI
+defaultContentType: application/json
+servers:
+  staging:
+    host: 'calm-green-anteater.rmq2.cloudamqp.com'
+    protocol: amqp
+    description: Staging broker
+channels:
+  clickhouse_hermes:
+    address: clickhouse_hermes
+    servers: 
+      -  $ref: '#/servers/staging'
+    messages:  
+      user.created:
+        $ref: '#/components/messages/UserCreated'
+      user.deleted.api:
+        $ref: '#/components/messages/UserDeletedAPI'
+      user.session.start:
+        $ref: '#/components/messages/UserSessionStart'
+      lc.addandauth.request:
+        $ref: '#/components/messages/LoyaltyCardAddAndAuthRequest'
+      lc.addandauth.success:
+        $ref: '#/components/messages/LoyaltyCardAddAndAuthResponse'
+      lc.addandauth.failed:
+        $ref: '#/components/messages/LoyaltyCardAddAndAuthResponse'
+      lc.auth.request:
+        $ref: '#/components/messages/LoyaltyCardAddAndAuthRequest'
+      lc.auth.success:
+        $ref: '#/components/messages/LoyaltyCardAddAndAuthResponse'
+      lc.auth.failed:
+        $ref: '#/components/messages/LoyaltyCardAddAndAuthResponse'
+      lc.join.request:
+        $ref: '#/components/messages/LoyaltyCardJoinRequest'
+      lc.join.success:
+        $ref: '#/components/messages/LoyaltyCardJoinSuccess'
+      lc.join.failed:
+        $ref: '#/components/messages/LoyaltyCardJoinFailed'
+      lc.register.request:
+        $ref: '#/components/messages/LoyaltyCardRegisterRequest'
+      lc.register.success:
+        $ref: '#/components/messages/LoyaltyCardRegisterSuccess'
+      lc.register.failed:
+        $ref: '#/components/messages/LoyaltyCardRegisterFailed'
+      lc.removed:
+        $ref: '#/components/messages/LoyaltyCardRemoved'
+      lc.statuschange:
+        $ref: '#/components/messages/LoyaltyCardStatusChange'
+      payment.account.added:
+        $ref: '#/components/messages/PaymentAccountAdded'
+      payment.account.removed:
+        $ref: '#/components/messages/PaymentAccountRemoved'
+      payment.account.status.change:
+        $ref: '#/components/messages/PaymentAccountStatusChange'
+      transaction.exported:
+        $ref: '#/components/messages/TransactionExport'
+      transaction.exported.response:
+        $ref: '#/components/messages/TransactionExportResponse'
+operations:
+  user.created:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/user.created'
+  user.deleted.api:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/user.deleted.api'
+  user.session.start:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/user.session.start'
+  lc.addandauth.request:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.addandauth.request'
+  lc.addandauth.success:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.addandauth.success'
+  lc.addandauth.failed:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.addandauth.failed'
+  lc.auth.request:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.auth.request'
+  lc.auth.success:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.auth.success'
+  lc.auth.failed:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.auth.failed'
+  lc.join.request:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.join.request'
+  lc.join.success:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.join.success'
+  lc.join.failed:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.join.failed'
+  lc.register.request:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.register.request'
+  lc.register.success:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.register.success'
+  lc.register.failed:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.register.failed'
+  lc.removed:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.removed'
+  lc.statuschange:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/lc.statuschange'
+  payment.account.added:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/payment.account.added'
+  payment.account.removed:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/payment.account.removed'
+  payment.account.status.change: 
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/payment.account.status.change'
+  transaction.exported:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/transaction.exported'
+  transaction.exported.response:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+      messages:
+        - $ref: '#/channels/clickhouse_hermes/messages/transaction.exported.response'
+components:
+  messages:
+    UserCreated:
+      name: User Created 
+      title: User Created
+      summary: A user has signed up to the Bink Service
+      payload:
+        $ref: '#/components/schemas/Metadata'
+    UserDeletedAPI:
+      name: User Deleted API
+      title: User Deleted API
+      summary: A user has been deleted via the API
+      payload:
+        $ref: '#/components/schemas/Metadata'  
+    UserSessionStart:
+      name: User Session Start
+      title: User Session Start
+      summary: A user has acessed the Bink Service
+      payload:
+        $ref: '#/components/schemas/Metadata'
+    LoyaltyCardAddAndAuthRequest:
+      name: Loyalty Card Add and Authorise Request
+      title: Loyalty Card Add and Authorise Request
+      summary: A user has requested to add and authorise a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'    
+          - $ref: '#/components/schemas/MainAnswer'
+    LoyaltyCardAddAndAuthResponse:
+      name: Loyalty Card Add and Authorise Response 
+      title: Loyalty Card Add and Authorise Response
+      summary: Event generated when loyalty card add and authorise request is successful or failed 
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    AuthoriseRequest:
+      name: Loyalty Card Authorise Request
+      title: Loyalty Card Authorise Request
+      summary: A user has requested to authorise a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'      
+          - $ref: '#/components/schemas/MainAnswer'
+    AuthoriseSuccess:
+      name: Loyalty Card Authorise Success
+      title: Loyalty Card Authorise Success
+      summary: A user has successfully authorised a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    AuthoriseFailed:
+      name: Loyalty Card Authorise Failed
+      title: Loyalty Card Authorise Failed
+      summary: A user has failed to authorise a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardJoinRequest:
+      name: Loyalty Card Join Request
+      title: Loyalty Card Join Request
+      summary: A user has requested to join a loyalty plan
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+    LoyaltyCardJoinSuccess:
+      name: Loyalty Card Join Success
+      title: Loyalty Card Join Success
+      summary: A user has successfully joined a loyalty plan
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardJoinFailed:
+      name: Loyalty Card Join Failed
+      title: Loyalty Card Join Failed
+      summary: Request to join a loyalty plan has failed
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardRegisterRequest:
+      name: Loyalty Card Register Request
+      title: Loyalty Card Register Request
+      summary: A user has requested to register a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+    LoyaltyCardRegisterSuccess:
+      name: Loyalty Card Register Success
+      title: Loyalty Card Register Success
+      summary: Loyalty card registration was successful
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardRegisterFailed: 
+      name: Loyalty Card Register Failed
+      title: Loyalty Card Register Failed
+      summary: Loyalty card registration has failed
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardRemoved:
+      name: Loyalty Card Removed
+      title: Loyalty Card Removed
+      summary: A user has removed a loyalty card
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/Status'
+    LoyaltyCardStatusChange:
+      name: Loyalty Card Status Change
+      title: Loyalty Card Status Change
+      summary: A Loyalty card status has changed
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/AddAndAuthData'
+          - $ref: '#/components/schemas/MainAnswer'
+          - $ref: '#/components/schemas/ToStatus'
+    PaymentAccountAdded:
+      name: Payment Account Added
+      title: Payment Account Added
+      summary: A user has added a payment account
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/PaymentAccountDetails'
+          - $ref: '#/components/schemas/Status'
+    PaymentAccountRemoved:
+      name: Payment Account Removed
+      title: Payment Account Removed
+      summary: A user has removed a payment account
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/PaymentAccountDetails'
+          - $ref: '#/components/schemas/Status'
+    PaymentAccountStatusChange:
+      name: Payment Account Status Change
+      title: Payment Account Status Change
+      summary: A payment account status has changed
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Metadata'
+          - $ref: '#/components/schemas/PaymentAccountDetails'
+          - $ref: '#/components/schemas/FromStatus'
+          - $ref: '#/components/schemas/ToStatus'
+    TransactionExport:
+      name: Transaction Export
+      title: Transaction Export
+      summary: A transaction has been exported to a retailer
+      payload:
+        $ref: '#/components/schemas/TransactionExport'
+    TransactionExportResponse:
+      name: Transaction Export Response
+      title: Transaction Export Response
+      summary: Retailer's response to a transaction export
+      payload:
+        $ref: '#/components/schemas/TransactionExportResponse'
+  schemas:
+    Metadata:
+      allOf:
+        - $ref: '#/components/schemas/RequiredMetadata'
+    RequiredMetadata:
+      allOf:
+        - $ref: '#/components/schemas/EventTypeDateTime'
+      type: object
+      properties:
+        origin:
+          description: 'Identifier for what triggered the event.'
+          type: string
+          enum: ["channel", "django.admin", "merchant.callback"]
+          example: channel
+        channel:
+          type: string
+          description: The identifier for the Channel that sent the request
+          example: com.barclays.bmb
+        external_user_ref:
+          type: string
+          example: "1645109767123456"
+          description: "external identifier as passed in by client"  
+        internal_user_ref:
+          type: string
+          example: "12345"
+          description: "Database user ID (not UUID)"            
+        email:
+          type: string
+          description: "User's e-mail address"
+          example: "user@example.com"
+    AddAndAuthData:
+      type: object
+      properties:   
+        scheme_account_id:
+          type: string
+          description: "The scheme account identifier"
+          example: "1234567890"
+        loyalty_plan:
+          type: string
+          description: "The loyalty plan identifier"
+          example: "329"
+    PaymentAccountDetails:
+      type: object
+      properties:
+        payment_account_id:
+          type: string
+          description: "The payment account identifier"
+          example: "1234567890"
+        fingerprint:
+          type: string
+          description: "The payment account fingerprint"
+          example: "ade13eacf"
+        expiry_date:
+          type: string
+          format: date
+          example: "2022-12-31"
+          description: "The payment account expiry date"
+        token:
+          type: string
+          description: "The payment account token"
+          example: "1234567890"
+    EventTypeDateTime:
+      type: object
+      properties:
+        event_type:
+          type: string
+          description: "The event type identifier, used for event subscriptions and routing"
+          example: "transaction.exported.response"
+        event_date_time:
+          type: string
+          format: date-time
+          example: 2023-08-12 22:57:01.242389
+          description: "Date and time of event creation in UTC"      
+    TransactionExport:
+      allOf:
+        - $ref: '#/components/schemas/EventTypeDateTime'
+      type: object
+      properties:
+        internal_user_ref:
+          type: string
+          example: "12345"
+          description: "Database user ID (not UUID)"
+        transaction_id:
+          type: string
+          description: "The transaction identifier"
+          example: "1234567890"
+        provider_slug:
+          type: string
+          description: "Retailer slug"
+          example: "loyalteas"
+        transaction_date:
+          type: string
+          format: date
+          example: "2020-12-31"
+          description: "The transaction date"
+        spend_amount:
+          type: number
+          format: float
+          example: 10.00
+          description: "The transaction amount" 
+        spend_currency:
+          type: string
+          example: "GBP"
+          description: "The transaction currency" 
+        loyalty_id:
+          type: string
+          description: "The loyalty card identifier"
+          example: "1234567890" 
+        mid:
+          type: string
+          description: "The merchant identifier"
+          example: "1234567890"
+        scheme_account_id:
+          type: string
+          description: "The scheme account identifier"
+          example: "1234567890"
+        credentials:
+          type: string
+          description: "Credentials"
+          example: "XC73464D"
+        status:
+          type: string
+          description: "export status"
+          example: "0"
+        feed_type:
+          type: string
+          description: "feed type"
+          example: "0"  
+        location_id:
+          type: string
+          description: "location id"
+          example: "0"  
+        merchant_internal_id:
+          type: string
+          description: "merchant internal id"
+          example: "0"  
+        payment_card_account_id:
+          type: string
+          description: "payment account id"
+          example: "0"  
+        settlement_key:
+          type: string
+          description: "settlement key"
+          example: "0"
+    TransactionExportResponse:
+      allOf:
+        - $ref: '#/components/schemas/EventTypeDateTime'
+      type: object
+      properties:
+        transaction_id:
+          type: string
+          description: "The transaction identifier"
+          example: "1234567890"
+        provider_slug:
+          type: string
+          description: "Retailer slug"
+          example: "stonegate"
+        status_code:
+          type: number
+          description: "The status code"
+          example: 200
+        response_status_category:
+          type: string
+          description: "A standard set of response categories for all transaction export responses."
+          example: "earn_via_pll"  
+          enum: 
+              - "earn_via_pll"
+              - "earn_already_awarded"
+              - "earn_not_awarded"
+        response_message:
+          type: string
+          description: "The response message"
+          example: "Points added successfully"
+        uuid:
+          type: string
+          description: "UUID"
+          example: "11d3d610-5088-4065-b75a-8bd28f0f14bb"
+    Status:
+      type: object
+      properties: 
+        status:
+          type: string
+          description: "Account status"
+          example: "0"
+    MainAnswer:     
+      type: object
+      properties:
+        main_answer:
+          type: string
+          description: "The credential field used as unique key value on the scheme account record"
+          example: "XC73464D"
+    ToStatus:
+      type: object
+      properties:
+        to_status:
+          type: string
+          description: "New account status"
+          example: "0"
+    FromStatus:
+      type: object
+      properties:
+        from_status:
+          type: string
+          description: "Old account status"
+          example: "0"
+          
