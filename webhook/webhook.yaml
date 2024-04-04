@@ -5,7 +5,6 @@ servers:
 info:
   version: 1.0.0
   title: Bink Webhook API
-  
   description:  "<h2>Bink Identified Transaction Webhook</h2> 
     </br>
     Bink offers a webhook that notifies your customer or loyalty system that we have recognised a transaction at one of your enrolled retailers.
@@ -147,11 +146,16 @@ components:
     IdentifiedTransaction:
       type: object
       properties:
+        transaction_type:
+          type: string
+          enum: 
+            - authorisation
+            - settlement 
         user_id:
           type: string
           description: The unique identifier of the user involved in the transaction.
           example: "XJD458D"
-        amount:
+        transaction_amount:
           type: number
           description: The monetary amount of the transaction.
           example: 25.99
@@ -159,11 +163,61 @@ components:
           type: string
           description: The unique identifier of the location where the transaction occurred.
           example: "LONDON-123"
-        date_time: 
+        transaction_date_time: 
           type: string
           format: date-time
           description: The date and time when the transaction occurred.
           example: "2022-01-01T12:00:00Z"
+        mid:
+          type: string
+          description: "The unique identifier assigned to the business location by the payment processor"
+          example: "8933111160"
+        transaction_currency:
+          type: string
+          description: The currency of the transaction.
+          example: "GBP"
+        brand_id:
+          type: string
+          description: The unique identifier of the brand involved in the transaction.
+          example: "BRAND-123"
+        payment_scheme:
+          type: string
+          enum: 
+            - visa
+            - mastercard
+            - amex
+        payment_account_id: 
+          type: number
+          description: The unique identifier of the payment account used in the transaction.
+          example: 123456
+        payment_card_expiry_month:
+          type: number
+          description: The expiry month of the payment card used in the transaction.
+          example: 12
+        payment_card_expiry_year:
+          description: The expiry year of the payment card used in the transaction.
+          type: number
+          example: 2022
+        payment_card_last_four_digits:
+          type: number
+          description: The last four digits of the payment card used in the transaction.
+          example: 1234 
+        authorisation_code:
+          type: string
+          description: The authorisation code of the transaction (Visa and Mastercard transactions)
+          example: "612637"
+        approval_code:
+          type: string
+          description: The approval code of the transaction (Amex transactions)
+          example: '722934'
+        loyalty_identifier:
+          type: string
+          description: The unique identifier of the loyalty account used in the transaction.
+          example: "LOYALTY-123"
+        transaction_id:
+          type: string
+          description: The unique identifier of the transaction.
+          example: "123456"  
     WebhookEndpoint:
       type: object
       properties: 

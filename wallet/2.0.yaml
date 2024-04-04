@@ -24,7 +24,7 @@ paths:
   /token:
     post:
       tags:
-        - Token
+        - Authentication
       summary: "User registration, login and token refresh."
       description: "Use this endpoint to get a token for a new user, existing user or retrieve a refresh token.<h2>For grant_type: b2b</h2>The <code>POST /token</code> request requires an Authorization header with a Bearer token which is a signed JWT with the following claims:
         <ul>
@@ -340,7 +340,7 @@ paths:
     post:
       tags:
         - Wallet
-        - Token
+        - Authentication
       summary: User registration and wallet creation containing a payment & loyalty card with PLL from a Trusted Channel
       description: "Used, by a Retailer, to create a Bink Wallet for their own channel. It is created linked payment card and loyalty account.
         <br>
@@ -4634,7 +4634,7 @@ components:
           description: 'Value associated with this field.'
           example: 'jdoe@google.com'                  
 tags:
-  - name: Token
+  - name: Authentication
   - name: Users
   - name: Loyalty Plans
   - name: Payment Accounts
