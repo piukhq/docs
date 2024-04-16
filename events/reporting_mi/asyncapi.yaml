@@ -87,14 +87,14 @@ operations:
     action: receive
     channel:
       $ref: '#/channels/clickhouse_hermes' 
-      messages:
-        - $ref: '#/channels/clickhouse_hermes/messages/user.RTBF'      
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/user.RTBF'      
   user.closure:
     action: receive
     channel:
       $ref: '#/channels/clickhouse_hermes' 
-      messages:
-        - $ref: '#/channels/clickhouse_hermes/messages/user.closure'
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/user.closure'
   lc.addandauth.request:
     action: receive
     channel:
@@ -207,8 +207,8 @@ operations:
     action: receive
     channel:
       $ref: '#/channels/clickhouse_hermes' 
-      messages:
-        - $ref: '#/channels/clickhouse_hermes/messages/transaction.exported.response'
+    messages:
+      - $ref: '#/channels/clickhouse_hermes/messages/transaction.exported.response'
 components:
   messages:
     UserCreated:
