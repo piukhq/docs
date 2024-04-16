@@ -43,7 +43,7 @@ RUN redoc-cli build merchant/retail_transaction_api.yaml --output /output/mercha
 ARG PUPPETEER_SKIP_DOWNLOAD=true
 RUN npm install -g @asyncapi/cli
 RUN npm install -g @asyncapi/html-template
-RUN npm install -g @asyncapi/parser@3.0.5
+RUN npm install -g @asyncapi/parser
 
 
 RUN asyncapi generate fromTemplate events/loyalty_card_management/asyncapi.yaml @asyncapi/html-template -o /output/events/loyalty_card_management/async
