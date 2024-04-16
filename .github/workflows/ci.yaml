@@ -50,9 +50,6 @@ jobs:
     strategy:
       matrix:
         environment:
-          - dev
-          - lloyds
-          - retail
           - staging
           - production
     environment:
