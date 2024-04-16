@@ -60,6 +60,10 @@ channels:
         $ref: '#/components/messages/TransactionExport'
       transaction.exported.response:
         $ref: '#/components/messages/TransactionExportResponse'
+      user.RTBF:
+        $ref: '#/components/messages/UserRTBFRequest'
+      user.closure:
+        $ref: '#/components/messages/UserClosureRequest'
 operations:
   user.created:
     action: receive
@@ -193,6 +197,18 @@ operations:
       $ref: '#/channels/clickhouse_hermes' 
       messages:
         - $ref: '#/channels/clickhouse_hermes/messages/transaction.exported.response'
+  user.RTBF:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+      messages:
+        - $ref: '#/channels/clickhouse_hermes/messages/user.RTBF'      
+  user.closure:
+    action: receive
+    channel:
+      $ref: '#/channels/clickhouse_hermes' 
+      messages:
+        - $ref: '#/channels/clickhouse_hermes/messages/user.closure'
 components:
   messages:
     UserCreated:
@@ -378,6 +394,36 @@ components:
       summary: Retailer's response to a transaction export
       payload:
         $ref: '#/components/schemas/TransactionExportResponse'
+    UserRTBFRequest:
+      name: User RTBF Request
+      title: User RTBF Request
+      summary: A user has requested to be forgotten
+      payload:
+        allOf: 
+          -  $ref: '#/components/schemas/EventTypeDateTime'
+          -  $ref: '#/components/schemas/RTBFRequest'
+        example:
+          event_type: "user.RTBF"
+          event_date_time: "2023-12-12 12:57:01.242389"
+          internal_user_ref: "12345"
+          scheme_account_ids: ["1234567890", "1234567891"]
+          payment_card_account_ids: ["1234567890", "1234567891"]
+          django_user_id: "email@domain.com"
+    UserClosureRequest:
+      name: User Closure Request
+      title: User Closure Request
+      summary: A user has requested to close their account
+      payload:
+        allOf: 
+          -  $ref: '#/components/schemas/EventTypeDateTime'
+          -  $ref: '#/components/schemas/RTBFRequest'
+        example:
+          event_type: "user.closure"
+          event_date_time: "2023-12-12 12:57:01.242389"
+          internal_user_ref: "12345"
+          scheme_account_ids: ["1234567890", "1234567891"]
+          payment_card_account_ids: ["1234567890", "1234567891"]
+          django_user_id: "mail@domain.com"        
   schemas:
     Metadata:
       allOf:
@@ -583,4 +629,25 @@ components:
           type: string
           description: "Old account status"
           example: "0"
-          
+    RTBFRequest:
+      properties: 
+        internal_user_ref:
+          type: string
+          example: "12345"
+          description: "Database user ID (not UUID)"
+        scheme_account_ids:
+          type: array
+          items:
+            type: string
+          description: "The scheme account identifiers"
+          example: ["1234567890", "1234567891"]
+        payment_card_account_ids:
+          type: array
+          items:
+            type: string
+          description: "The payment card account identifiers"
+          example: ["1234567890", "1234567891"]
+        django_user_id:
+          type: string
+          example: "email@domain.com,12345"
+          description: "User ID for operator who ran the RTBF action"
