@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Redoc</title>
+    <title>Bink Webhook Specification</title>
     <!-- needed for adaptive design -->
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Space Grotesk:300,400,700|Roboto:300,400,700" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="https://bink.com/wp-content/uploads/2021/03/favicon2.svg"/>
+
+    
 
     <!--
     Redoc doesn't change outer page styles
@@ -15,6 +17,18 @@
       body {
         margin: 0;
         padding: 0;
+      }
+      header {
+        background: linear-gradient(to left, #5BE0CA, #057EA8);
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+      }
+      h1 {
+        font-size: 2em;
+        margin: 0;
+        font-family: 'Space Grotesk';
+
       }
     </style>
   </head>
@@ -28,8 +42,24 @@
            "backgroundColor": "#EBFFFD"
          },         
          "rightPanel": {
-            "backgroundColor": "#264054"
-         }
+            "backgroundColor": "#141E33",
+            "textColor": "#EBFFFD"
+         },
+         "typography": {
+          "fontFamily": "Plus Jakarta Sans",
+					"color": "#057EA8",
+          "code": {
+            "backgroundColor": "#71F9D3",
+            "color": "CMYK (55, 24, 0, 67)",
+            "fontFamily": "Space Grotesk"
+          },          
+          "headings": {
+            "fontFamily": "Space Grotesk",
+            "fontWeight": "800",
+						"lineHeight": "0.6em",
+						"color": "#141E33"
+          }
+				 }
        }'></redoc>
     <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>
   </body>

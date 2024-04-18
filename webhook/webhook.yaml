@@ -1,112 +1,123 @@
 openapi: 3.1.0
 servers: 
-  - url: https://retail.gb.bink.com/webhooks/"
+  - url: https://retail.gb.bink.com/webhooks
     description: "Retail sandbox server"
 info:
   version: 1.0.0
   title: Bink Webhook API
-  description:  "<h1>Bink webhook endpoints</h1>
-    This API allows clients to register their webhook endpoints with Bink. <br><br> This API accepts a JSON body and provides HTTP response codes and a JSON response body.
-    <br><br>
-    This specification also describes the payload that receivers should expect to receive to their endpoints and how to respond to the request. 
-    </br></br>
-    <h2>Authentication</h2>
-    Bink uses API keys to authenticate requests. Provide your API key in every request in the X-API-KEY header. Bink will provide each retailer with an API key upon integration. 
-    <br><br>
-    <h2>Errors</h2>
-    Bink's API uses HTTP response codes. Codes in the 2xx range indicate success. Requests that result in errors codes have a code in the 4xx range and a JSON body containing <i>error_message</i> and <i>error_slug</i> fields. 
+  description:  "<h2>Bink Identified Transaction Webhook</h2> 
+    </br>
+    Bink offers a webhook that notifies your customer or loyalty system that we have recognised a transaction at one of your enrolled retailers.
+    <h3>Webhook endpoint</h3>
+    To receive these notifications, you need to provide us with a URL that we can send the notifications to. We will then send a JSON payload to that URL whenever we recognise a transaction at one of your enrolled retailers.
+    </br>
+    <h3>Webhook payload</h3>
+    The payload will contain the information specified in this guide. You can use this information to update your customer or loyalty system with the transaction details.
+    </br>
+    <h3>Webhook security</h3>
+    To ensure that the payload is authentic, we will include a secret key in the header (X-API-KEY). You can use this key to verify the authenticity of the request. 
 
-    <h2>Versioning</h2>
-    The Webhook API is versionless, all changes will be backward-compatible. Any future changes that are backward-incompatible with result in a new API operation. 
+    <style>
+      h2 .red-text {
+       color: #057EA8;
+      }
+    </style>
     "
   x-logo: 
-    url: https://logos.bink.com/img/logos/mono-teal.png    
-paths: 
-  /retailers/{retailer_id}/webhook_endpoints:
-    post:
-      security: 
-        - ApiKeyAuth: [] 
-      tags:
-        - Webhook endpoints
-      summary: "Create a webhook endpoint"
-      description: "Create a webhook endpoint to be notified about events that happen in your enrolled retailer."
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WebhookEndpoint'
-      parameters:
-        - in: path
-          name: retailer_id
-          description: "The unique identifier for the retailer. Bink will provide this value to you."
-          required: true
-          schema:
-            type: string
-      responses: 
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  webhook_id: 
-                    type: number
-                    example: 123
-        '401':
-          $ref: '../common/components.yaml#/components/responses/Error401'
-        '403':
-          description: Forbidden 
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error_message: 
-                    type: string
-                    example: "You are not authorized to access this resource"
-                  error_slug: 
-                    type: string
-                    example: "not_authorized"
-        '422':
-          $ref: '../common/components.yaml#/components/responses/Error422'  
-  /retailers/{retailer_id}/webhook_endpoints/{webhook_id}:
-    patch:
-      security: 
-        - ApiKeyAuth: []
-      tags:
-        - Webhook endpoints
-      summary: "Update a webhook endpoint"
-      description: "Update a webhook endpoint "       
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/WebhookEndpoint'
-      parameters:
-        - in: path
-          name: retailer_id
-          description: "The unique identifier for the retailer. Bink will provide this value to you."
-          required: true
-          schema:
-            type: string
-      responses: 
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  webhook_id: 
-                    type: number
-                    example: 123
-        '401':
-          $ref: '../common/components.yaml#/components/responses/Error401'
-        '403':
-          $ref: '../common/components.yaml#/components/responses/Error403'
-        '422':
-          $ref: '../common/components.yaml#/components/responses/Error422'
+    url: https://logos.bink.com/img/logos/mono-teal.png
+    href: https://bink.com/
+#paths: 
+#  /retailers/{retailer_id}/webhook_endpoints:
+#    post:
+#      security: 
+#        - ApiKeyAuth: [] 
+#      tags:
+#        - Webhook endpoints
+#      summary: "Create a webhook endpoint"
+#      description: "Create a webhook endpoint to be notified about events that happen in your enrolled retailer."
+#      requestBody:
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/WebhookEndpoint'
+#      parameters:
+#        - in: path
+#          name: retailer_id
+#          description: "The unique identifier for the retailer. Bink will provide this value to you."
+#          required: true
+#          schema:
+#            type: string
+#      responses: 
+#        '200':
+#          description: OK
+#          content:
+#            application/json:
+#              schema:
+#                type: object
+#                properties:
+#                  webhook_id: 
+#                    type: number
+#                    example: 123
+#        '401':
+#          $ref: '../common/components.yaml#/components/responses/Error401'
+#        '403':
+#          description: Forbidden 
+#          content:
+#            application/json:
+#              schema:
+#                type: object
+#                properties:
+#                  error_message: 
+#                    type: string
+#                    example: "You are not authorized to access this resource"
+#                  error_slug: 
+#                    type: string
+#                    example: "not_authorized"
+#        '422':
+#          $ref: '../common/components.yaml#/components/responses/Error422'  
+#  /retailers/{retailer_id}/webhook_endpoints/{webhook_id}:
+#    patch:
+#      security: 
+#        - ApiKeyAuth: []
+#      tags:
+#        - Webhook endpoints
+#      summary: "Update a webhook endpoint"
+#      description: "Update a webhook endpoint "       
+#      requestBody:
+#        content:
+#          application/json:
+#            schema:
+#              $ref: '#/components/schemas/WebhookEndpoint'
+#      parameters:
+#        - in: path
+#          name: retailer_id
+#          description: "The unique identifier for the retailer. Bink will provide this value to you."
+#          required: true
+#          schema:
+#            type: string
+#        - in: path
+#          name: webhook_id
+#          description: "The unique identifier for the webhook. Bink will provide this value to you."
+#          required: true
+#          schema:
+#            type: string
+#      responses: 
+#        '200':
+#          description: OK
+#          content:
+#            application/json:
+#              schema:
+#                type: object
+#                properties:
+#                  webhook_id: 
+#                    type: number
+#                    example: 123
+#        '401':
+#          $ref: '../common/components.yaml#/components/responses/Error401'
+#        '403':
+#          $ref: '../common/components.yaml#/components/responses/Error403'
+#        '422':
+#          $ref: '../common/components.yaml#/components/responses/Error422'
 webhooks:
   Identified Transaction Webhook: 
     post:
@@ -135,19 +146,78 @@ components:
     IdentifiedTransaction:
       type: object
       properties:
+        transaction_type:
+          type: string
+          enum: 
+            - authorisation
+            - settlement 
         user_id:
           type: string
           description: The unique identifier of the user involved in the transaction.
-        amount:
+          example: "XJD458D"
+        transaction_amount:
           type: number
           description: The monetary amount of the transaction.
+          example: 25.99
         location_id:
           type: string
           description: The unique identifier of the location where the transaction occurred.
-        date_time: 
+          example: "LONDON-123"
+        transaction_date_time: 
           type: string
           format: date-time
           description: The date and time when the transaction occurred.
+          example: "2022-01-01T12:00:00Z"
+        mid:
+          type: string
+          description: "The unique identifier assigned to the business location by the payment processor"
+          example: "8933111160"
+        transaction_currency:
+          type: string
+          description: The currency of the transaction.
+          example: "GBP"
+        brand_id:
+          type: string
+          description: The unique identifier of the brand involved in the transaction.
+          example: "BRAND-123"
+        payment_scheme:
+          type: string
+          enum: 
+            - visa
+            - mastercard
+            - amex
+        payment_account_id: 
+          type: number
+          description: The unique identifier of the payment account used in the transaction.
+          example: 123456
+        payment_card_expiry_month:
+          type: number
+          description: The expiry month of the payment card used in the transaction.
+          example: 12
+        payment_card_expiry_year:
+          description: The expiry year of the payment card used in the transaction.
+          type: number
+          example: 2022
+        payment_card_last_four_digits:
+          type: number
+          description: The last four digits of the payment card used in the transaction.
+          example: 1234 
+        authorisation_code:
+          type: string
+          description: The authorisation code of the transaction (Visa and Mastercard transactions)
+          example: "612637"
+        approval_code:
+          type: string
+          description: The approval code of the transaction (Amex transactions)
+          example: '722934'
+        loyalty_identifier:
+          type: string
+          description: The unique identifier of the loyalty account used in the transaction.
+          example: "LOYALTY-123"
+        transaction_id:
+          type: string
+          description: The unique identifier of the transaction.
+          example: "123456"  
     WebhookEndpoint:
       type: object
       properties: 
@@ -169,5 +239,5 @@ components:
   securitySchemes:
     ApiKeyAuth:      
       type: apiKey
-      in: header     
-      name: X-API-KEY
+      in: header
+      name: X-API-KEY    

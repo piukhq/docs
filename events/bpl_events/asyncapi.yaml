@@ -22,10 +22,6 @@ channels:
         $ref: '#/components/messages/UserDeletedAPI'
       user.session.start:
         $ref: '#/components/messages/UserSessionStart'
-      user.RTBF:
-        $ref: '#/components/messages/UserRTBFRequest'
-      user.closure:
-        $ref: '#/components/messages/UserClosureRequest'
       lc.addandauth.request:
         $ref: '#/components/messages/LoyaltyCardAddAndAuthRequest'
       lc.addandauth.success:
@@ -83,18 +79,6 @@ operations:
       $ref: '#/channels/clickhouse_hermes' 
     messages:
       - $ref: '#/channels/clickhouse_hermes/messages/user.session.start'
-  user.RTBF:
-    action: receive
-    channel:
-      $ref: '#/channels/clickhouse_hermes' 
-    messages:
-      - $ref: '#/channels/clickhouse_hermes/messages/user.RTBF'      
-  user.closure:
-    action: receive
-    channel:
-      $ref: '#/channels/clickhouse_hermes' 
-    messages:
-      - $ref: '#/channels/clickhouse_hermes/messages/user.closure'
   lc.addandauth.request:
     action: receive
     channel:
@@ -207,8 +191,8 @@ operations:
     action: receive
     channel:
       $ref: '#/channels/clickhouse_hermes' 
-    messages:
-      - $ref: '#/channels/clickhouse_hermes/messages/transaction.exported.response'
+      messages:
+        - $ref: '#/channels/clickhouse_hermes/messages/transaction.exported.response'
 components:
   messages:
     UserCreated:
@@ -394,38 +378,6 @@ components:
       summary: Retailer's response to a transaction export
       payload:
         $ref: '#/components/schemas/TransactionExportResponse'
-    UserRTBFRequest:
-      name: User RTBF Request
-      title: User RTBF Request
-      summary: A user has requested to be forgotten
-      payload:
-        allOf: 
-          -  $ref: '#/components/schemas/EventTypeDateTime'
-          -  $ref: '#/components/schemas/RTBFRequest'
-        example:
-          event_type: "user.RTBF"
-          event_date_time: "2023-12-12 12:57:01.242389"
-          internal_user_ref: 12345
-          scheme_account_ids: ["1234567890", "1234567891"]
-          payment_card_account_ids: ["1234567890", "1234567891"]
-          requesting_user_id: 12345
-          requesting_user_email: "email@domain.com"
-    UserClosureRequest:
-      name: User Closure Request
-      title: User Closure Request
-      summary: A user has requested to close their account
-      payload:
-        allOf: 
-          -  $ref: '#/components/schemas/EventTypeDateTime'
-          -  $ref: '#/components/schemas/RTBFRequest'
-        example:
-          event_type: "user.closure"
-          event_date_time: "2023-12-12 12:57:01.242389"
-          internal_user_ref: 76543
-          scheme_account_ids: ["1234567890", "1234567891"]
-          payment_card_account_ids: ["1234567890", "1234567891"]
-          requesting_user_id: 12345
-          requesting_user_email: "email@domain.com"
   schemas:
     Metadata:
       allOf:
@@ -631,29 +583,4 @@ components:
           type: string
           description: "Old account status"
           example: "0"
-    RTBFRequest:
-      properties: 
-        internal_user_ref:
-          type: number
-          example: 12345
-          description: "Database user ID (not UUID)"
-        scheme_account_ids:
-          type: array
-          items:
-            type: string
-          description: "The scheme account identifiers"
-          example: ["1234567890", "1234567891"]
-        payment_card_account_ids:
-          type: array
-          items:
-            type: string
-          description: "The payment card account identifiers"
-          example: ["1234567890", "1234567891"]
-        requesting_user_id:
-          type: number
-          example: 12345
-          description: "User ID for initiating system or collague who initiated the RTBF action"
-        requesting_user_email:
-          type: string
-          example: "email@domain.com"
-          description: "Email address of the user who initiated the RTBF action"
+          
