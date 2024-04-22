@@ -26,7 +26,8 @@ paths:
       tags:
         - Authentication
       summary: "User registration, login and token refresh."
-      description: "Use this endpoint to get a token for a new user, existing user or retrieve a refresh token.<h2>For grant_type: b2b</h2>The <code>POST /token</code> request requires an Authorization header with a Bearer token which is a signed JWT with the following claims:
+      description: "Use this endpoint to authenticate a user by getting a token for a new user, existing user or retrieve a refresh token.
+       <h2>For grant_type: b2b</h2>The <code>POST /token</code> request requires an Authorization header with a Bearer token which is a signed JWT with the following claims:
         <ul>
           <li><h3>Header claims:</h3></li>
           <ul>
@@ -46,7 +47,7 @@ paths:
         <h2>For grant_type: refresh_token</h2>
         The <code>POST /token</code> request requires an Authorisation header with a Bearer token. Provide the refresh_token value that will have been issued in a previous request to <code>POST /token</code>. This string is opaque to the client.
         <h2>For grant_type: client_credentials</h2>
-        The <code>POST /token</code> request requires a BasicAuth header, where the BasicAuth is comprosed of:
+        The <code>POST /token</code> request requires a BasicAuth header, where the BasicAuth is composed of:
         <ul>
           <li>**Username:** Bink Bundle Id</li>
           <li>**Password:** Secret to be provided by Bink
@@ -341,13 +342,13 @@ paths:
       tags:
         - Wallet
         - Authentication
-      summary: User registration and wallet creation containing a payment & loyalty card with PLL from a Trusted Channel
-      description: "Used, by a Retailer, to create a Bink Wallet for their own channel. It is created linked payment card and loyalty account.
+      summary: "User registration including a payment & loyalty card with PLL by a Retailer."
+      description: "Retailers can create a PLL link for their own customers.
         <br>
           The request contains:
           <br>
-            <h2>Token request</h2>
-            Currently supported token requests are for B2B, user access tokens
+            <h2>Authentication</h2>
+            Currently supported token requests are for b2b or user access tokens
               <h3>For grant_type: b2b</h3>
               **Signed JWT has the following claims:**
               <ul>
@@ -372,26 +373,13 @@ paths:
               </ul>
               **Additional Requirement:** <br> This grant_type requires that a username is passed in the request payload.
             <br>
-            <h2>Payment Card</h2>
-            This resource represents a primary account number (PAN) which can be associated with one or more physical payment cards (e.g., with different expiry dates or cardholder names).
-            <br><br>
-            When posting to an existing account with the same **fingerprint**, if the following fields are different in the request, the stored values will be updated:
-            <br>
-            <ul>
-              <li><code>expiry_month</code></li>
-              <li><code>expiry_year</code></li>
-              <li><code>name_on_card</code></li>
-              <li><code>card_nickname</code></li>
-            </ul>
-            <br>
-            **NOTE**: Success will automatically create PLL links to the provided Loyalty Card.
-            <br>
+           
             <h2>Loyalty Card</h2>
-            When a **PLL** type **Loyalty Card** is added to the Bink service, we typically require the user to provide Add and Authorisation credentials so we can verify ownership with the relevant **Loyalty Plan** provider. Trusted Channel allows an integrated partner to Add a **PLL** type **Loyalty Card** with a single credential, having already validated the user through their own client application.
+            An integrated partner can Add a PLL type Loyalty Card with a single credential, having already validated the user through their own client application.
             <br><br>
             This endpoint trusts that the partner has completed full verification of the user and no additional validation is required from Bink.
             <h3>Credentials</h3>
-              We require a unique identifier that allows us to recognise the membership information verified by the Trusted Channel. Examples of a membership identifier are **card number** or **email**. This data is in <code>journey_fields.add_fields</code> or <code>journey_fields.authorise_fields</code> and can be obtained from either of the following endpoints:
+              We require a unique identifier that allows us to recognise the membership information verified by the integration partner. Examples of a membership identifier are **card number** or **email**. This data is in <code>journey_fields.add_fields</code> or <code>journey_fields.authorise_fields</code> and can be obtained from either of the following endpoints:
               <ul>
                 <li><code>GET /loyalty plans</code></li>
                 <li><code> GET /loyalty_plans/{loyalty_plan_id}</code></li>
@@ -404,7 +392,21 @@ paths:
               For this endpoint you will use the <b>add_field</b> or the first <b>authorise_field</b> if no <b>add_field</b> exists.<br>
               <br>
               <h3>Merchant Fields</h3>
-              Provide a unique, immutable identifer for the loyalty membership. We will use this identifier for **PLL**."
+              Provide a unique, immutable identifer for the loyalty membership. We will use this identifier for **PLL**.
+              <h2>Payment Card</h2>
+            This resource represents a primary account number (PAN) which can be associated with one or more physical payment cards (e.g., with different expiry dates or cardholder names).
+            <br><br>
+            When posting to an existing account with the same **fingerprint**, if the following fields are different in the request, the stored values will be updated:
+            <br>
+            <ul>
+              <li><code>expiry_month</code></li>
+              <li><code>expiry_year</code></li>
+              <li><code>name_on_card</code></li>
+              <li><code>card_nickname</code></li>
+            </ul>
+            <br>
+            **NOTE**: Success will automatically create PLL links to the provided Loyalty Card."
+    
       operationId: POST /wallet/create_trusted
       security:
         - bearerAuth: []
@@ -435,6 +437,13 @@ paths:
               schema:
                 allOf:
                   - $ref: '#/components/schemas/genericresponse401'
+        '403':
+          description: '**Forbidden** This feature is not permitted for this user.'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/genericresponse403'
         '409':
           description: '**Conflict** Could not process the request due to a conflict.'
           content:
@@ -2384,7 +2393,7 @@ components:
             - user
         username:
           type: string
-          description: Required when the grant_type is client_credentials, this provides the user for the response tokens' scope.
+          description: Required when the grant_type is client_credentials, this is the user for the response tokens' scope.
           example: testuser@test.com
     TokenResponseSuccess:
       type: object
@@ -2514,7 +2523,7 @@ components:
           properties:
             add_fields: 
               type: object
-              description: "The fields that need to be presented to the user in order to Add an existing Loyalty Card as Store type to the user's wallet."
+              description: "The fields that need to be presented to the user in order to Add an existing Loyalty Card to the user's wallet."
               properties: 
                 credentials:
                   type: array
@@ -2920,7 +2929,7 @@ components:
         id:
           type: integer
           example: 10683
-          description: "Unique resrouce identifier for this Loyalty Card."
+          description: "Unique resource identifier for this Loyalty Card."
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
@@ -2941,7 +2950,7 @@ components:
         id:
           type: integer
           example: 10683
-          description: "Unique resrouce identifier for this Join request."
+          description: "Unique resource identifier for this Join request."
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
@@ -3060,7 +3069,7 @@ components:
         id:
           type: integer
           example: 10683
-          description: "Unique resrouce identifier for this Loyalty Card."
+          description: "Unique resource identifier for this Loyalty Card."
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
@@ -3162,7 +3171,7 @@ components:
         id:
           type: integer
           example: 10683
-          description: "Unique resrouce identifier for this Loyalty Card."
+          description: "Unique resource identifier for this Loyalty Card."
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
@@ -3204,7 +3213,7 @@ components:
         id:
           type: integer
           example: 10683
-          description: "Unique resrouce identifier for this Loyalty Card."
+          description: "Unique resource identifier for this Loyalty Card."
           minimum: 1
           maximum: 18446744073709552000
           pattern: '^[0-9]+$'
@@ -4400,12 +4409,17 @@ components:
     genericresponse403:
       type: object
       required:
-        - title
+        - error_message
+        - error_slug
       properties:
-        title:
+        error_message:
           type: string
-          description: 'Description of the error.'
-          example: '403 Forbidden'   
+          description: 'Error message that could be displayed to a user.'
+          example: 'This endpoint is for trusted channel use only.'   
+        error_slug:
+          type: string
+          description: 'Human-readable identifier that is easy to code against.'
+          example: 'FORBIDDEN"'
     genericresponse404:
       type: object
       required:
